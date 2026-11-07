@@ -1362,3 +1362,28 @@ contracts:
     producers:
       - kernel.scaffold.book-llm
     consumers: []
+  - id: kernel.coord.lock-state
+    version: 1.0.0
+    purpose: 当前文件占用表，记录路径、占用者、开始时间与过期时间
+    fields:
+      result:
+        type: object
+    required:
+      - result
+    external_consumers: true
+    producers:
+      - kernel.coord.lock
+      - kernel.coord
+    consumers: []
+  - id: kernel.coord.message
+    version: 1.0.0
+    purpose: 智能体之间的一条留言，带收件人、时间戳与是否已读
+    fields:
+      result:
+        type: object
+    required:
+      - result
+    external_consumers: true
+    producers:
+      - kernel.coord.mailbox
+    consumers: []

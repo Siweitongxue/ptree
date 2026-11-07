@@ -1,11 +1,11 @@
 AI Company 程序树总览
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-07 22:56:41
+生成时间：2026-11-07 23:04:49
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=3）
 
-节点统计：共 89 个（root=1 · department=6 · program=29 · step=53）
+节点统计：共 92 个（root=1 · department=6 · program=30 · step=55）
 
 一、树结构
 
@@ -31,10 +31,13 @@ ptree [已完成 P0] 程序树
 │   │   ├── kernel.ops.health [已完成 P0] 健康与变更记录
 │   │   ├── kernel.ops.verify [已完成 P0] 跨树校验与验证
 │   │   └── kernel.ops.adapt [已完成 P0] 目录适配与基准
-│   └── kernel.backup [已完成 P0] 备份子系统
-│       ├── kernel.backup.config [已完成 P0] 备份配置与凭据
-│       ├── kernel.backup.run [已完成 P0] 备份点与保留
-│       └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+│   ├── kernel.backup [已完成 P0] 备份子系统
+│   │   ├── kernel.backup.config [已完成 P0] 备份配置与凭据
+│   │   ├── kernel.backup.run [已完成 P0] 备份点与保留
+│   │   └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+│   └── kernel.coord [未完成 P2] 协作占用与留言
+│       ├── kernel.coord.lock [未完成 P2] 文件占用锁
+│       └── kernel.coord.mailbox [未完成 P2] 留言信箱
 ├── interface [已完成 P1] 接口部
 │   ├── interface.mcp-server [已完成 P1] MCP 协议服务
 │   │   ├── interface.mcp-server.read [已完成 P1] 只读工具组
@@ -112,7 +115,7 @@ ptree [已完成 P0] 程序树
 
   canvas（画布部）：节点 8；已落地 6；推进中 2；其它 0
   interface（接口部）：节点 7；已落地 7；推进中 0；其它 0
-  kernel（内核部）：节点 24；已落地 24；推进中 0；其它 0
+  kernel（内核部）：节点 27；已落地 24；推进中 3；其它 0
   quality（质量部）：节点 10；已落地 8；推进中 2；其它 0
   release（发布部）：节点 9；已落地 9；推进中 0；其它 0
   rules（规则部）：节点 24；已落地 24；推进中 0；其它 0
@@ -207,4 +210,7 @@ ptree [已完成 P0] 程序树
   quality.smoke-e2e（端到端冒烟 · 未完成）：依赖 quality.baseline；父节点 quality.baseline
   quality.snapshot-hygiene（快照治理 · 未完成）：依赖 quality.baseline；父节点 quality.baseline
   kernel.scaffold.book-llm（程序书 DeepSeek 生成 · 已完成）：依赖 kernel.scaffold.products；父节点 kernel.scaffold
+  kernel.coord（协作占用与留言 · 未完成）：依赖 kernel；父节点 kernel
+  kernel.coord.lock（文件占用锁 · 未完成）：依赖 kernel.coord；父节点 kernel.coord
+  kernel.coord.mailbox（留言信箱 · 未完成）：依赖 kernel.coord；父节点 kernel.coord
 

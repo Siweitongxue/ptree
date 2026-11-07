@@ -33,3 +33,4 @@ D26 ｜ 构建入口的实现边界 ｜ 读取 PTree.sln 的 5 个项目与 Dire
 D27 ｜ 产物发布的实现边界 ｜ 读取 PTree.Cli 与 PTree.Serve 的 csproj 和 Release 构建输出，固定 AssemblyName 为 ptree-cs… ｜ 不越出本节点职责 ｜ 无 ｜ release.publish ｜ 转述稿 ｜ 未确认 ｜ 2026-11-07
 D28 ｜ 示例树脚手架的实现边界 ｜ 读取 examples/demo 下的清单、契约、标杆、四棵树实例与三类文本（该目录由 ptree-cs init 生成），维护 demo、core、cor… ｜ 不越出本节点职责 ｜ 无 ｜ release.examples ｜ 转述稿 ｜ 未确认 ｜ 2026-11-07
 D29 ｜ 开源入口的实现边界 ｜ 读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 许可，声明公开仓库不… ｜ 不越出本节点职责 ｜ 无 ｜ release.open-source ｜ 转述稿 ｜ 未确认 ｜ 2026-11-07
+D30 ｜ 协作占用与留言的实现边界 ｜ 用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车 ｜ 不越出本节点职责 ｜ 无 ｜ kernel.coord ｜ 转述稿 ｜ 未确认 ｜ 2026-11-07

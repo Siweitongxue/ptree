@@ -1,7 +1,7 @@
 程序树落地顺序
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-07 22:56:41
+生成时间：2026-11-07 23:04:49
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=3）
 
@@ -80,8 +80,11 @@ tree_version：1.0.0
 阶段 P2 画布
 
   [已完成] canvas 画布部 — 依赖：ptree
+  [未完成] kernel.coord 协作占用与留言 — 依赖：kernel
   [已完成] canvas.viewer-shell 视图外壳 — 依赖：canvas
   [未完成] canvas.grid-export 网格导出器 — 依赖：canvas
+  [未完成] kernel.coord.lock 文件占用锁 — 依赖：kernel.coord
+  [未完成] kernel.coord.mailbox 留言信箱 — 依赖：kernel.coord
   [未完成] canvas.viewer-grid 网格渲染引擎 — 依赖：canvas.viewer-shell、canvas.grid-export
   [已完成] canvas.grid-export.rows 行解析 — 依赖：canvas.grid-export
   [已完成] canvas.grid-export.graph 联系拼装 — 依赖：canvas.grid-export
@@ -115,6 +118,8 @@ tree_version：1.0.0
 
 被阻塞节点
 
+  kernel.coord.lock（P2）：依赖 kernel.coord 当前 status=未完成，尚未已完成/已验证
+  kernel.coord.mailbox（P2）：依赖 kernel.coord 当前 status=未完成，尚未已完成/已验证
   canvas.viewer-grid（P2）：依赖 canvas.grid-export 当前 status=未完成，尚未已完成/已验证
   canvas.grid-export.rows（P2）：依赖 canvas.grid-export 当前 status=未完成，尚未已完成/已验证
   canvas.grid-export.graph（P2）：依赖 canvas.grid-export 当前 status=未完成，尚未已完成/已验证

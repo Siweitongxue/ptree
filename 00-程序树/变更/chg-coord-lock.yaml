@@ -1,0 +1,99 @@
+proposal: chg-coord-lock
+author: lead
+reason: 登记多智能体协作需求：文件占用锁与相互留言，防止正面撞车
+contracts:
+- id: kernel.coord.lock-state
+  version: 1.0.0
+  purpose: 当前文件占用表，记录路径、占用者、开始时间与过期时间
+  fields:
+    result:
+      type: object
+  required: [result]
+  external_consumers: true
+  producers: [kernel.coord.lock, kernel.coord]
+  consumers: []
+- id: kernel.coord.message
+  version: 1.0.0
+  purpose: 智能体之间的一条留言，带收件人、时间戳与是否已读
+  fields:
+    result:
+      type: object
+  required: [result]
+  external_consumers: true
+  producers: [kernel.coord.mailbox]
+  consumers: []
+ops:
+- op: add
+  node:
+    id: kernel.coord
+    name: 协作占用与留言
+    kind: program
+    layer: 2
+    parent: kernel
+    phase: P2
+    status: 未完成
+    responsibility: 用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车
+    not_responsible:
+    - 不做版本控制，也不替代代码审查
+    inputs: []
+    outputs:
+    - kernel.coord.lock-state
+    depends_on:
+    - kernel
+    files: []
+    acceptance:
+    - 命令：ptree-cs coord claim <路径> --by <智能体> 成功后 coord list 能看到该占用
+    - 命令：ptree-cs coord release <路径> 后 coord list 里没有该占用
+    - 测试：两个进程同时 claim 同一路径，只有一个成功，另一个拿到占用者与过期时间
+    - 命令：ptree-cs coord say <收件人> <一句话> 后 coord inbox <收件人> 能读到且标记已读
+    spec: 00-程序树/规范/核心/04_权限与动文件.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'
+- op: add
+  node:
+    id: kernel.coord.lock
+    name: 文件占用锁
+    kind: step
+    layer: 3
+    parent: kernel.coord
+    phase: P2
+    status: 未完成
+    responsibility: 登记文件占用者与过期时间，改完立刻释放，别人要改先看占用
+    not_responsible:
+    - 不长时间占着不放，超时自动失效
+    inputs: []
+    outputs:
+    - kernel.coord.lock-state
+    depends_on:
+    - kernel.coord
+    files: []
+    acceptance:
+    - 命令：占用表按路径索引，同一路径只允许一个占用者
+    - 人工清单：占用过期后不阻塞别人，且占用记录里能看到已过期
+    spec: 00-程序树/规范/核心/04_权限与动文件.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'
+- op: add
+  node:
+    id: kernel.coord.mailbox
+    name: 留言信箱
+    kind: step
+    layer: 3
+    parent: kernel.coord
+    phase: P2
+    status: 未完成
+    responsibility: 给指定智能体留一条带时间戳的消息，下次读取时消费并标记已读
+    not_responsible:
+    - 不做长文传递，只留一句话与指针
+    inputs: []
+    outputs:
+    - kernel.coord.message
+    depends_on:
+    - kernel.coord
+    files: []
+    acceptance:
+    - 命令：消息按收件人索引，读取后标记已读且不重复提醒
+    - 人工清单：留言内容不进程序书与生成物，只留在本地协作目录
+    spec: 00-程序树/规范/核心/04_权限与动文件.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'

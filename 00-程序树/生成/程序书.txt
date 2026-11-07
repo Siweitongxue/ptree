@@ -1,11 +1,11 @@
 AI Company 程序书
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-07 22:56:41
+生成时间：2026-11-07 23:04:49
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=3）
 
-节点统计：共 89 个（root=1 · department=6 · program=29 · step=53）
+节点统计：共 92 个（root=1 · department=6 · program=30 · step=55）
 
 程序书怎么用
 
@@ -36,10 +36,13 @@ ptree [已完成 P0] 程序树
 │   │   ├── kernel.ops.health [已完成 P0] 健康与变更记录
 │   │   ├── kernel.ops.verify [已完成 P0] 跨树校验与验证
 │   │   └── kernel.ops.adapt [已完成 P0] 目录适配与基准
-│   └── kernel.backup [已完成 P0] 备份子系统
-│       ├── kernel.backup.config [已完成 P0] 备份配置与凭据
-│       ├── kernel.backup.run [已完成 P0] 备份点与保留
-│       └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+│   ├── kernel.backup [已完成 P0] 备份子系统
+│   │   ├── kernel.backup.config [已完成 P0] 备份配置与凭据
+│   │   ├── kernel.backup.run [已完成 P0] 备份点与保留
+│   │   └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+│   └── kernel.coord [未完成 P2] 协作占用与留言
+│       ├── kernel.coord.lock [未完成 P2] 文件占用锁
+│       └── kernel.coord.mailbox [未完成 P2] 留言信箱
 ├── interface [已完成 P1] 接口部
 │   ├── interface.mcp-server [已完成 P1] MCP 协议服务
 │   │   ├── interface.mcp-server.read [已完成 P1] 只读工具组
@@ -2228,6 +2231,68 @@ ptree [已完成 P0] 程序树
     下游：kernel.book.text → 外部消费者
 
 
+节点：kernel.coord · 协作占用与留言
+
+  类型/层级：program / 2；阶段：P2；状态：未完成
+  父节点：kernel
+  依赖：kernel
+  输入契约：无
+  输出契约：kernel.coord.lock-state
+  验收：命令：ptree-cs coord claim <路径> --by <智能体> 成功后 coord list 能看到该占用；命令：ptree-cs coord release <路径> 后 coord list 里没有该占用；测试：两个进程同时 claim 同一路径，只有一个成功，另一个拿到占用者与过期时间；命令：ptree-cs coord say <收件人> <一句话> 后 coord inbox <收件人> 能读到且标记已读
+  SPEC：00-程序树/规范/核心/04_权限与动文件.txt
+
+  职责：用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车
+  不负责：不做版本控制，也不替代代码审查
+
+  连接：
+    上游：无
+    下游：kernel.coord.lock-state → 外部消费者
+
+  说明（00-程序树/说明/kernel.coord.txt）：
+    协作占用与留言是一个守门程序，解决多个智能体同时改同一个仓库时的正面撞车：改文件之前先登记占用，改完立刻释放，别人要改同一文件时先看占用表而不是先动手。
+    占用表按路径索引，一条占用包含占用者、开始时间与过期时间，同一路径只允许一个占用者，过期自动失效，避免某个智能体半路死掉把文件永久锁住。
+    留言信箱解决的是另一类协作：A 改了某个文件会影响 B，但两边不共享上下文，就把一句话留在信箱里，收件人下次开工先读，读完标记已读。留言只存本地协作目录，不进程序书、不进生成物、不进台账，避免污染交付物。
+    边界是不做版本控制、不做代码审查，也管不住绕过工具直接写文件的进程；它只把『我要改这里』和『我改完了』变成可查询的状态。
+    实现入口计划放在 00-程序树/工具/csharp/src/PTree.Core 下新增协作模块，并在 CLI 暴露 coord 子命令；规范依据是 00-程序树/规范/核心/04_权限与动文件.txt 里关于动文件前先登记的要求。
+    
+
+
+节点：kernel.coord.lock · 文件占用锁
+
+  类型/层级：step / 3；阶段：P2；状态：未完成
+  父节点：kernel.coord
+  依赖：kernel.coord
+  输入契约：无
+  输出契约：kernel.coord.lock-state
+  验收：命令：占用表按路径索引，同一路径只允许一个占用者；人工清单：占用过期后不阻塞别人，且占用记录里能看到已过期
+  SPEC：00-程序树/规范/核心/04_权限与动文件.txt
+
+  职责：登记文件占用者与过期时间，改完立刻释放，别人要改先看占用
+  不负责：不长时间占着不放，超时自动失效
+
+  连接：
+    上游：无
+    下游：kernel.coord.lock-state → 外部消费者
+
+
+节点：kernel.coord.mailbox · 留言信箱
+
+  类型/层级：step / 3；阶段：P2；状态：未完成
+  父节点：kernel.coord
+  依赖：kernel.coord
+  输入契约：无
+  输出契约：kernel.coord.message
+  验收：命令：消息按收件人索引，读取后标记已读且不重复提醒；人工清单：留言内容不进程序书与生成物，只留在本地协作目录
+  SPEC：00-程序树/规范/核心/04_权限与动文件.txt
+
+  职责：给指定智能体留一条带时间戳的消息，下次读取时消费并标记已读
+  不负责：不做长文传递，只留一句话与指针
+
+  连接：
+    上游：无
+    下游：kernel.coord.message → 外部消费者
+
+
 变更历史入口
 
   提案目录：00-程序树/变更/（AI 编写的变更提案，apply 处理）
@@ -2235,7 +2300,7 @@ ptree [已完成 P0] 程序树
   剪枝候选：00-程序树/变更/剪枝候选.yaml
   写入口：ptree-cs apply --file <提案>（默认 dry-run，--write 落地）
 
-待处理提案：chg-book-llm.yaml（chg-book-llm）；chg_truth.yaml（chg-baseline-truth）
+待处理提案：chg-book-llm.yaml（chg-book-llm）；chg-coord-lock.yaml（chg-coord-lock）；chg_truth.yaml（chg-baseline-truth）
 
 已修剪节点（来自变更历史）
 
