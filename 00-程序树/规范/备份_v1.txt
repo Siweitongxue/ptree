@@ -1,0 +1,92 @@
+备份规范 v1（自动备份子系统）
+================================
+
+定位：自动备份是程序树的附属功能，默认关闭、可开启。它把「树的每次完整改动」——即每次写操作产生的一个
+tree_version 快照——映射到对应内层代码仓的一个备份点，并管住凭据（加密存储）。不在默认路径上、不启用就
+不产生任何文件、不改变任何既有行为。
+
+一、配置文件分两层
+------------------
+
+1. 项目层（进 git）：00-程序树/运维/备份.yaml
+   只放非敏感项，字段固定为：
+   - enabled          布尔，默认 false（关闭）。凡是启用都必须先完成全局配置，否则拒绝启用。
+   - mode             备份方式：git-bundle / tag / copy，默认 git-bundle。
+   - retention        同一 target 保留的备份点数量，整数，默认 10，范围 1-1000。
+   - targets          列表，每项是内层 git 仓路径（相对项目根或绝对路径）或节点 id。
+                      节点 id 先取节点的 home，其次取第一个 files 的目录。
+   - last_run         上次备份时间（yyyy-MM-dd HH:mm:ss），由工具写。
+   - last_tree_version 上次备份对应的 tree_version，由工具写。
+   - note             可选备注。
+   未出现在上面的字段视为未知字段（R43 给 W）。
+
+2. 全局层（不进 git）：%USERPROFILE%\.ptree\
+   - global.yaml      形如：
+                        backup:
+                          key: <base64 随机 32 字节>
+                          retention: 10        # 全局默认值，项目配置没显式写时生效
+                          mode: git-bundle
+   - credentials.enc  加密后的凭据（username / token / updated_at 的 JSON 明文再加密）。
+   环境变量 PTreeBackupHome 可把整个全局目录指到别处（测试与多用户隔离用）。
+   密钥从全局配置读；缺失时报「未配置」，绝不静默生成。只有 tree_backup_setup 首次配置时会生成
+   32 字节随机密钥并回报 key_created=true。
+
+二、加密格式
+------------
+
+- 算法：AES-256-GCM；密钥 32 字节（全局配置里的 base64）。
+- 每次加密用随机 12 字节 nonce，16 字节认证 tag。
+- 密文文件内容：base64(nonce|tag|ciphertext)，无换行。
+- 解密所需的东西（密钥）只在全局配置，不随项目仓库走。
+- 凭据只能整体读回后由调用方使用；任何工具输出都必须脱敏：token 只显示前 4 后 2
+  （长度不足 6 时整段显示为 ****），用户名可全显。token 明文绝不进入日志、台账、MCP 响应、
+  异常消息或测试快照。
+
+三、备份点与保留策略
+--------------------
+
+- 一次「树的完整改动」= 一个 tree_version 快照（写操作成功后自动触发；未启用时不做任何事）。
+- 备份产物目录：00-程序树/运维/备份/<tree_version>/<repo>.bundle（git-bundle 模式）。
+- 台账：00-程序树/运维/备份.jsonl，每行一条，键固定为
+  {at, tree_version, kind, target, commit, bundle, bytes}
+  - kind：bundle / tag / copy（tag 模式只打 tag，bytes=0；copy 模式整目录复制）。
+  - commit：备份时该内层仓 HEAD 的完整 commit 号。
+- retention：同一 target 只留最近 N 个备份点（默认 10）。超出的删 bundle 文件，并在 jsonl 追加
+  一条 kind=trimmed 的记录（保留原 tree_version / bundle / bytes，便于审计）。
+  台账是 append-only：裁剪不重写历史行，trimmed 记录相当于墓碑；有效备份点 = 非 trimmed 且没有
+  对应墓碑（同 target + tree_version + bundle）的行。status 的 backup_points、list、verify 都按有效
+  备份点算，避免把已删的旧备份点算进去。
+- 00-程序树/运维/备份/ 必须写进 .gitignore（产物不进 git；配置与台账进 git）。
+
+四、接口清单
+------------
+
+MCP（六个）：
+- tree_backup_status    enabled、mode、retention、targets 数、凭据状态（已配置/未配置/脱敏用户名）、
+                        上次备份时间、备份点数量、磁盘占用。
+- tree_backup_config    改 enabled / mode / retention / targets（整体替换、add_targets、remove_targets）。
+                        改 enabled=true 时若全局密钥或加密凭据缺失，拒绝启用并提醒先跑 tree_backup_setup。
+- tree_backup_setup     写入/更新凭据（username、token），AES-256-GCM 加密落到全局目录；
+                        token 传空表示只改用户名；返回脱敏摘要。
+- tree_backup_now       立即备份一次，返回每个 target 的 commit、bundle 路径、字节数、耗时。
+- tree_backup_list      列备份点，按 tree_version 倒序，可按 target 过滤、限制条数，可含 trimmed。
+- tree_backup_verify    对 bundle 记录跑 git bundle verify，返回每个备份点的可读性。
+
+CLI（同一实现）：
+  ptree-cs backup status
+  ptree-cs backup config [--enable|--disable|--enabled true|false] [--mode ...] [--retention N]
+                         [--add-target <仓路径或节点id>] [--remove-target <...>]
+  ptree-cs backup setup  --username <用户名> [--token <token>]
+  ptree-cs backup now
+  ptree-cs backup list   [--target <...>] [--limit N] [--include-trimmed]
+  ptree-cs backup verify [--target <...>] [--limit N]
+
+五、未配置时的行为
+------------------
+
+- 默认 enabled=false：不提醒、不拦截、不产出任何备份文件。
+- tree_backup_config 把 enabled 设为 true 时，若全局密钥或凭据缺失：拒绝启用（配置不落盘），
+  返回 need_setup=true，文案明确写「请先跑 tree_backup_setup 完成配置」。
+- enabled=true 但未配置时，tree_guard / health 追加一条 W（backup_unconfigured）。
+- tree_backup_now / backup now 在未启用时拒绝，并提示先 tree_backup_setup 再 tree_backup_config。
+- 校验规则 R43 只校验 00-程序树/运维/备份.yaml 的结构与取值（E/W），不读密钥、不读凭据。

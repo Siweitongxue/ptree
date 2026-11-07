@@ -1,0 +1,458 @@
+程序树校验规则
+版本 1，日期 2026-11-06
+适用：00-程序树/工具/csharp 的实现者、校验调用方、规则变更提案人；Python 版 ptree.py 于 2026-11-06 冻结，仅作迁移对照
+
+一 判定与输出约定
+1 每条规则给出级别、检查对象、判据；级别含义：E 错误，W 警告，I 提示。
+2 工具退出码：0 表示无 E；1 表示至少一条 E；2 表示用法或 IO 错误。
+3 人类可读输出一行一条，格式示例：
+  [E] R05 nodes.info.understanding: parent 不存在：info
+  [W] R08 nodes: 职责高度相似：x ≈ y（相似度 0.93）
+4 --json 输出对象含 ok、errors、warnings、notes 四个键；errors 与 warnings 的元素含 code、node、message。
+5 校验默认只读，不修改任何文件；view、order、book、benchmark 子命令才写 生成/ 目录。
+6 规则实现异常按 E 报告，不得吞掉。
+
+二 树与节点（R01-R08）
+R01 顶层结构 级别 E
+  1 必填顶层键：schema_version、tree_version、updated、root、phases、nodes；未知键报错，与 schema 一致。
+  2 schema_version 必须为 1。
+  3 tree_version 形如 1.0.0。
+  4 updated 形如 2026-10-24。
+R02 节点字段 级别 E
+  1 每个节点必须且只能包含 schema 声明的字段；必填字段缺一即错。root 允许缺 parent 或显式写 null；department 允许缺 inputs、outputs、depends_on，按空数组处理；program 与 step 保持严格。
+  2 类型不符即错，例如数组写成字符串、layer 写成字符串。
+  3 契约引用 id 必须为小写字母、数字、连字符加点分段，如 scenario.brief、innovation.premise。
+  4 节点 id 命名是约定不是闸门：root 与部门建议单段，更深节点建议 parent 前缀加字面点加末段；不符合前缀只报 I，不阻断。
+  5 layer 缺失时按 parent 链自动推导；显式 layer 与推导值不一致只报 W，并按推导值处理。
+R03 id 唯一 级别 E
+  1 节点 id 全树唯一。
+  2 重复即错并列出重复项。
+R04 根节点 级别 E
+  1 root 字段指向的节点必须存在，kind=root、layer=0、parent=null。
+  2 全树只能有一个 kind=root。
+R05 父子完整性 级别 E
+  1 非 root 节点的 parent 必须存在，且 parent.layer 等于本节点 layer 减 1。
+  2 从 root 出发必须能到达全部节点；不可达节点视为孤儿。
+  3 parent 链不得成环。
+R06 层级与类型 级别 E
+  1 layer 0 为 root。
+  2 layer 1 为 department。
+  3 layer 2 为 program 或 external。
+  4 layer 3 为 step 或 external。
+  5 kind 与 layer 不匹配即错。
+R07 职责声明 级别 E 或 W
+  1 responsibility 非空，长度 4 到 80 字。
+  2 responsibility 以动词开头；实现启发式为不得以“的、了、是”开头。
+  3 responsibility 不得含占位符：TBD、待补、三个问号。
+  4 kind 为 program 或 step 时，not_responsible 至少 1 条，每条至少 2 字。
+  5 responsibility 不得包含分号或句号，一句职责不允许塞两件事。
+  6 无 acceptance 的 program 或 step 报错；status 为 退役 或 退役 的归档节点豁免。
+R08 职责重复 级别 E 或 W
+  1 归一化方法：去空白、去标点、统一大小写后比较。
+  2 任意两节点归一化后完全相同报 E。
+  3 字符二元组 Jaccard 相似度大于等于 0.90 报 W，提示人工确认。
+  4 kind=external 的节点不参与重复判定。
+
+三 契约（R09-R10）
+R09 概念与引用 级别 E
+  1 每个节点 inputs、outputs 中的契约 id 必须在 contracts.yaml 中存在。
+  2 同一节点的 inputs 内、outputs 内不得重复同一契约。
+  3 program 或 step 至少 1 个 output。
+  4 root、department、external 以及 status 为 退役 或 退役 的归档节点允许 output 为空。
+R10 双向一致性 级别 E
+  1 对节点 N 的每个 output 契约 C，C.producers 必须包含 N。
+  2 对节点 N 的每个 input 契约 C，C.consumers 必须包含 N。
+  3 每个契约至少 1 个 producer，external: true 的契约除外；至少 1 个 consumer，external_consumers: true 的契约除外。
+  4 契约引用的 node id 必须存在。
+  5 contracts.yaml 自身：id 唯一；version 形如 1.0.0；purpose 非空；schema.fields 非空；schema.required 为 schema.fields 键的子集；producers 与 consumers 不得同时为空，除非 external 标记。
+  6 本规则是全树串得起来的硬保证：节点输出无人消费、输入没有来源，都会被点名。
+
+四 依赖与阶段（R11-R12）
+R11 依赖图 级别 E
+  1 depends_on 中每个 id 必须存在。
+  2 不得自依赖。
+  3 不得成环，用 DFS 检测。
+  4 依赖关系必须与阶段一致，判据见 R12。
+R12 落地阶段 级别 E
+  1 节点 phase 必须在 phases 列表中。
+  2 每个 phase 至少被 1 个节点使用，否则删除该死阶段。
+  3 依赖约束：dep.phase 序号小于等于本节点 phase 序号，可以同阶段，不能依赖更晚阶段。
+  4 父子阶段约束：parent.phase 序号小于等于每个 child.phase 序号。
+  5 phases 列表中的 id 必须按序号严格递增且无重复。
+
+五 状态语义（R13-R16）
+R13 状态与产物一致性 级别 E
+  1 未完成：files 必须为空；evidence 必须为空；spec 必须存在，可为设计文档或 SPEC.md。
+  2 未完成：files 可以部分存在，不强制全部存在；acceptance 非空。
+  3 已完成：files 中每个路径必须存在；acceptance 非空。
+  4 已验证：在 已完成 规则之上，evidence 至少 1 条且全部 result=pass，每条含 test、at、result。
+  5 已完成 或 已验证 节点不得 depends_on 状态为 未完成 或 退役 的节点；确需如此必须在 notes 写明，并在 00-程序树/豁免.yaml 登记 R13 豁免，见 R24。
+  6 退役：必须有 退役_reason 且至少 8 字，必须有 authority 字段，值为权威替代节点 id 或 null。
+  7 退役 的 files 允许指向旧路径，可不做物理布局校验；authority 非 null 时必须指向存在节点，且该节点 kind 为 program 或 step、status 为 已完成 或 已验证。
+  8 退役：必须有 replaced_by，值为节点 id 或 null；replaced_by 非 null 时必须指向存在且 status 为 已完成 或 已验证 的节点。
+R14 验收与证据 级别 E
+  1 已完成 或 已验证：acceptance 至少 1 条，每条非空。
+  2 验收条目写法：命令：、测试：、人工清单：三种前缀。
+  3 已验证：evidence 每条 at 为 YYYY-MM-DD，result 为 pass，不得有 fail 记录。
+R15 spec 可追溯 级别 E 或 W
+  1 spec 非空；路径部分去掉锚点后相对仓库根必须存在，可为文件或目录。
+  2 锚点写法为路径后的井号加章节名。
+  3 目录类 spec 应带章节锚点；工具只检查文件存在，不校验锚点内容。
+R16 父子完成度 级别 E 或 W
+  1 父节点 status=已验证 时，其全部子节点必须为 已完成、已验证 或 退役，否则报 E。
+  2 父节点 status=已完成 时，不得存在 未完成 或 未完成 子节点，否则报 W 并列出。
+  3 父节点 status=未完成 时，不得存在 已完成 或 已验证 子节点，否则报 E；子先于父落地必须提升父状态。
+  4 root 与 department 的 status 只表达聚合，不做自动推导，由人工填写并接受上述约束检查。
+
+六 物理布局与代码卫生（R17-R20）
+1 本节只对声明了 home 且 home 位于 10-程序/ 下的 program 生效；旧资产用 files 登记，不强制搬家。
+2 从 v1 起，任何新增程序必须落在 10-程序/ 的树形目录里。
+R17 物理目录 级别 E
+  1 home 必须是相对路径，且以 10-程序/ 开头。
+  2 home 期望值为 10-程序/加去 root 前缀的 id 路径，点换斜杠；例如 info.understanding 对应 10-程序/info/understanding。
+  3 status 为 未完成、已完成 或 已验证 时，home 目录必须存在。
+  4 home 下必须有 SPEC.md 与 program.yaml，内容由 R18 检查。
+  5 一个 home 只能被一个节点声明。
+R18 SPEC 完整性 级别 E
+  1 物理程序的 SPEC.md 必须包含八个二级标题，顺序不限、文字精确：职责、不负责、输入、输出、依赖、边界与失败模式、验收、落地阶段。
+  2 每节内容不得为空或仅含占位符 TBD、待补。
+  3 program.yaml 必须包含该节点的 id、name、kind、layer、parent、phase、status、responsibility、inputs、outputs、depends_on。
+  4 program.yaml 上述字段必须与 program-tree.yaml 中的对应节点一致，不允许两份真相。
+R19 未登记代码扫描 级别 E 或 W
+  1 扫描 10-程序/ 下所有目录。
+  2 目录含 program.yaml 时，必须能对应到一个 kind=program 且 home 相同的节点，否则报 E。
+  3 目录不含 program.yaml 但含 .py、.js、.ts 等代码文件时，报 E，原因为未登记代码或缺少 program.yaml。
+  4 每个 kind=program 且 home 在 10-程序/ 下的节点，必须存在对应目录与 program.yaml，否则报 E。
+  5 10-程序/ 根下除 README.md、共享/、模板例外说明外，不得有散落代码文件，否则报 E。
+R20 跨节点 import 级别 E
+  1 对 10-程序/部门/程序/ 下的 Python 文件做 AST 解析。
+  2 允许 import：标准库、第三方包、本程序包内模块、10-程序/共享/ 提供的模块。
+  3 禁止 import 另一个程序的包，例如 innovation 的程序 import info.understanding 的内部模块，报 E。
+  4 JS/TS 暂不做跨节点 import 检查，v1 记为 I，提示用依赖声明人工保证。
+
+七 豁免与治理（R21-R24）
+R21 契约版本 级别 W
+  1 contracts.yaml 中每个契约 version 形如 1.0.0。
+  2 若同 id 在 00-程序树/契约/历史/ 下存在旧版本，major 变化必须升 major。
+  3 v1 未实现自动比对，只保留字段与目录约定。
+R22 阶段覆盖 级别 W
+  1 每个 phase 至少 1 个 status 为 未完成 或 未完成 的节点，视为正在推进。
+  2 或者该 phase 全部节点为 已完成 或 已验证，视为已完成。
+  3 不满足 1 或 2 的 phase 报 W，提示调整落地计划。
+R23 节点数量与规模 级别 I
+  1 输出节点数，并按状态、阶段、部门统计。
+  2 单部门节点数大于 20 报 I，提示粒度太细或该拆部门。「部门节点数」只数 parent 直指该部门的直属子节点，不数整棵子树；归档与历史目录不计入组织规模。
+R24 豁免登记 级别 E 或 W
+  1 00-程序树/豁免.yaml 顶层键为 exemptions，每项字段为 rule、node、reason、until；示例值：rule 为 R13，node 为 runtime.llm-退役，reason 为历史 Python 实现保留、依赖旧 LLM 层，until 为 2027-01-01。
+  2 未登记原因或已过期的豁免报 E。
+  3 被豁免命中的规则降为 W，并在输出指出豁免来源。
+  4 豁免不得用于绕过 R03、R04、R05、R10。
+
+八 标杆层（R25-R30）
+1 配套文件：规范/标杆规范_v1.txt、标杆/benchmarks.yaml、标杆/绑定.yaml。
+2 以下阈值属于机器判据；标杆规范只写概念，不复述阈值。
+R25 标杆定义完整性 级别 E 或 W
+  1 00-程序树/标杆/benchmarks.yaml 必须存在。
+  2 顶层键仅允许 schema_version、updated、benchmarks、coverage；schema_version 必须为 1，updated 形如 2026-10-24，benchmarks 为数组，允许为空；空数组报 I 尚未立标杆，文件缺失或结构坏仍报 E；coverage 可缺省；未知键报 E。
+  3 每条标杆必填 id、name、kind、reference、why、dimensions、levels；可选 reference_links、owner。
+  4 id 形如 bench.加小写字母开头的名称，名称由小写字母、数字、连字符组成，全文件唯一。
+  5 kind 取值为 product、vision、craft。
+  6 name 非空；reference 至少 10 字；why 至少 10 字；reference_links 若存在，每条以 http:// 或 https:// 开头。
+  7 dimensions 1 到 5 条；每条 id 形如小写字母开头的名称，条内唯一；name 与 question 非空，question 至少 8 字。
+  8 levels 恰好 5 条，level 取值集合恰好为 0、1、2、3、4；每条 name、criteria、evidence 非空，criteria 至少 15 字。
+  9 criteria 含主观词且不含任一量化或对照标记时报 W，提示改成可判定判据；主观词清单：好看、美观、漂亮、大气、高级、流畅、顺手、简洁、舒服、清爽；量化或对照标记清单：数字、屏、步、秒、分钟、元素、清单、截图、记录、状态、对照。
+  10 coverage.required 每条必填 node、reason；node 必须存在于 program-tree.yaml；reason 至少 4 字；不得重复。
+  11 标杆条数大于 12 报 I，只在 R29 报一次，R25 不重复报。
+R26 绑定完整性 级别 E
+  1 00-程序树/标杆/绑定.yaml 必须存在。
+  2 顶层键仅允许 schema_version、updated、bindings；schema_version 必须为 1，updated 形如 2026-10-24，bindings 为数组且可为空；未知键报 E。
+  3 每条绑定必填 node、benchmark、level、target、gaps、history；level 大于等于 2 时 evidence 必填且至少 1 条。
+  4 node 必须存在，且 status 不得为 退役 或 退役。
+  5 benchmark 必须存在于 benchmarks.yaml；同一 node 与 benchmark 组合只能出现一次。
+  6 level、target 为整数 0 到 4，且 level 小于等于 target。
+  7 gaps 每条必填 dimension、gap、next、opened；dimension 必须是该标杆 dimensions 的 id；gap 至少 6 字；next 至少 6 字；opened 为 YYYY-MM-DD；gaps 允许为空数组。
+  8 history 至少 1 条；每条必填 date、from、to，可选 proposal；date 合法；from、to 为 0 到 4；from 小于等于 to；相邻两条 to 等于 from；最后一条 to 等于当前 level。
+  9 单节点绑定数大于 3 或单标杆被大于 8 个节点绑定报 I，与 R29 同源。
+R27 覆盖与孤儿 级别 E 或 W
+  1 coverage.required 中每个节点至少 1 条绑定，否则报 E 并点名。
+  2 每条标杆至少被 1 条绑定引用，否则报 W；孤儿标杆要么绑节点，要么用 bench_prune 修剪。
+  3 只报 coverage 未绑定与孤儿标杆，不重复报 R26 已报项。
+R28 差距时效 级别 W
+  1 基准日期取 program-tree.yaml 的 updated，保证可复现，不取系统时间。
+  2 gaps 的 opened 距基准大于 120 天仍未关闭报 W，提示此差距已躺 N 天，要么关要么重排。
+R29 规模上限 级别 I
+  1 标杆条数大于 12 报 I。
+  2 单节点绑定大于 3 条报 I。
+  3 单标杆被大于 8 个节点绑定报 I。
+R30 不倒退 级别 E 或 W
+  1 本规则在 apply 与 check-plan 阶段生效。
+  2 bench_bind：已存在同 node、同 benchmark 绑定时，新 level 小于旧 level 或新 target 小于旧 target 报 E。
+  3 上一项在提案顶层 allow_regress: true 且 reason 非空时降为 W，并写明原因。
+  4 bench_bind 把 level 提高且新 level 大于等于 2 但 evidence 为空时报 E。
+  5 bench_prune：标杆仍被任何绑定引用时报 E；coverage.required 条目只有 node、reason，无法按标杆归因，报错信息里点名提示先解绑。
+  6 bench_add：id 已存在时报 E。
+  7 bench_cover：列表整体替换；任一 node 不存在时报 E。
+  8 已绑定节点的 modify 改动 files、acceptance、status 之一但提案未带 bench_ref 时报 W，提示改了已立标杆的东西却没写关哪条差距。
+  9 apply --write 写入后必须整树复跑 R01-R46，出现任何 E 即回滚。
+
+九 说明、台账、连接与补齐（R31-R45）
+R31 节点说明 级别 E 或 W
+  1 说明目录为 00-程序树/说明/，文件名为节点 id 加 .txt，一个节点一份。
+  2 kind=program 且 status 为 未完成、未完成、已完成、已验证 时必须存在，否则报 E。
+  3 status 为 退役 或 退役 时缺失只报 W。
+  4 kind=department 缺失报 W；kind=step 与 kind=external 不检查。
+  5 内容去空白后小于 200 字报 E。
+  6 含 TBD、待补、TODO、以后再填报 E。
+  7 行首出现 Markdown 标记或阿拉伯数字编号时报 W；Markdown 标记指井号标题、星号加粗、短横线列表、大于号引用、三反引号代码围栏；数字编号指数字加点或数字加顿号。
+  8 整篇没有出现任何一个真实存在的路径关键词时报 W，提示写成与代码无关的空话；路径关键词包括 .py、.js、.yaml、.md、00-程序树、10-程序。
+  9 说明由 AI 编写，不由脚本批量生成；改名、合并、退役节点时同步修改；prune 节点删除说明文件。
+R32 变更台账 级别 E 或 W
+  1 台账文件为 00-程序树/变更/台账.jsonl，追加写，一行一条 JSON。
+  2 文件不存在报 W，首次落地尚未产生记录；格式错误报 E。
+  3 每行必填 id、at、actor、proposal、reason、ops、validation、result。
+  4 validation 必含 errors、warnings 两个整数；result 取值为 applied 或 rolled_back。
+  5 actor 写提案 author；提案没写 author 时回落为 lead。
+  6 id 形如 chg-YYYYMMDD-NNNN，全文件唯一，重复报 E。
+  7 proposal 路径相对仓库根必须存在，否则报 E；at 必须能被解析为时间，否则报 E。
+  8 00-程序树/变更/历史/ 下已有归档提案但台账缺失或为空时报 W，提示补基线记录。
+  9 台账必须提交进 git，是每次改完都有记录的落点；失败回滚不写台账，由 apply 输出说明。
+R33 连接一致性 级别 I 或 W
+  1 依赖与契约互相印证：对节点 A 的每个 depends_on B，B 存在且非 A 的父或子节点，若不存在契约 C 满足 C 在 A.inputs 且 B 在 C.producers，报 I，仅提示依赖无契约支撑。
+  2 契约连接反向：对每条契约 C 的 producer P 与 consumer Q，若 Q.depends_on 不含 P 且 P 不是 Q 的祖先节点，报 W，提示契约连接缺依赖声明。
+  3 依赖无契约支撑固定为 I，不再按条数升级 W；契约连接反向仍按 W/I 提示。本规则只提示不阻断，不得静默删除。
+  4 node 子命令的 connections 与 impact 由本规则同一份数据生成，避免工具与校验两套口径。
+  5 R31、R32、R33 为 v1.1 新增；允许 AI 直接补写说明作为基线补录，不进台账；此后新增或修改说明走提案 intro op。
+
+R34 评价空间 级别 E 或 W
+  1 评价有两个承载处：00-程序树/评价/<节点id>.txt 的四行文件，或 yaml 节点的 evaluation 字符串；任一存在即通过。
+  2 评价文件固定四行：判断（必须有、应该有、可有可无、不该有）、位置（对或应移到 <节点id>）、做法、缺；文件存在但缺判断行报 W。
+  3 yaml evaluation 一旦写了，去除空白后不得少于 40 字，不得使用待补、略、TBD、TODO 等占位，违反报 E。
+  4 两处都没有报 W，提示编码前先写四行；空位允许存在，不报 E。
+R35 预设节点 级别 E
+  1 preset 为 true 时，节点状态必须是未完成。
+  2 preset 节点 files 必须为空。
+  3 preset 节点必须带 outputs，或显式写 preset_outputs: none。
+  4 写了 files 后仍保留 preset=true 报 E；转正必须去掉 preset 标记。
+R36 自动适配区域 级别 E
+  1 adapt 可缺省；存在时必须是数组，每项含 dir 与 patterns。
+  2 dir 必须是仓库内相对路径且目录存在；patterns 必须是非空字符串数组。
+  3 adapt 只登记扫描范围，不决定归属；未归属文件由 ptree-cs adapt 报告并给路径前缀建议。
+
+R37 短介绍 级别 E 或 W
+  1 文件路径为 00-程序树/短介绍/<节点id>.txt，一行，写功能而不是实现。
+  2 kind 为 program 或 department 且文件缺失报 W。
+  3 去空白后超过 80 字报 E。
+  4 含 TBD、待补、TODO 等占位报 E。
+
+R38 功能块（打组） 级别 E 或 W
+  1 groups 段每一项的 id 必须形如 group.<slug>（小写字母数字与连字符），name 必填。
+  2 parent 必须是已存在的组；members 只能引用已存在的节点或组，一个节点可以进多个块。
+  3 组成员为空报 W；成员不存在、父组不存在、父组成环报 E。
+  4 group.all 与 group.dept-* 是自动派生的部门组，只查结构，不要求简介与详细介绍。
+  5 人建的功能块必须有一行简介（description，≤60 字），并有一份详细介绍 00-程序树/说明/<组id>.txt（≥80 字）；简介缺失报 E，详细介绍缺失过短报 W。
+  6 组的详细介绍与本节点的说明文件同目录，用同一条 intro 写入通道落盘，回滚一起回滚。
+
+R39 网格阅读项 级别 E 或 W
+  1 适用范围是 00-程序树/树实例/ 下除程序树网格外的全部网格：策划树、美术树、UI树、全文件树，以及清单 trees 段登记的预留网格（音效树、特效树）。程序树网格的条目就是节点，短介绍由 R37 管。
+  2 每个有编号的条目都要有一份 00-程序树/短介绍/<编号>.txt；组行 MA0–MA4、U0–U2 也算条目，网格编号与节点 id 不重叠，直接放同一目录。
+  3 短介绍文件缺失报 W，提示补齐；文件存在但去空白后为空报 W。
+  4 去空白后超过 80 字报 E；含待补、TBD、TODO 等占位报 E。
+  5 一行写这条资产是干什么用的，不复述字段；条目名单与读工具、tree_map 的覆盖统计共用同一份解析（GridReadings 以 TreeStore 条目为主体，再补上解析器按字段数跳过的组行），避免三处各算一遍。
+  6 程序树网格的 76 行不重复要求：它们与节点 id 同名，已由 R37 覆盖。
+  7 写入口是 tree_update_node 的 short_intro：网格条目只接受这一个字段（name、status 等节点字段一律拒绝），与节点同一口径——非空、去空白 ≤80 字、不含待补/TODO/TBD 占位词；落盘 00-程序树/短介绍/<编号>.txt（UTF-8 无 BOM、一行、末尾换行），编号在多张网格重复时拒绝，不改 tree_version。
+
+R40 联系登记 级别 E 或 I（结构错一律 E，完整性提示 I）
+  1 links 段可缺省；存在时必须是数组，每项是映射。缺省或空数组只报 I：还没有登记任何联系。
+  2 每条必须有 from、to、type，缺一报 E。
+  3 type 白名单只有七种：引用、测试、探针、覆盖、数据、控制、基址（大小写敏感），其它值报 E，message 里列全白名单。基址用于「A 是 B 的基址/被继承的脚本」这类关系；白名单唯一来源是 Models.LinkKinds，写入口、R40 与 MCP 工具枚举共用同一份，不允许各处各写一份。
+  4 from 与 to 必须真实存在：节点 id，或网格条目编号（与 R39 共用 GridReadings 的条目名单），任一端不存在报 E。
+  5 不允许自连接（from 与 to 相同）报 E；同一 from+to+type 只能登记一次，重复报 E。
+  6 每条 E 都指明是第几条（links[i]）与具体 id，不合并、不省略、不静默跳过。
+  7 缺 note 只报 I：联系依据（代码位置、命令或文档）要写在 note 里；note 不参与存在性判断。
+  8 写入口 tree_add_link 落盘前走同一套结构检查（白名单、存在性、自连接、重复）；写入口拒绝时 R40 不会见到坏数据。
+R41 代码引用未登记 级别 I（只提示，不阻断）
+  1 扫描范围：节点 files 里登记的代码文件，路径前缀只认 00-程序树/工具/csharp/ 与 10-程序/，扩展名只认 .cs、.js、.mjs；跳过 09-归档、bin、obj；文件不存在的不报。
+  2 归属：一个文件属于登记它的节点；同一文件被多个节点登记时以清单里先出现的节点为准。
+  3 C# 两个并列信号：① using 的命名空间归属——命名空间从被扫描文件的 namespace 声明读出，被引用的命名空间由另一节点的文件声明时记为跨节点引用；② csproj 的 ProjectReference——文件所在项目（从文件目录往上第一个恰好含一个 *.csproj 的目录；目录里有多个 csproj 视为无法归属，不猜）的 ProjectReference 指向另一个已登记项目时，记为「该文件归属节点 → 被引用项目归属节点」的跨节点引用。项目归属节点 = 该项目内已登记文件的多数归属节点（与命名空间归属同口径）。两种信号的等价口径：任一成立即视为代码引用；是否已登记仍按第 5 条用 depends_on 或 type=引用 的 link 判断。
+  4 JS/MJS 按 import / require / export from 的相对路径（以 . 开头）归属：先按原路径，再补 .js、.mjs、.cjs 与 index.js、index.mjs 查找，命中已登记文件才算跨节点引用。
+  5 判定：A 的代码引用了 B 的代码（A≠B）时，若 A 既没有 depends_on B，也没有一条 type=引用 的 link A→B，报 I；message 写清 A、B、被引用的 B 的文件与来源文件。
+  6 限流：每个 A 最多报 3 条，全树最多报 20 条，末尾再加一条汇总「共 N 条代码引用未登记」（被截断时写明已列出多少条）。
+  6.1 每条提示末尾附可直接复制的补法参数：tree_add_link {"from":A,"to":B,"type":"引用","note":"来源 <来源文件>"}；type 一律建议「引用」（只有它算代码联系登记，见第 8 条），note 写来源文件相对路径，不写别的。
+  7 同一 (A,B) 只报一次；本规则永不产出 W 或 E，避免把提示变成阻断。
+  8 只有 type=引用 的 link 算代码联系登记，其它类型（测试、探针、覆盖、数据、控制）不替代代码引用登记。
+  9 边界（写清楚，不许假装全知）：本规则只认静态引用——using、ProjectReference、import/require 字面量。动态 require 拼路径、配置里写死的跨模块调用、跨语言进程调用、字符串拼接的入口，一律扫不到；这类联系靠人登记，note 里写明依据。R41 报 0 只说明「静态引用都登记了」，不等于「联系已经全」。
+R42 预设转正一致性 级别 W
+  1 preset 为 true 的节点不重复检查：files 非空已由 R35 报 E。
+  2 preset 不为 true、files 非空、状态为已完成或已验证（即节点自称建成）时，说明与短介绍里不得再出现「尚未建成」「未建成」「预设占位」这类占位字样，出现报 W，提示改口。
+  3 状态仍未完成的不报：还在建的东西写「尚未建成」是实话。例：orchestration.office.understand 只有只读归档代码、状态未完成，报 W 会逼着写不实描述，故不报。
+  4 同一节点只报一条，message 指明是说明还是短介绍、命中的哪个字样。
+R43 备份配置结构 级别 E 或 W
+  1 只校验 00-程序树/运维/备份.yaml 是否存在与结构；文件不存在直接跳过（备份默认关闭，不是错误）。
+  2 未知字段报 W（只认 enabled、mode、retention、targets、last_run、last_tree_version、note）。
+  3 enabled 不是布尔报 E；mode 不是 git-bundle/tag/copy 之一报 E；retention 不是整数或不在 1-1000 报 E。
+  4 targets 不是列表、或元素不是非空字符串报 E；enabled=true 但 targets 为空/缺失报 W。
+  5 last_run、last_tree_version 不是字符串或 null 报 E。
+  6 本规则不读全局密钥与加密凭据，也不判断「启用但未配置」——那是 tree_guard / health 的 W（backup_unconfigured）。
+R44 预设节点长期未转正 级别 I
+  1 只看 preset 为 true 的节点；preset 节点的 files/状态一致性由 R35/R42 管，本规则不重复。
+  2 created_at 缺失或不是 YYYY-MM-DD 时不报（R08 管时间戳合法性），把「没法判」和「判为过期」分开。
+  3 created_at 早于今天 30 天以上（>30 天）报 I，message 写明已挂多少天、宽限多少天，并给出两条出路：转正（tree_update_node 传 preset=false 并补 files）或退役（tree_retire_node）。
+  4 近期建的预设不报：真树 3 个预设都是 2026-11-07 之后建的，本规则对现役树命中 0 条。
+  5 本规则永不产出 W 或 E：预设是合法状态，过期只是提醒。
+R45 策划文档缺口 级别 I
+  1 只读策划树实例；程序树、美术树、UI树、全文件树都不在本规则范围内（程序树网格的条目就是节点，不经策划文档口径）。
+  2 策划树的字段表里没有「文档」列时整条规则跳过：没启用这套口径就不许凭空造缺口。
+  3 「对应程序」为空或只有占位内容的条目不报：还没落到程序上的策划，本来就不该先有实现文档。
+  4 「对应程序」非空且「文档」列为空或写「未写」时报 I，每个条目只报一条，message 写清条目编号、对应程序与当前文档列取值。
+  5 文档列写真实路径即视为通过，本规则不校验该路径是否存在（存在性属于另一层检查，避免把「没写」和「写错」混成一条提示）。
+  6 本规则永不产出 W 或 E；也不影响 T09 的程序覆盖判定（T09 仍只看对应程序字段）。
+
+R46 已验证必须带通过证据 级别 E
+  1 status 为已验证的节点，evidence 至少要有 1 条 result=pass 的记录；没有证据、或证据全是 fail 一律 E。
+  2 「用户确认」这类人工结论写进证据的 note；规则只校验证据结构与结论，不替人判断功能是否真的齐全。
+  3 与 R13 分工：R13 管「有没有证据」，R46 管「证据里有没有通过结论」；两条都不许豁免（豁免不得绕过 R46）。
+  4 写入口是 tree_update_node 的 evidence 字段（对象数组）；status 注释用 notes 字段，两者都可独立更新。
+
+十 子命令契约
+1 validate：跑 R01-R46，打印错误、警告、统计。退出码 0 或 1。
+2 view：生成 生成/程序树总览.txt，含 ASCII 树、状态图例、按部门统计、依赖与父子关系。纯文本，无 Markdown 标记。退出码 0 或 1；validate 失败也生成，顶部写未通过校验。
+3 order：生成 生成/落地顺序.txt，按阶段分组、阶段内拓扑序、被阻塞节点。退出码 0 或 1。
+4 orphans：只跑 R19，列出未登记代码。退出码 0 或 1。
+5 init：在目标根初始化一棵最小可用程序树（清单、契约、模板、说明、台账、生成物、空目录），用于沙箱与新建项目；不写已有文件。退出码 0 或 1。原 new 子命令（模板渲染脚手架）未并入 C# 内核，需要脚手架时按 模板/程序/ 手工复制。
+6 check-plan --node <yaml文件>：校验待并入的节点片段，检查 R02、R03、R06、R07、R09、R10 引用、R12，输出可并入或不可并入。退出码 0 或 1。
+7 stats：只打印统计。退出码 0。
+7.1 bench [--repeat N] [--node <id>] [--json]：进程内测 validate / check / read-node / map --mode names / status / version 的耗时，每遍都含加载清单（等于 CLI 单次调用减去进程启动），输出 min / median / p95 / 首次；另给冷启动自测（进程启动 → 首次 validate 完成）。默认 5 遍，上限 50 遍。不开子进程、不起后台进程。退出码 0。
+8 benchmark --node <id> --json：生成 生成/标杆看板.txt 并打印摘要；--node 打印单节点标杆、五级阶梯与差距。退出码 0 或 1；校验有 E 仍生成看板并标未通过；未知节点等用法错误返回 2。
+9 node <id> --json：输出单节点 JSON，含说明全文、代码地图、连接、标杆、验收；默认 JSON。退出码 0 或 2。
+10 index --json：输出全树索引 JSON，部门到程序到状态与阶段，供插件 scope=tree 使用。退出码 0 或 1。
+11 log --node <id> --limit N --json：读 变更/台账.jsonl，输出变更记录，默认最近 20 条。退出码 0 或 2。
+12 check-plan 输入格式：顶层 node 键为节点片段，id 例为 info.archive，其余字段与 program-tree.yaml 节点同构，可缺 files、evidence；顶层 contracts 键可选，为契约数组，条目 id 例为 scenario.brief；只在新增或变更契约时提供，与现有契约同 id 时做字段对比。
+13 节点 phase 晚于依赖节点允许；反向报错。check-plan 不写任何文件。
+14 adapt --json：按清单 adapt 段扫描登记目录，输出 assigned、unassigned、ignored、unaccounted 与计数；每个扫描文件必须进入其中一个清单，未归属项给最长路径前缀建议；只读，不写清单。退出码 0 或 1。
+15 git-sync --files <相对路径逗号列表> [--message <文本>]：只提交本次 written_files，按目录归组；message 缺省取台账最新 chg 条目；无改动不产生空提交；git 不可用或不在仓库内返回 ok=false。退出码 0。
+16 check：跑跨树检查 T00-T12（树实例解析、断链、必填字段、状态迁移、组结构、时间戳、策划全覆盖、附件、文档形态、确认状态），打印 E/W/I 与逐条位置，不做 R 规则。退出码 0 或 1。
+17 apply：按提案改动清单与契约；默认 dry-run，--write 时落盘、复跑 validate、出错回滚。退出码 0、1 或 2。
+18 verify：跑退出码、生成物新鲜度、插件冒烟等检查，输出 00-程序树/运维/验证报告.txt，结论 PASS 或 FAIL。退出码 0 或 1。
+
+十一 生成物要求
+1 生成/程序树总览.txt 顶部必须有生成时间、tree_version、校验状态、节点统计。
+2 ASCII 树必须包含每个节点的 id、名称、状态、阶段，层级用缩进表示。
+3 生成/落地顺序.txt 必须给出阶段顺序、每阶段节点按拓扑排序依赖在前、未就绪原因。
+4 生成/标杆看板.txt 必须满足 标杆规范_v1.txt 第十节：登记、覆盖、收敛看板、过期警报四节。
+5 生成物不得手工编辑，文件头注明由 ptree-cs 生成、禁止手改。
+
+十二 实现约束
+1 只用 .NET 10 与 xUnit；不引第三方运行时依赖。构建必须走 bash build-lock.sh <项目相对路径>，禁止并发 dotnet build。
+2 路径解析以 program-tree.yaml 所在目录为仓库根，不依赖当前工作目录。
+3 代码分节：PTreeRepository 加载，Validator 跑 R 规则，ManifestChecker 与 TreeStore 跑 T 规则，Reporting 渲染，PTree.Cli 命令行，PTree.Mcp 工具层，PTree.Serve 本地服务。
+4 所有规则函数返回 issue 列表，CLI 统一渲染，供 --json 与子命令复用。
+5 单测放 00-程序树/工具/csharp/tests/PTree.Tests，用 xUnit，命令 dotnet test tests/PTree.Tests -c Release；每个 R 规则至少 1 个反例，树级至少 1 个全绿样例。快照失败先确认是不是有意的行为变化，是则用 PTREE_UPDATE_SNAPSHOT=1 重基线并在提交说明里写清。
+6 真实清单未就绪时，用 tests/fixtures 下的最小合法树先跑通；真实清单就绪后必须再跑一次真实 validate。
+7 标杆测试放 tests/PTree.Tests 的标杆用例：R25-R29 每条至少 1 个反例加 1 个正例；R30 至少 4 个反例，覆盖降 level、降 target、修剪在用标杆、改已绑节点无 bench_ref。
+8 测试夹具必须补默认空标杆文件：标杆/benchmarks.yaml 与 标杆/绑定.yaml 的最小合法内容，保持既有测试全绿。
+9 实现口径：R26 顺带检查绑定节点不得为 退役 或 退役；R27 只报 coverage 未绑定与孤儿标杆；R25 的标杆大于 12 条只在 R29 报一次。
+10 实现口径：R25-R33 暂不纳入 R24 豁免，豁免仅适用于 R01-R24；要豁免先改规范。
+11 实现口径：evidence 只校验非空字符串数组，不校验路径是否存在，截图与记录由人核对。
+12 实现口径：标杆文件 benchmarks.yaml 与 绑定.yaml 严格拒绝未声明键，history 允许 proposal 键。
+13 已知限制：apply --write 重写标杆两文件同样会丢 YAML 注释，与 program-tree.yaml 一致。
+
+检查命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate
+
+
+十三 跨树检查（T00-T12）
+T00 树实例解析 级别 E
+  1 清单 trees 段每项必须是映射，且含非空 kind、file、id_pattern；id_pattern 必须是合法正则。
+  2 每条 tree 的实例文件必须存在；条目行必须能解析，id 必须符合 id_pattern 且同树内不重复。
+  3 无法解析的行、重复 id、字段数与表头不符都报 T00，并给出行号。
+T02 策划条目确认状态 级别 E
+  1 策划树每个条目必须能读到确认状态，取值为未确认或已确认（含以这两词开头的写法）。
+  2 读不到确认状态报 T02，与 T11 文档形态、T12 确认值合法性分工不重叠。
+T03 引用断链 级别 E
+  1 任意树条目引用另一棵树的目标 id 时，目标树必须存在且含该 id。
+  2 断链报 T03，写明来源树、来源 id、字段名、目标 id 与目标树。
+T04 美术条目必填字段 级别 E
+  1 美术树为 strict 时，每个条目必须填名称、分类、用处、风格。
+  2 缺字段报 T04，列出缺的字段名。
+T05 UI 条目必填字段 级别 E
+  1 UI 树为 strict 时，每个条目必须填场景、时刻、父子集。
+  2 缺字段报 T05，列出缺的字段名。
+T06 状态取值 级别 E 或 I
+  1 strict 树条目写了旧六值（planned、in_progress、built、verified、legacy、deprecated）报 I，并给出迁移后的四值。
+  2 写了四值以外且无法映射的值报 E。
+状态迁移说明
+  1 机器状态只保留四值：未完成、已完成、已验证、退役。
+  2 旧六值 planned、in_progress、built、verified、legacy、deprecated 作为只读兼容别名接受一版，读入即映射为四值，输出一律四值。
+  3 planned 与 in_progress 映射为未完成；built 映射为已完成；verified 映射为已验证；legacy 与 deprecated 映射为退役。
+  4 本轮不重采金标；Python 版 ptree.py 于 2026-11-06 冻结，仅作对照，不作为验收口径。
+
+T01 程序树策划列提示 级别 I
+  1 程序树实例的策划条目列改为可选提示；有值时只校验指向的策划 id 存在，没值不报错。
+  2 覆盖判定只以 T09 策划树实例的对应程序字段为准，T01 不再承担全覆盖。
+  3 策划列引用不存在时由 T03 断链规则报 E。
+  4 本规则当前并入 T09：代码不再单独输出 T01，编号保留不复用；后续要么补实现，要么正式作废。
+
+T07 组结构 级别 E
+  1 groups 为顶层数组，成员可以是节点或组，组最多两层。
+  2 组必须有 id、name、members、description、parent；id 唯一。
+  3 parent 必须为空或指向存在的组，不得自指、成环或超过两层。
+  4 每个成员必须是存在的节点或组，同一组内成员不得重复。
+  5 每个节点至少归属一个组，组归属同时包含祖先组。
+
+T08 节点时间戳 级别 E
+  1 每个节点必须有 created_at 与 updated_at，格式 YYYY-MM-DD。
+  2 updated_at 不得早于 created_at。
+  3 现有节点统一补 2026-10-25，不臆造更早历史日期。
+
+T09 策划全覆盖 级别 E 或 I
+  1 每个 kind=program 节点必须被至少一条策划条目逐节点引用，不得使用全部程序节点等通配词。
+  2 策划条目的对应程序字段出现通配词报 E。
+  3 策划条目的对应程序字段出现不存在或非法的程序 id 报 E。
+  4 未被引用且未写 planning_exemption 理由的 program 节点报 E。
+  5 写了 planning_exemption 的节点报 I，单列为策划豁免。
+
+T10 节点附件 级别 E
+  1 attachments 为数组，每项含 path 与 kind。
+  2 path 必须是仓库内相对路径，不得绝对路径、盘符或包含上级目录。
+  3 path 指向的文件或目录必须存在。
+
+T11 策划文档形态 级别 E
+  1 策划条目必须有文档形态，取值为整合稿或转述稿。
+  2 缺失或取值非法报 E。
+
+T12 策划确认状态与体验预设节点 级别 E
+  1 策划条目必须有确认状态，取值为未确认或已确认；缺失由 T02 报，出现无法识别的确认值由 T12 报 E。
+  2 仅当清单 root 为 ai-company 时，三个体验插件预设节点必须存在，状态为未完成，职责与非职责写清；其他项目不检查这三个 id。
+  3 体验插件预设节点不进入完成度统计。
+
+
+
+十四 提案引擎（A01-A06）
+A01 提案文件 级别 E
+  1 提案顶层必须是映射，至少含非空 ops 数组；op 只能是 add、modify、deprecate、prune、split、merge、intro、meta、bench_add、bench_bind、bench_cover、bench_prune。
+  2 add 节点 id 不得与现有节点重复；modify 不得改 id。
+A02 dry-run 级别 E 或 W
+  1 默认只读，逐 op 输出判定与将产生的改动，不写任何文件。
+  2 候选状态复用 validate；提案前已存在的 E/W 不重复计为提案问题，只报告提案新引入的问题。
+  3 有 E 不许落地；有 W 可落地，W 记入台账 validation.warnings。
+A03 写盘与回滚 级别 E
+  1 --write 先在内存改动并复跑 validate，出现 E 即拒绝并不落盘。
+  2 落盘前备份清单、契约、标杆、绑定、说明与生成物；落盘后重新加载再 validate，失败按备份回滚。
+  3 成功后重生成 生成/程序树总览.txt、生成/落地顺序.txt、生成/程序书.txt、生成/标杆看板.txt。
+  4 成功后追加 变更/台账.jsonl，字段沿用 id、at、actor、proposal、reason、ops、validation、result。
+A04 节点 op 级别 E
+  1 deprecate/prune 有下游依赖必须报 E；prune remove 只允许未完成、无 files、无下游的节点。
+  2 split 必须有至少两个 into 片段，原节点转退役并记录拆分去向。
+  3 merge 只允许合并没有子节点、没有下游依赖的未完成节点。
+A05 标杆 op 级别 E
+  1 bench_add、bench_bind、bench_cover、bench_prune 修改标杆/绑定原始文档，写入后仍走 R25-R30 校验。
+  2 bench_prune 仍有绑定时报 E。
+A06 说明与元数据 级别 E
+  1 intro 必须给非空正文，支持字符串或 text 字段；写入 00-程序树/说明/<id>.txt。
+  2 meta 只允许 tree_version 与 updated，版本与日期格式按 R02。
+
+
+十五 多树配置（T00）
+1 清单 program-tree.yaml 可选顶层 trees 数组；不写时默认程序树、策划树、美术树、UI树四棵。
+2 trees 每项字段为 kind（显示名）、file（实例文件名，不含 .txt）、id_pattern（条目 id 正则）、strict（true 跑全套 T；false 只做 T00 解析、条目 id 去重与 T03 引用目标存在性）。
+3 trees 未列出的默认四棵树自动补齐；新增树只需加一条 trees 与一个实例文件，不改内核。
+4 schema 的 tree 定义见 schema/program-tree.schema.json。

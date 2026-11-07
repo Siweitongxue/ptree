@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>项目管维插件 · 交互式网格视图</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>项目管维插件 · 网格视图</h1>
+    <div class="meta" id="metaLine">正在读取数据…</div>
+    <div class="mode-line">
+      <span class="mode-badge readonly" id="modeBadge">只读模式</span>
+      <span class="hint" id="modeRoot">正在判断数据来源…</span>
+    </div>
+  </div>
+  <nav class="tabs" id="gridTabs" aria-label="网格切换"></nav>
+</header>
+
+<section class="toolbar" id="toolbar">
+  <div class="tool-group grow">
+    <input id="searchInput" type="search" autocomplete="off" placeholder="搜索 id / 名称 / 职责，回车聚焦第一个" aria-label="搜索节点">
+    <span class="hint" id="searchCount"></span>
+  </div>
+  <div class="tool-group" id="viewSwitch">
+    <span class="hint">视图</span>
+    <button type="button" data-view="graph" class="active">图形</button>
+    <button type="button" data-view="table">表格</button>
+  </div>
+  <div class="tool-group">
+    <label class="field">状态
+      <select id="statusFilter">
+        <option value="">全部</option>
+        <option value="未完成">未完成</option>
+        <option value="已完成">已完成</option>
+        <option value="已验证">已验证</option>
+        <option value="退役">退役</option>
+      </select>
+    </label>
+    <label class="field">部门
+      <select id="deptFilter"><option value="">全部</option></select>
+    </label>
+    <label class="field">阶段
+      <select id="phaseFilter"><option value="">全部</option></select>
+    </label>
+  </div>
+  <div class="tool-group graph-only">
+    <label class="field">显示到
+      <select id="depthSelect">
+        <option value="1">1 层</option>
+        <option value="2">2 层</option>
+        <option value="3">3 层</option>
+        <option value="4" selected>4 层</option>
+      </select>
+    </label>
+    <button id="fitBtn" type="button">适合窗口</button>
+    <button id="resetBtn" type="button">重置</button>
+    <button id="zoomOut" type="button" title="缩小">−</button>
+    <button id="zoomIn" type="button" title="放大">＋</button>
+  </div>
+  <div class="tool-group graph-only edges" id="edgeToggles">
+    <span class="hint">关系线</span>
+    <label class="chk"><input type="checkbox" data-edge="contains" checked> 包含</label>
+    <label class="chk"><input type="checkbox" data-edge="depends_on" checked> 依赖</label>
+    <label class="chk"><input type="checkbox" data-edge="flow" checked> 契约流</label>
+    <label class="chk"><input type="checkbox" data-edge="plans"> 对应策划</label>
+  </div>
+  <div class="tool-group graph-only groups" id="groupToggles">
+    <span class="hint">功能块</span>
+    <label class="chk"><input type="checkbox" data-groups="user" checked> 组框</label>
+    <label class="chk"><input type="checkbox" data-groups="auto"> 部门组</label>
+  </div>
+</section>
+
+<main>
+  <section class="stage" id="graphWrap">
+    <canvas id="graph" aria-label="程序网格画布"></canvas>
+    <div class="canvas-tip" id="canvasTip" hidden></div>
+    <div class="stage-legend" id="legend"></div>
+    <div class="stage-tip">滚轮缩放 · 拖拽平移 · 双击适合窗口 · 点节点看一圈联系 · 悬停看短介绍 · 点组框标题条开组卡</div>
+    <div class="empty-hint" id="emptyHint" hidden>当前筛选没有可见节点</div>
+    <div class="empty-grid-hint" id="gridEmptyHint" hidden>预留网格：字段与规则已定，暂无条目</div>
+  </section>
+
+  <section class="stage table-stage" id="tableWrap" hidden>
+    <div class="table-head">
+      <b id="tableTitle">网格表</b>
+      <span class="hint" id="tableCount"></span>
+    </div>
+    <div class="table-scroll">
+      <table id="gridTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="detail" id="detail" aria-label="节点详情">
+    <div class="detail-empty">
+      <b>点一个节点</b>
+      <p>右侧会列出基本信息与一圈联系：父、子、兄弟、依赖上下游、契约流、对应策划、波及面。</p>
+    </div>
+  </aside>
+</main>
+
+<footer class="statusbar">
+  <span id="statLine">正在初始化…</span>
+  <span class="muted">数据源 data.js（由 grid_export.py 生成，请勿手改）· 零外部依赖 · file:// 直接打开</span>
+</footer>
+
+<script src="data.js"></script>
+<script src="viewer.js"></script>
+</body>
+</html>

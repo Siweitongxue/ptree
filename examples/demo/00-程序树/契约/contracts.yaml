@@ -1,0 +1,30 @@
+schema_version: 1
+contracts_version: "1.0.0"
+updated: "2026-11-07"
+contracts:
+  - id: user.request
+    name: 用户请求
+    version: 1.0.0
+    external: true
+    purpose: 由用户直接提供、未经加工的原始请求
+    fields:
+      text:
+        type: string
+    required:
+      - text
+    producers: []
+    consumers:
+      - core.app
+  - id: app.result
+    name: 程序结果
+    version: 1.0.0
+    purpose: 起步程序产出的第一份结构化结果
+    fields:
+      summary:
+        type: string
+    required:
+      - summary
+    producers:
+      - core.app
+    consumers: []
+    external_consumers: true

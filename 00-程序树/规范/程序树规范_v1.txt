@@ -1,0 +1,108 @@
+程序树规范
+版本 2，日期 2026-11-06
+适用：AI Company 全部程序；任何功能落地前的架构定位；与 规范/核心 的四值状态、网结构、C# 内核口径一致
+
+一 定位
+1 程序树是 AI Company 全部程序的架构宪法；任何功能落地前，必须先在这棵树上找到位置。
+2 程序树是项目级管理插件里的一棵树；并列的策划树、美术树、UI 树共用同一套身份、四值状态与台账。
+3 程序树是 AI 进入项目的第一入口；需求文档与源码都不是入口。
+4 树只回答程序是什么、在哪、连着谁、改到哪一步；不回答代码怎么写。
+5 本规范管树的结构、布局、契约、阶段与红线；机器判据见 校验规则_v1.txt，提案写法见 程序书编写协议.txt，标杆见 标杆规范_v1.txt。
+6 理解层入口是 00_理解_项目管维插件.txt：它是从手写原文到结构的唯一来处；本篇与它冲突时按它修订。
+
+二 树的结构
+1 分层为四层，从根到末端枝干；结构本质是网，父子只是联系的一种，同一枝干可被多条路径到达，树只是沿用的说法。
+  L0 root：ai-company 根节点。
+  L1 department：info 部门。
+  L2 program：info.understanding 程序。
+  L3 step：info.understanding.merger 步骤。
+2 部门是组织节点，不做数据交换，inputs 与 outputs 必须为空，职责写该部门整体负责什么。
+3 程序是落地单位：一个 home 目录、一份 SPEC.md、一套契约、一组验收。
+4 步骤是程序内部拆分，不单独占 home 目录，文件必须在父程序目录内。
+5 外部能力只登记依赖与版本，不写实现，不参与职责重复判定。
+6 状态定稿四个值：未完成、已完成、已验证、退役；必须如实填写。
+  1 旧值 planned、in_progress、built、verified、legacy、deprecated 只作读入兼容，读入即映射为四值，输出一律四值。
+7 父节点验收通过前，子节点不许全部完成，判据见 校验规则 R16。
+8 组以清单 groups 段为唯一真相，字段为 id、name、description、parent、members；组最多两层。
+9 组 id 以 group. 开头，只含小写字母、数字、点与连字符；实例里的组列必须写清单组 id，不得另造编号。
+  1 过渡映射：实例的 G0 到 group.all，G01 到 group.dept-governance，G02 到 group.dept-info，G03 到 group.dept-innovation 与 group.dept-solution，G04 到 group.dept-orchestration 与 group.dept-memory，G05 到 group.dept-delivery 与 group.dept-runtime，G06 到 group.dept-assets。
+  2 实例不在本文件的管理范围；改实例时以清单为准，改完跑 ptree-cs check 验 T07。
+
+三 物理布局
+1 新程序路径为 10-程序/部门 id/程序 id/，目录内四件：
+  1 SPEC.md，程序卷，八节。
+  2 program.yaml，与清单一致的节点副本。
+  3 src/，只放本程序实现。
+  4 tests/，契约测试与验收。
+2 home 必须与节点 id 推导一致，例如 info.understanding 对应 10-程序/info/understanding。
+3 10-程序/ 下出现未登记目录或散落代码，校验器 R19 报错。
+4 旧代码不搬家：旧实现登记在 assets.legacy，只归档、不供在新链路；要复活必须先按程序书加节点。
+5 R17 到 R20 的完整判据见 校验规则_v1.txt 第六节。
+
+四 节点字段
+1 必填字段：id、name、kind、layer、parent、phase、status、responsibility、not_responsible、inputs、outputs、depends_on、files、acceptance、spec。
+2 responsibility：一句职责，动词开头，不含分号；长度 4 到 80 字；重复即错，判据见 R07、R08。
+3 not_responsible：明确不做什么；程序与步骤至少一条，判据见 R07。
+4 inputs 与 outputs：契约 id 列表；必须与 contracts.yaml 双向一致，判据见 R09、R10。
+5 depends_on：节点 id 列表；无环；依赖阶段不晚于本节点，判据见 R11、R12。
+6 status：落地状态；必须与 files、evidence 一致，判据见 R13、R14。
+7 phase：落地阶段；父阶段不晚于子阶段，判据见 R12。
+8 home：物理目录，仅新程序；必须在 10-程序 下且与 id 一致，判据见 R17。
+9 spec：说明书路径；必须存在，判据见 R15。
+10 完整字段与状态机见 schema/program-tree.schema.json 与 校验规则_v1.txt。
+
+五 契约
+1 程序不得 import 另一个程序的内部模块，不得共享全局状态，不得靠提示词约定对方给什么。
+2 一切跨程序数据写成 contracts.yaml 里的契约，字段为 id、version、purpose、schema、producers、consumers、invariants。
+3 节点声明 output 契约时契约 producers 必须包含它；节点声明 input 时契约 consumers 必须包含它；本规范不重复反向判据，见 R10。
+4 改契约必须升版本、列出全部受影响 consumers、逐个确认，不许只改一边。
+5 外部输入（用户请求）与外部出口（交付视图）用 external 与 external_consumers 标记，允许没有对端。
+
+六 落地顺序
+1 ptree-cs order 按阶段与依赖生成拓扑顺序，AI 只做当前阶段就绪的节点。
+2 阶段与目标：
+  P0 治理骨架：树、契约、校验器、程序书机制成立。
+  P1 运行时底座：DSH profile、preset、模型、密钥、远程访问可复现。
+  P2 核心环竖切：规划者到工人到报告到态势板到观察者真跑一次。
+  P3 信息部：结构化场景、检索过滤、索引、规则。
+  P4 创新部：七棒流水线完整跑一个真实命题。
+  P5 统筹部：五 AI、任务表、人力部、验收回写。
+  P6 优解部：A1 到 A4 按契约接入主流程。
+  P7 记忆与交付：经验真正影响下一次任务，交付物可见可打开。
+3 阶段不是排期，是依赖关系；没有 P0 的树，后面每个程序都会重新变成散件。
+
+七 修 bug 协议
+1 先定位契约：输入不对、输出不对、还是边界没处理。
+2 沿树找到生产者或消费者节点，只在归属节点里改。
+3 契约有歧义时升版本并通知全部 consumers。
+4 禁止跨节点补丁、禁止在调用链中间打特判、禁止复制粘贴兼容。
+5 修完更新节点状态与验收证据；涉及契约的，重跑 validate。
+
+八 版本与变更
+1 树的版本在 program-tree.yaml 的 tree_version；契约版本在 contracts.yaml。
+2 规范变更必须同步修改 schema、校验规则、C# 内核（工具/csharp）、模板四处，缺一视为未完成。
+3 v1 边界：校验器覆盖 R01-R46，C# 侧已迁移的判据见 工具/csharp/README.md，未迁移部分以 校验规则_v1.txt 为准；JS/TS 跨节点 import 只提示；契约历史目录只约定格式；标杆的审美判断与改动是否真的有效仍靠 标杆规范_v1.txt 第五节收敛环，不归校验器。
+4 内核只有 C# 的 ptree-cs；Python 版 ptree.py 于 2026-11-06 冻结，仅作迁移对照，不再承担校验与落地。
+
+九 红线
+1 没有节点就开始写功能。
+2 同一职责保留多套并行实现且没有权威版本。
+3 绕过契约跨节点 import 或共享状态。
+4 伪造已完成或已验证状态，即没有代码或证据。
+5 发现屎山不登记、不汇报、继续往上叠。
+6 物理删除有下游依赖的节点。
+
+十 标杆层
+1 标杆层用于判断程序做到什么程度才算好；定义、三类、五级阶梯、文件形状与收敛环见 标杆规范_v1.txt。
+2 标杆层的边界、不替代验收、不改契约与依赖，见 标杆规范_v1.txt 第一节。
+3 看板由 ptree-cs benchmark 生成，路径 生成/标杆看板.txt；机器判据见 校验规则 R25-R30。
+
+十一 节点说明与变更台账
+1 每个部门和程序节点在 00-程序树/说明/ 有一份说明，文件名为节点 id 加 .txt，由 AI 撰写并随改动同步更新。
+2 说明写这个程序本身：做什么、边界、代码怎么组织（入口、关键文件、调用顺序）、从谁拿什么给谁什么、怎么改安全、有哪些坑。
+3 说明要求纯文本，不用 Markdown，不用数字编号列表，500 到 800 字，步骤节点可 300 到 500 字；格式见 说明/格式说明.txt，机器判据见 R31。
+4 每次 apply --write 成功落地后，在 00-程序树/变更/台账.jsonl 追加一条记录，字段与判据见 R32。
+5 查询台账用 ptree-cs log --node <id> 或 ptree-cs log --limit 20。
+6 节点之间的连接只有一个权威来源：契约；node 子命令输出 upstream、downstream、depends_on、impact 四项，判据见 R33。
+
+检查命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --root 仓库根；Python 版已冻结，仅作迁移对照。
