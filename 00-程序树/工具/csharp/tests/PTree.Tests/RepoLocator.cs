@@ -26,6 +26,17 @@ internal static class RepoLocator
             }
             directory = Path.GetDirectoryName(directory);
         }
-        throw new InvalidOperationException("找不到仓库根（00-程序树/program-tree.yaml）");
+        // 开源仓库只有示例树：测试统一跑在 examples/demo 上
+        directory = AppContext.BaseDirectory;
+        while (directory is not null)
+        {
+            var demo = Path.Combine(directory, "examples", "demo");
+            if (File.Exists(Path.Combine(demo, "00-程序树", "program-tree.yaml")))
+            {
+                return demo;
+            }
+            directory = Path.GetDirectoryName(directory);
+        }
+        throw new InvalidOperationException("找不到树根（00-程序树/program-tree.yaml 或 examples/demo/00-程序树/program-tree.yaml）");
     }
 }
