@@ -1,0 +1,2245 @@
+AI Company 程序书
+
+由 ptree-cs 生成，禁止手改
+生成时间：2026-11-07 22:56:41
+tree_version：1.0.0
+校验状态：通过校验（E=0，W=3）
+
+节点统计：共 89 个（root=1 · department=6 · program=29 · step=53）
+
+程序书怎么用
+
+这是一份活文档：AI 可写变更提案（00-程序树/变更/*.yaml），用 apply 校验（默认 dry-run）后落地。
+机器唯一真相是 program-tree.yaml；本文件只是给人和 AI 读的总书，禁止手改。
+
+树结构
+
+ptree [已完成 P0] 程序树
+├── kernel [已完成 P0] 内核部
+│   ├── kernel.store [已完成 P0] 树清单读写
+│   │   ├── kernel.store.yaml [已完成 P0] YAML 与值树解析
+│   │   ├── kernel.store.repository [已完成 P0] 仓库与节点表
+│   │   └── kernel.store.output [已完成 P0] 输出与兼容层
+│   ├── kernel.reading [已完成 P0] 节点阅读与渲染
+│   │   ├── kernel.reading.card [已完成 P0] 卡片与关系图
+│   │   └── kernel.reading.brief [已完成 P0] 速览与粗读
+│   ├── kernel.write [已完成 P0] 节点写工具
+│   │   ├── kernel.write.node [已完成 P0] 节点增改退删
+│   │   ├── kernel.write.group [已完成 P0] 功能块维护
+│   │   └── kernel.write.query [已完成 P0] 查询与提交
+│   ├── kernel.scaffold [已完成 P0] 提案与脚手架
+│   │   ├── kernel.scaffold.proposal [已完成 P0] 提案评估与落盘
+│   │   ├── kernel.scaffold.products [已完成 P0] 生成物渲染
+│   │   ├── kernel.scaffold.init [已完成 P0] 新项目脚手架
+│   │   └── kernel.scaffold.book-llm [已完成 P1] 程序书 DeepSeek 生成
+│   ├── kernel.ops [已完成 P0] 运维与校验
+│   │   ├── kernel.ops.health [已完成 P0] 健康与变更记录
+│   │   ├── kernel.ops.verify [已完成 P0] 跨树校验与验证
+│   │   └── kernel.ops.adapt [已完成 P0] 目录适配与基准
+│   └── kernel.backup [已完成 P0] 备份子系统
+│       ├── kernel.backup.config [已完成 P0] 备份配置与凭据
+│       ├── kernel.backup.run [已完成 P0] 备份点与保留
+│       └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+├── interface [已完成 P1] 接口部
+│   ├── interface.mcp-server [已完成 P1] MCP 协议服务
+│   │   ├── interface.mcp-server.read [已完成 P1] 只读工具组
+│   │   ├── interface.mcp-server.write [已完成 P1] 写工具组
+│   │   └── interface.mcp-server.verify [已完成 P1] 校验与备份工具组
+│   ├── interface.mcp-compat [已完成 P1] 旧工具兼容层
+│   ├── interface.cli [已完成 P1] 命令行接口
+│   └── interface.serve [已完成 P1] 本地 HTTP 服务
+├── rules [已完成 P0] 规则部
+│   ├── rules.structure [已完成 P0] 结构与规模规则
+│   │   ├── rules.structure.schema [已完成 P0] 顶层与字段检查
+│   │   ├── rules.structure.identity [已完成 P0] 身份与层级检查
+│   │   └── rules.structure.groups [已完成 P0] 规模豁免与组检查
+│   ├── rules.relations [已完成 P0] 联系与契约规则
+│   │   ├── rules.relations.contracts [已完成 P0] 契约引用检查
+│   │   ├── rules.relations.dependency [已完成 P0] 依赖与阶段检查
+│   │   └── rules.relations.links [已完成 P0] 联系登记与引用扫描
+│   ├── rules.state [已完成 P0] 状态质量与验收规则
+│   │   ├── rules.state.responsibility [已完成 P0] 职责声明与重复检查
+│   │   ├── rules.state.completion [已完成 P0] 完成度与证据检查
+│   │   └── rules.state.quality [已完成 P0] 标杆与评价检查
+│   ├── rules.docs [已完成 P0] 文档与阅读项规则
+│   │   ├── rules.docs.spec [已完成 P0] spec 与物理目录检查
+│   │   ├── rules.docs.intro [已完成 P0] 说明与阅读项检查
+│   │   └── rules.docs.standard [已完成 P0] 规范目录核对
+│   ├── rules.backup [已完成 P0] 备份台账与预设规则
+│   │   ├── rules.backup.ledger [已完成 P0] 变更台账检查
+│   │   ├── rules.backup.config [已完成 P0] 备份配置检查
+│   │   └── rules.backup.preset [已完成 P0] 预设节点检查
+│   └── rules.planning [已完成 P0] 跨树与策划对账规则
+│       ├── rules.planning.cross-tree [已完成 P0] 跨树引用与字段检查
+│       ├── rules.planning.coverage [已完成 P0] 策划覆盖与文档形态检查
+│       └── rules.planning.scan [已完成 P0] 未登记代码与缺口扫描
+├── canvas [已完成 P2] 画布部
+│   ├── canvas.viewer-shell [已完成 P2] 视图外壳
+│   ├── canvas.viewer-grid [未完成 P2] 网格渲染引擎
+│   │   ├── canvas.viewer-grid.layout [已完成 P2] 布局与可见性
+│   │   ├── canvas.viewer-grid.draw [已完成 P2] 画布绘制
+│   │   └── canvas.viewer-grid.interaction [已完成 P2] 交互与详情
+│   └── canvas.grid-export [未完成 P2] 网格导出器
+│       ├── canvas.grid-export.rows [已完成 P2] 行解析
+│       └── canvas.grid-export.graph [已完成 P2] 联系拼装
+├── quality [已完成 P3] 质量部
+│   ├── quality.kernel-tests [已完成 P3] 内核行为测试
+│   ├── quality.rule-tests [已完成 P3] 规则与提案测试
+│   ├── quality.read-tests [已完成 P3] 阅读阶梯与卡片测试
+│   ├── quality.link-tests [已完成 P3] 联系与预设测试
+│   ├── quality.health-tests [已完成 P3] 健康与备份测试
+│   └── quality.baseline [已完成 P3] 快照与性能基线
+│       ├── quality.baseline.snapshot [已完成 P3] 校验与索引快照
+│       ├── quality.baseline.perf [已完成 P3] 性能护栏
+│       ├── quality.smoke-e2e [未完成 P3] 端到端冒烟
+│       └── quality.snapshot-hygiene [未完成 P3] 快照治理
+└── release [已完成 P3] 发布部
+    ├── release.build [已完成 P3] 构建入口
+    │   └── release.build.lock [已完成 P3] 构建互斥锁
+    ├── release.publish [已完成 P3] 产物发布
+    │   ├── release.publish.cli [已完成 P3] ptree-cs 发布
+    │   └── release.publish.serve [已完成 P3] ptree-serve 发布
+    ├── release.examples [已完成 P3] 示例树脚手架
+    │   ├── release.examples.demo [已完成 P3] demo 示例树
+    │   └── release.examples.texts [已完成 P3] 示例文本
+    └── release.open-source [已完成 P3] 开源入口
+
+节点页
+
+节点：ptree · 程序树
+
+  类型/层级：root / 0；阶段：P0；状态：已完成
+  父节点：（无）
+  依赖：无
+  输入契约：无
+  输出契约：无
+  验收：命令：dotnet build 00-程序树/工具/csharp/PTree.sln；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release
+  SPEC：README.md
+
+  职责：接收公开仓库根→界定程序树工具自身的程序、契约、说明与四棵树实例边界→输出 6 个部门可独立验收的架构树
+  不负责：不实现具体业务逻辑；不代替部门决定内部结构
+
+  连接：
+    上游：无
+    下游：无
+
+  说明（00-程序树/说明/ptree.txt）：
+    程序树工具是这个仓库的唯一产出：它把程序树从文档变成 AI 可以直接调用的接口。
+    读的一侧，PTree.Core 解析 00-程序树/program-tree.yaml 与 00-程序树/契约/contracts.yaml，把节点、契约、组与联系还原成内存模型，再用卡片渲染成不超过九行的纯文本，让调用方按先粗后细的阶梯取信息。
+    写的一侧，同一套内核提供增删改、联系登记、退役与合并提案，所有写入都经过校验器逐条检查 R01-R46 与 T01-T12，通过才落盘。
+    接口一侧，PTree.Mcp 把内核能力暴露成 tree_ 前缀工具，PTree.Cli 提供 ptree-cs 命令行，PTree.Serve 提供本地 HTTP 服务，三个出口共用同一份实现，不存在第二套口径。
+    配套的 00-程序树/工具/viewer 是只读画布，数据由 00-程序树/工具/适配/grid_export.py 从树清单导出，画布不持有自己的数据。
+    这个根节点不负责业务程序的写法，也不托管使用者项目的数据：换一个仓库，只要 00-程序树/program-tree.yaml 在，工具就能跑。
+    验收方式是自举：在仓库根执行 ptree-cs validate 与 ptree-cs check 都应当是零错误，dotnet test PTree.sln 全绿。
+    
+
+  SPEC 摘要：
+
+
+节点：kernel · 内核部
+
+  类型/层级：department / 1；阶段：P0；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：无
+  输出契约：无
+  验收：命令：dotnet build 00-程序树/工具/csharp/PTree.sln 成功；命令：内核相关 dotnet test 过滤用例全绿
+  SPEC：README.md
+
+  职责：接收仓库根与树清单路径→加载并维护清单/契约/树实例，提供阅读、写入、提案、运维与备份能力→输出所有上层只调工具即可读写的内核 API
+  不负责：不实现 MCP 协议与 CLI 参数解析；不实现 viewer 画布；不做跨部门业务
+
+  连接：
+    上游：无
+    下游：无
+
+  说明（00-程序树/说明/kernel.txt）：
+    内核部接收仓库根与 00-程序树/program-tree.yaml 路径，读取清单、契约与四棵树实例，再通过 PTree.Core 下的读写工具把节点、组、连接、契约与生成物串成一套可校验的内核。部门本身不做 MCP 协议、CLI 参数解析和画布渲染，这些交给接口部与画布部；它只维护内核边界，确保阅读、写入、脚手架、运维、备份六个程序都从同一份 tree.loaded 取数，并把树版本与台账作为统一结果交出去。相关代码入口是 00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs 与 NodeTools.cs，部门验收要求 PTree.sln 可构建、内核测试过滤用例全绿。
+
+  SPEC 摘要：
+
+
+节点：kernel.store · 树清单读写
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel
+  输入契约：kernel.store.json
+  输出契约：tree.loaded
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/YamlLoader.cs、00-程序树/工具/csharp/src/PTree.Core/RawYaml.cs、00-程序树/工具/csharp/src/PTree.Core/Models.cs、00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs、00-程序树/工具/csharp/src/PTree.Core/PyValue.cs、00-程序树/工具/csharp/src/PTree.Core/PythonText.cs、00-程序树/工具/csharp/src/PTree.Core/PythonImports.cs、00-程序树/工具/csharp/src/PTree.Core/PyDateTimeValues.cs、00-程序树/工具/csharp/src/PTree.Core/JsonOutput.cs、00-程序树/工具/csharp/src/PTree.Core/Payloads.cs、00-程序树/工具/csharp/src/PTree.Core/PTreeException.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~TreeStoreConfigTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- validate --root examples/demo 退出码 0
+  SPEC：README.md
+
+  职责：读入 program-tree.yaml、contracts.yaml 与树实例→用 RawYaml/Models 建原始值树和节点/组表，并统一 JSON…
+  不负责：不解释节点业务语义；不改写清单；不做校验规则
+
+  连接：
+    上游：kernel.store.json ← kernel.store.output
+    下游：tree.loaded → interface.cli、interface.mcp-compat、interface.mcp-server、interface.serve、kernel.backup、kernel.ops、kernel.reading、kernel.scaffold、kernel.write、rules、rules.backup、rules.backup.config、rules.backup.ledger、rules.backup.preset、rules.docs、rules.docs.intro、rules.docs.spec、rules.docs.standard、rules.planning、rules.planning.coverage、rules.planning.cross-tree、rules.planning.scan、rules.relations、rules.relations.contracts、rules.relations.dependency、rules.relations.links、rules.state、rules.state.completion、rules.state.quality、rules.state.responsibility、rules.structure、rules.structure.groups、rules.structure.identity、rules.structure.schema
+
+  说明（00-程序树/说明/kernel.store.txt）：
+    树清单读写程序读取 00-程序树/program-tree.yaml、00-程序树/契约/contracts.yaml 与 00-程序树/树实例目录，先用 YamlLoader 和 RawYaml 把 YAML 解析成保留键顺序的原始值树，再映射成 Manifest、NodeModel、ContractModel 等模型，并按 id 建立节点表与组归属。程序还负责把模型序列化成统一 UTF-8 中文不转义 JSON，把可预期的用法与 IO 错误包成 PTreeException；它不解释节点业务语义，也不改写清单，校验规则由规则部负责。入口文件是 00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs 和 TreeStore.cs，输出 tree.loaded 供阅读、写入、脚手架、运维与备份共用。
+
+  SPEC 摘要：
+
+
+节点：kernel.store.yaml · YAML 与值树解析
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.store
+  依赖：kernel.store
+  输入契约：无
+  输出契约：kernel.store.raw
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/YamlLoader.cs、00-程序树/工具/csharp/src/PTree.Core/RawYaml.cs、00-程序树/工具/csharp/src/PTree.Core/Models.cs、00-程序树/工具/csharp/src/PTree.Core/PyValue.cs、00-程序树/工具/csharp/src/PTree.Core/PythonText.cs、00-程序树/工具/csharp/src/PTree.Core/PythonImports.cs、00-程序树/工具/csharp/src/PTree.Core/PyDateTimeValues.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~YamlOracleTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~PythonTextTests 全绿
+  SPEC：README.md
+
+  职责：接收 YAML 文本→用 YamlDotNet 事件流保留键顺序、合并键、日期与 Python 大小写语义→输出 RawMap/RawList 与节点/契约…
+  不负责：不读取业务路径；不写回 YAML
+
+  连接：
+    上游：无
+    下游：kernel.store.raw → kernel.store.repository
+
+  说明（00-程序树/说明/kernel.store.yaml.txt）：
+    YAML 与值树解析步骤读取任意 YAML 文本，通过 00-程序树/工具/csharp/src/PTree.Core/YamlLoader.cs 调用 YamlDotNet 表示模型，再由 RawYaml 保留映射键顺序、处理合并键与重复键，把标量拆成字符串、整数、布尔、日期和 datetime。为对齐 Python 版行为，PyValue、PythonText、PythonImports 与 PyDateTimeValues 负责真值判断、土耳其字母与词尾 sigma 小写、受限 import 扫描和日期格式。产出 kernel.store.raw 原始值树与模型，供仓库步骤建节点表；该步骤不读取业务路径、不写回 YAML，也不承担节点字段校验。
+
+  SPEC 摘要：
+
+
+节点：kernel.store.repository · 仓库与节点表
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.store
+  依赖：kernel.store、kernel.store.yaml
+  输入契约：kernel.store.raw
+  输出契约：kernel.store.model
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~CoreTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~TreeStoreConfigTests 全绿
+  SPEC：README.md
+
+  职责：接收仓库根→加载清单/契约/标杆/绑定/说明路径，按 id 建节点表与组归属，并从 RawMap 构造候选仓库→输出 PTreeRepository 与 T…
+  不负责：不做业务校验；不生成文本卡
+
+  连接：
+    上游：kernel.store.raw ← kernel.store.yaml
+    下游：kernel.store.model → kernel.store.output
+
+  说明（00-程序树/说明/kernel.store.repository.txt）：
+    仓库与节点表步骤读取仓库根下的清单、契约、标杆、绑定和说明路径，通过 00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs 构造 PTreeRepository，暴露 Root、Manifest、Contracts、NodeMap 与 Groups；同时用 TreeStore 解析程序树、策划树、美术树、UI 树实例，生成 TreeDocument、TreeEntry、TreeReference 与解析问题。它还支持 FromRaw 从候选提案构造仓库，供提案校验使用。输出 kernel.store.model 强类型模型与按 id 建好的节点表、组表；该步骤不做业务校验、不生成文本卡，也不写盘。
+
+  SPEC 摘要：
+
+
+节点：kernel.store.output · 输出与兼容层
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.store
+  依赖：kernel.store、kernel.store.repository
+  输入契约：kernel.store.model
+  输出契约：kernel.store.json
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/JsonOutput.cs、00-程序树/工具/csharp/src/PTree.Core/Payloads.cs、00-程序树/工具/csharp/src/PTree.Core/PTreeException.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~CoreTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GridReadingsTests 全绿
+  SPEC：README.md
+
+  职责：接收模型对象→统一 UTF-8 中文不转义 JSON 与 index/node 载荷，封装可预期异常→输出上层可直接序列化的结果
+  不负责：不决定字段业务含义；不写文件
+
+  连接：
+    上游：kernel.store.model ← kernel.store.repository
+    下游：kernel.store.json → kernel.store
+
+  说明（00-程序树/说明/kernel.store.output.txt）：
+    输出与兼容层步骤接收已建好的模型，通过 00-程序树/工具/csharp/src/PTree.Core/JsonOutput.cs 统一 UTF-8、中文不转义、缩进两空格的 JSON 序列化，并用 Payloads.cs 定义 index/node 等对外载荷字段。PTreeException.cs 把找不到清单、YAML 解析失败、无法读取文件这类可预期问题包成统一异常，让 CLI 返回退出码 2、MCP 返回错误文本。该步骤只决定输出形状与异常边界，不决定字段业务含义，也不写文件；产出 kernel.store.json，供内核部各程序复用。
+
+  SPEC 摘要：
+
+
+节点：kernel.reading · 节点阅读与渲染
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel、kernel.store
+  输入契约：tree.loaded、tree.mutation、kernel.reading.card、kernel.reading.brief
+  输出契约：tree.card
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs、00-程序树/工具/csharp/src/PTree.Core/BriefRenderer.cs、00-程序树/工具/csharp/src/PTree.Core/StatusValues.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~NodeCardsTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- read-node core.app --root examples/demo 输出不超过 9 行
+  SPEC：README.md
+
+  职责：接收 tree.loaded 与节点 id→按 depth/format 读短介绍、契约、依赖、邻居并渲染卡片/关系图/速览，渲染前合并 tree.muta…
+  不负责：不改清单；不跑校验；不做搜索索引
+
+  连接：
+    上游：tree.loaded ← kernel.store；tree.mutation ← kernel.write；kernel.reading.card ← kernel.reading.card；kernel.reading.brief ← kernel.reading.brief
+    下游：tree.card → kernel.write
+
+  说明（00-程序树/说明/kernel.reading.txt）：
+    节点阅读与渲染程序接收 tree.loaded、节点 id 与 depth/format 参数，通过 00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs 读取短介绍、进出契约、依赖、相关策划、美术、UI、连接与文件，按 800 字节和 9 行预算输出卡片；depth 大于等于二时输出节点表与边表，format=full 仍返回原 JSON。BriefRenderer 和 StatusValues 另外提供项目速览、阅读阶梯、功能块分区、组内成员与状态归一化。程序只读清单并渲染文本，不改字段、不跑校验；输出 tree.card 供写入和接口层使用。
+
+  SPEC 摘要：
+
+
+节点：kernel.reading.card · 卡片与关系图
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.reading
+  依赖：kernel.reading
+  输入契约：无
+  输出契约：kernel.reading.card
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs、00-程序树/工具/csharp/src/PTree.Core/StatusValues.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~NodeCardsTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ReadLadderTests 全绿
+  SPEC：README.md
+
+  职责：接收节点与 depth→拼短介绍、进出契约、依赖、相关网格、边、文件与说明路径，按 800 字节/9 行预算截断→输出卡片或 N 层节点表边表
+  不负责：不渲染整树速览；不写文件
+
+  连接：
+    上游：无
+    下游：kernel.reading.card → kernel.reading
+
+  说明（00-程序树/说明/kernel.reading.card.txt）：
+    卡片与关系图步骤读取单个节点及其一圈关系，在 00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs 中拼出定位行、短介绍、吃进契约、给出契约、依赖与波及、功能块、边、文件与说明路径，超长时按行 110 字和整卡 800 字节截断。depth 为零时展开全树节点表与边表，超过 200 节点或 400 边时给出截断提示。它只消费 repository 与节点 id，不渲染整树速览，也不写文件；输出 kernel.reading.card 纯文本卡。
+
+  SPEC 摘要：
+
+
+节点：kernel.reading.brief · 速览与粗读
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.reading
+  依赖：kernel.reading
+  输入契约：无
+  输出契约：kernel.reading.brief
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/BriefRenderer.cs、00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GridReadingsTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- brief --root examples/demo 输出不超过 120 行
+  SPEC：README.md
+
+  职责：接收树仓库→汇总网格、状态、部门、关键契约与缺口，渲染阅读阶梯、功能块分区与组内成员→输出 120 行以内项目速览
+  不负责：不读单节点细节；不生成 HTML
+
+  连接：
+    上游：无
+    下游：kernel.reading.brief → kernel.reading
+
+  说明（00-程序树/说明/kernel.reading.brief.txt）：
+    速览与粗读步骤读取树仓库的网格条目、状态、部门、关键契约与缺口，在 00-程序树/工具/csharp/src/PTree.Core/BriefRenderer.cs 生成 120 行、6KB 以内的项目速览；NodeCards.cs 另外生成阅读阶梯、功能块分区和组内成员清单，帮助 AI 先粗后细定位。它不读单节点细节、不生成 HTML，也不改清单；输出 kernel.reading.brief 给 MCP 的 tree_map、guide、read_group 与 CLI brief 使用。
+
+  SPEC 摘要：
+
+
+节点：kernel.write · 节点写工具
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel、kernel.store、kernel.reading
+  输入契约：tree.loaded、tree.card、tree.diagnostics、kernel.write.node、kernel.write.group、kernel.write.query
+  输出契约：tree.mutation
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ContractSyncTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~LinkAndPresetTests 全绿
+  SPEC：README.md
+
+  职责：接收 AI 的节点/组/连接参数与 tree.loaded→在内存清单改字段、同步契约 producers/consumers、写盘前跑 validate…
+  不负责：不实现 MCP 传输；不解析 CLI 参数；不生成程序书
+
+  连接：
+    上游：tree.loaded ← kernel.store；tree.card ← kernel.reading；tree.diagnostics ← kernel.ops；kernel.write.node ← kernel.write.node；kernel.write.group ← kernel.write.group；kernel.write.query ← kernel.write.query
+    下游：tree.mutation → kernel.ops、kernel.reading
+
+  说明（00-程序树/说明/kernel.write.txt）：
+    节点写工具程序接收 AI 传入的节点、组、连接字段与当前树仓库，通过 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 在内存 RawMap 上增删改字段，校验父类型、id、契约引用与依赖，同步契约 producers 和 consumers，写盘前跑完整 validate，出现 E 时用备份还原并回滚。它还负责 find、changes、scan 与 git 归组提交等查询动作。程序不实现 MCP 传输、不解析 CLI 参数、不生成程序书；输出 tree.mutation、written_files、台账条目与新 tree_version。
+
+  SPEC 摘要：
+
+
+节点：kernel.write.node · 节点增改退删
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.write
+  依赖：kernel.write
+  输入契约：无
+  输出契约：kernel.write.node
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ContractSyncTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~LinkAndPresetTests 全绿
+  SPEC：README.md
+
+  职责：接收 add/update/retire/relocate/delete 参数与当前清单→校验父类型、id、契约与依赖，改字段并同步契约成员，原子写盘失败回…
+  不负责：不处理功能块；不处理查询
+
+  连接：
+    上游：无
+    下游：kernel.write.node → kernel.write
+
+  说明（00-程序树/说明/kernel.write.node.txt）：
+    节点增改退删步骤接收 add、update、retire、relocate、delete 参数，在 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 中校验父节点类型、id 格式、契约是否存在、preset 状态、依赖与子节点，随后修改 RawMap 字段、同步契约成员、写盘并追加台账，失败时恢复原文件。它不处理功能块，也不处理 find、changes 查询；输出 kernel.write.node 差异与新版本号，供写程序汇总成 tree.mutation。
+
+  SPEC 摘要：
+
+
+节点：kernel.write.group · 功能块维护
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.write
+  依赖：kernel.write
+  输入契约：无
+  输出契约：kernel.write.group
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GroupsTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GridWriteTests 全绿
+  SPEC：README.md
+
+  职责：接收组 id、成员与父组→校验组成员存在、组层级不超过两层且不成环，增改成员与简介→输出组差异与更新后的清单
+  不负责：不改节点字段；不跑健康检查
+
+  连接：
+    上游：无
+    下游：kernel.write.group → kernel.write
+
+  说明（00-程序树/说明/kernel.write.group.txt）：
+    功能块维护步骤接收组 id、成员、父组、名称和简介，在 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 中校验组成员既可为节点也可为组、组层级不超过两层、父组不存在或成环时拒绝，随后更新 groups 段并写盘。功能块对应阅读阶梯里的粗读分区，组编号使用 group. 前缀；它不改节点字段，也不跑健康检查，输出 kernel.write.group 的成员与简介差异，供写程序汇总后交给接口层。
+
+  SPEC 摘要：
+
+
+节点：kernel.write.query · 查询与提交
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.write
+  依赖：kernel.write
+  输入契约：无
+  输出契约：kernel.write.query
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs、00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~LinkEvidenceTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ReadLadderTests 全绿
+  SPEC：README.md
+
+  职责：接收查询词、变更时间窗或 written_files→按 id/状态/联系检索、读取文件变更台账、按路径分组 git 提交→输出候选节点、短文本或提交结果
+  不负责：不新增节点；不改组结构
+
+  连接：
+    上游：无
+    下游：kernel.write.query → kernel.write
+
+  说明（00-程序树/说明/kernel.write.query.txt）：
+    查询与提交步骤接收查询词、状态、时间窗或 written_files，在 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 中按 id、名称、职责过滤节点，读取 HealthCheck 写入的文件变更 JSONL，扫描 adapt 目录，按路径前缀归组 git 提交并返回提交结果。它不新增节点，也不改组结构；输出 kernel.write.query 候选节点、短文本或提交结果，供 MCP 的 tree_find、tree_changes、tree_scan、tree_commit 复述。
+
+  SPEC 摘要：
+
+
+节点：kernel.scaffold · 提案与脚手架
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel、kernel.store、kernel.ops
+  输入契约：tree.loaded、tree.diagnostics、kernel.scaffold.proposal、kernel.scaffold.products、kernel.scaffold.init
+  输出契约：tree.candidate
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs、00-程序树/工具/csharp/src/PTree.Core/GeneratedProducts.cs、00-程序树/工具/csharp/src/PTree.Core/InitRunner.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ProposalEngineTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- init --help 退出码 0
+  SPEC：README.md
+
+  职责：接收提案 YAML 或 init 参数与 tree.loaded→逐 op 应用候选清单、校验候选、渲染四份生成物或写最小脚手架→输出 tree.candi…
+  不负责：不直接接受 MCP 请求；不维护已有节点日常字段
+
+  连接：
+    上游：tree.loaded ← kernel.store；tree.diagnostics ← kernel.ops；kernel.scaffold.proposal ← kernel.scaffold.proposal；kernel.scaffold.products ← kernel.scaffold.products；kernel.scaffold.init ← kernel.scaffold.init
+    下游：tree.candidate → kernel.ops
+
+  说明（00-程序树/说明/kernel.scaffold.txt）：
+    提案与脚手架程序接收提案 YAML 或 init 参数与 tree.loaded，通过 00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs 逐 op 应用 add、modify、deprecate、prune、split、merge、intro、meta 和标杆操作，在内存生成候选清单并校验；GeneratedProducts 渲染程序书、总览、落地顺序和标杆看板，InitRunner 生成最小可校验脚手架。程序不直接接受 MCP 请求，也不维护已有节点日常字段；输出 tree.candidate 与可落盘文件清单。
+
+  SPEC 摘要：
+
+
+节点：kernel.scaffold.proposal · 提案评估与落盘
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.scaffold
+  依赖：kernel.scaffold
+  输入契约：无
+  输出契约：kernel.scaffold.proposal
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ProposalEngineTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- apply --dry-run --root examples/demo 退出码 0
+  SPEC：README.md
+
+  职责：接收提案 YAML→解析 add/modify/deprecate/prune/split/merge/intro/meta/bench 操作，在内存逐 o…
+  不负责：不生成生成物；不初始化新项目
+
+  连接：
+    上游：无
+    下游：kernel.scaffold.proposal → kernel.scaffold
+
+  说明（00-程序树/说明/kernel.scaffold.proposal.txt）：
+    提案评估与落盘步骤读取提案 YAML，在 00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs 中解析 ops，逐项修改候选清单、契约、标杆与绑定，记录新增、删除、退役、裁剪候选与说明覆盖，然后对候选仓库跑 validate，失败不写盘。成功时一次性写清单、契约、标杆、说明和台账并重新生成文档。它不生成四份生成物，也不初始化新项目；输出 kernel.scaffold.proposal 摘要、错误与是否写盘。
+
+  SPEC 摘要：
+
+
+节点：kernel.scaffold.products · 生成物渲染
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.scaffold
+  依赖：kernel.scaffold
+  输入契约：无
+  输出契约：kernel.scaffold.products
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/GeneratedProducts.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~CoreTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- book --root examples/demo 生成程序书
+  SPEC：README.md
+
+  职责：接收树仓库与校验结果→渲染程序书、总览、落地顺序、标杆看板四份纯文本，统一写生成目录→输出带生成时间与禁改声明的全文
+  不负责：不改清单；不校验提案
+
+  连接：
+    上游：无
+    下游：kernel.scaffold.products → kernel.scaffold
+
+  说明（00-程序树/说明/kernel.scaffold.products.txt）：
+    生成物渲染步骤读取树仓库与校验结果，在 00-程序树/工具/csharp/src/PTree.Core/GeneratedProducts.cs 中渲染程序树总览、落地顺序、程序书和标杆看板四份纯文本，统一带生成时间、禁改声明和计数，并写入 00-程序树/生成目录。程序书现在有两种产出：不带 --llm 时用离线模板按节点、契约与验收数据填充，显式 --llm 时由 DeepSeek 生成正文；两种方式都只能引用 program-tree.yaml 与 contracts.yaml 中登记过的路径、契约 id 和节点事实，不得编造文件、目录或结论。模型输出在写入 00-程序树/生成/程序书.txt 前必须经过 R31、R34、R37 的文本检查，失败时回退离线模板。它不改清单、不校验提案，也不生成 HTML；输出 kernel.scaffold.products 全文，供 CLI 的 view、order、book、benchmark 与合并后的程序书使用。
+
+  SPEC 摘要：
+
+
+节点：kernel.scaffold.init · 新项目脚手架
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.scaffold
+  依赖：kernel.scaffold
+  输入契约：无
+  输出契约：kernel.scaffold.init
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/InitRunner.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~KernelCompletionTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- init --help 退出码 0
+  SPEC：README.md
+
+  职责：接收目标根与项目名→生成清单、契约、标杆、四树实例、节点说明与 README 的最小可校验集合，写入后自跑 validate/check→输出文件清单与自检计数
+  不负责：不迁移已有项目；不覆盖已有清单除非 force
+
+  连接：
+    上游：无
+    下游：kernel.scaffold.init → kernel.scaffold
+
+  说明（00-程序树/说明/kernel.scaffold.init.txt）：
+    新项目脚手架步骤接收目标根、项目名和 force 参数，在 00-程序树/工具/csharp/src/PTree.Core/InitRunner.cs 中生成清单、契约、标杆、绑定、四棵树实例、根、部门、程序说明与 README 的最小可校验集合，创建变更、生成、运维目录，写入后自跑 validate 和 check 并汇总 E、W 计数。它不迁移已有项目，不覆盖已有清单除非显式 force；输出 kernel.scaffold.init 文件清单与自检结果。
+
+  SPEC 摘要：
+
+
+节点：kernel.ops · 运维与校验
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel、kernel.store、kernel.backup
+  输入契约：tree.loaded、tree.mutation、tree.candidate、backup.point、kernel.ops.health、kernel.ops.verify、kernel.ops.adapt
+  输出契约：tree.diagnostics
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs、00-程序树/工具/csharp/src/PTree.Core/VerifyRunner.cs、00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs、00-程序树/工具/csharp/src/PTree.Core/AdaptScanner.cs、00-程序树/工具/csharp/src/PTree.Core/Bench.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthChangesTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- verify --root examples/demo 退出码 0
+  SPEC：README.md
+
+  职责：接收 tree.loaded、写结果与备份点→跑健康检查/跨树校验/一键 verify/固定目录扫描/性能基准并静默记变更→输出 tree.diagnost…
+  不负责：不改节点字段；不实现备份产物；不实现 MCP 传输
+
+  连接：
+    上游：tree.loaded ← kernel.store；tree.mutation ← kernel.write；tree.candidate ← kernel.scaffold；backup.point ← kernel.backup；kernel.ops.health ← kernel.ops.health；kernel.ops.verify ← kernel.ops.verify；kernel.ops.adapt ← kernel.ops.adapt
+    下游：tree.diagnostics → kernel.scaffold、kernel.write
+
+  说明（00-程序树/说明/kernel.ops.txt）：
+    运维与校验程序接收 tree.loaded、写结果和备份点，通过 00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs 检查文件消失、登记目录缺失、已完成无实现三类问题，并静默记录 mtime 变更；VerifyRunner 汇总 validate、check、生成物新鲜度、说明覆盖和 MCP 冒烟，ManifestChecker 执行 T07 到 T12，AdaptScanner 扫描固定目录，Bench 做进程内性能样本。程序不改节点字段、不实现备份产物；输出 tree.diagnostics。
+
+  SPEC 摘要：
+
+
+节点：kernel.ops.health · 健康与变更记录
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.ops
+  依赖：kernel.ops
+  输入契约：无
+  输出契约：kernel.ops.health
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthChangesTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthAndLifecycleTests 全绿
+  SPEC：README.md
+
+  职责：接收树仓库→检查文件消失、登记目录缺失、已完成无实现三类问题，把 mtime 晚于 updated_at 的文件静默追加到文件变更 JSONL→输出健康报告…
+  不负责：不做跨树检查；不做性能测量
+
+  连接：
+    上游：无
+    下游：kernel.ops.health → kernel.ops
+
+  说明（00-程序树/说明/kernel.ops.health.txt）：
+    健康与变更记录步骤读取树仓库与节点 files，在 00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs 中判断文件是否存在、父目录是否整体缺失、已完成或已验证节点是否有实现，只把这三类记为重要问题；代码 mtime 晚于 updated_at 时按 node 加 file 每天去重写入 00-程序树/运维/文件变更.jsonl，并提供 changes 查询。它不做跨树检查和性能测量；输出 kernel.ops.health 报告与 changes 短文本。
+
+  SPEC 摘要：
+
+
+节点：kernel.ops.verify · 跨树校验与验证
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.ops
+  依赖：kernel.ops
+  输入契约：无
+  输出契约：kernel.ops.verify
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/VerifyRunner.cs、00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ManifestCheckerTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~KernelCompletionTests 全绿
+  SPEC：README.md
+
+  职责：接收树仓库与生成物→跑 T07-T12 组/时间戳/附件/策划覆盖/文档形态检查与 validate/check/新鲜度/MCP 冒烟，汇总 PASS/FA…
+  不负责：不修复问题；不改清单
+
+  连接：
+    上游：无
+    下游：kernel.ops.verify → kernel.ops
+
+  说明（00-程序树/说明/kernel.ops.verify.txt）：
+    跨树校验与验证步骤读取树仓库、四棵树实例与生成物，在 00-程序树/工具/csharp/src/PTree.Core/VerifyRunner.cs 中依次跑 validate、check、实例解析、生成物新鲜度、说明覆盖、策划映射和 MCP 冒烟，并把 PASS、FAIL、命令、耗时与指标写进验证报告；ManifestChecker.cs 负责组、时间戳、附件、策划覆盖、文档形态和预设检查。它不修复问题、不改清单；输出 kernel.ops.verify。
+
+  SPEC 摘要：
+
+
+节点：kernel.ops.adapt · 目录适配与基准
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.ops
+  依赖：kernel.ops
+  输入契约：无
+  输出契约：kernel.ops.adapt
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/AdaptScanner.cs、00-程序树/工具/csharp/src/PTree.Core/Bench.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~PerformanceTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- bench --root examples/demo 输出各命令耗时
+  SPEC：README.md
+
+  职责：接收清单 adapt 段与 iterations→扫描固定目录并按节点 files 判断归属，或进程内重复跑 validate/read-node/stat…
+  不负责：不自动写回归属；不做子进程性能测试
+
+  连接：
+    上游：无
+    下游：kernel.ops.adapt → kernel.ops
+
+  说明（00-程序树/说明/kernel.ops.adapt.txt）：
+    目录适配与基准步骤接收清单 adapt 段和 iterations，在 00-程序树/工具/csharp/src/PTree.Core/AdaptScanner.cs 中遍历固定目录、跳过链接、按 patterns 过滤，再按节点 files 判断归属，输出已归属、未归属与忽略文件及最长前缀建议；Bench.cs 在进程内重复加载并执行 validate、check、read-node、map、status，统计首跑、最小值、中位数和 P95。它不自动写回归属，也不做子进程计时；输出 kernel.ops.adapt。
+
+  SPEC 摘要：
+
+
+节点：kernel.backup · 备份子系统
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：kernel
+  依赖：kernel、kernel.store
+  输入契约：tree.loaded、kernel.backup.config、kernel.backup.run、kernel.backup.secret-scan
+  输出契约：backup.point
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/BackupService.cs、00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs、00-程序树/工具/csharp/src/PTree.Core/BackupCrypto.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~BackupTests 全绿；命令：dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- validate --root examples/demo 退出码 0
+  SPEC：README.md
+
+  职责：接收 tree.loaded 与备份配置/全局密钥→按 git-bundle、tag、copy 把 tree_version 映射为备份点并按保留策略裁剪…
+  不负责：不备份项目源码之外的外部系统；不把 token 明文写入日志或台账
+
+  连接：
+    上游：tree.loaded ← kernel.store；kernel.backup.config ← kernel.backup.config；kernel.backup.run ← kernel.backup.run；kernel.backup.secret-scan ← kernel.backup.secret-scan
+    下游：backup.point → kernel.ops
+
+  说明（00-程序树/说明/kernel.backup.txt）：
+    备份子系统程序接收 tree.loaded、项目层备份配置和全局密钥，通过 00-程序树/工具/csharp/src/PTree.Core/BackupService.cs 把 tree_version 映射到内层代码仓的 git-bundle、tag 或 copy 备份点，写台账并按 retention 裁剪旧点；BackupConfig 负责 00-程序树/运维/备份.yaml 与全局 home 的分层，BackupCrypto 用 AES-256-GCM 加解密凭据并只回显脱敏 token。程序不备份外部系统、不把 token 明文写日志；输出 backup.point。
+
+  SPEC 摘要：
+
+
+节点：kernel.backup.config · 备份配置与凭据
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.backup
+  依赖：kernel.backup
+  输入契约：无
+  输出契约：kernel.backup.config
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs、00-程序树/工具/csharp/src/PTree.Core/BackupCrypto.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~BackupTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthAndLifecycleTests 全绿
+  SPEC：README.md
+
+  职责：接收 root 与全局 home→加载项目层 enabled/mode/retention/targets，校验全局 32 字节密钥与 AES-256-GC…
+  不负责：不执行备份；不裁剪台账
+
+  连接：
+    上游：无
+    下游：kernel.backup.config → kernel.backup
+
+  说明（00-程序树/说明/kernel.backup.config.txt）：
+    备份配置与凭据步骤读取项目层 00-程序树/运维/备份.yaml 和全局 home，在 00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs 中解析 enabled、mode、retention、targets、last_run，校验 mode 属于 git-bundle、tag、copy，retention 在 1 到 1000，缺全局密钥或 credentials.enc 时拒绝启用；BackupCrypto.cs 校验 32 字节密钥，用随机 nonce 与 tag 解密密文，并把 token 显示为前四后二。它不执行备份、不裁剪台账；输出 kernel.backup.config。
+
+  SPEC 摘要：
+
+
+节点：kernel.backup.run · 备份点与保留
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.backup
+  依赖：kernel.backup
+  输入契约：无
+  输出契约：kernel.backup.run
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/BackupService.cs、00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~BackupTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthAndLifecycleTests 全绿
+  SPEC：README.md
+
+  职责：接收 tree_version、targets 与保留数→按模式创建 git bundle/tag/copy，写备份台账并按 retention 裁剪旧点…
+  不负责：不生成密钥；不修改项目配置
+
+  连接：
+    上游：无
+    下游：kernel.backup.run → kernel.backup
+
+  说明（00-程序树/说明/kernel.backup.run.txt）：
+    备份点与保留步骤接收 tree_version、targets 与保留数，在 00-程序树/工具/csharp/src/PTree.Core/BackupService.cs 中按模式创建 git bundle、tag 或目录副本，写 00-程序树/运维/备份.jsonl 台账，按 retention 删除最旧备份点并统计磁盘占用，同时更新 last_run 与 last_tree_version。它不生成密钥、不修改项目配置；输出 kernel.backup.run 备份点状态与最近运行记录，供 HealthCheck 在启用但未配置时给出提醒。
+
+  SPEC 摘要：
+
+
+节点：kernel.backup.secret-scan · 备份密钥扫描
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：kernel.backup
+  依赖：kernel.backup
+  输入契约：无
+  输出契约：kernel.backup.secret-scan
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/SecretScanner.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~SecretScannerTests 全绿；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~BackupTests 全绿
+  SPEC：README.md
+
+  职责：接收备份 targets 与扫描开关→遍历目标目录，跳过 bin、obj、.git、备份目录、.enc 与二进制文件，按云厂商 token、私钥、JWT、通…
+  不负责：不读取或回显完整密钥；不生成备份点；不修改备份配置
+
+  连接：
+    上游：无
+    下游：kernel.backup.secret-scan → kernel.backup
+
+  说明（00-程序树/说明/kernel.backup.secret-scan.txt）：
+    备份密钥扫描步骤接收备份 targets 与 secret_scan 开关，通过 00-程序树/工具/csharp/src/PTree.Core/SecretScanner.cs 遍历目标目录，跳过 bin、obj、.git、00-程序树/运维/备份、.enc 和二进制文件，再按云厂商 token、GitHub、OpenAI、Anthropic、Slack、Google、Stripe、JWT、私钥块、通用赋值和敏感文件名模式逐行扫描。命中结果只保留 file、line、kind 与脱敏值，供 BackupService 在生成 bundle 之前拒绝整次备份；该步骤不读取或回显完整密钥，不生成备份点，也不修改备份配置。
+
+  SPEC 摘要：
+
+
+节点：interface · 接口部
+
+  类型/层级：department / 1；阶段：P1；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：tool.catalog、tool.result、compat.result、cli.output、http.response、mcp.read.result、mcp.write.result、mcp.verify.result
+  输出契约：无
+  验收：命令：dotnet build 00-程序树/工具/csharp/PTree.sln 退出码 0；命令：printf '%s\n%s\n%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' '{"jsonrpc":"2.0","method":"notifications/initialized"}' '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll mcp，tools/list 返回 26 个 tree_* 工具；另起 ptree-serve --port 7777 后 GET /api/health 返回 ok=true
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：把内核能力封装成 MCP 工具、CLI 子命令与本地 HTTP 接口，确保 AI 只调工具不读文件
+  不负责：不实现校验规则与清单写盘内核；不维护画布静态资源与发布打包
+
+  连接：
+    上游：tool.catalog ← interface.mcp-server；tool.result ← interface.mcp-server；compat.result ← interface.mcp-compat；cli.output ← interface.cli；http.response ← interface.serve；mcp.read.result ← interface.mcp-server.read；mcp.write.result ← interface.mcp-server.write；mcp.verify.result ← interface.mcp-server.verify
+    下游：无
+
+  说明（00-程序树/说明/interface.txt）：
+    接口部是外部调用方进入程序树的唯一门面，它把内核加载好的树只读快照分发给三个入口：MCP 协议服务负责 JSON-RPC 工具调用，命令行负责一次性子命令，本地 HTTP 服务负责画布与写接口。外部 AI 与人都只面对工具名、参数和 JSON 结果，不接触 program-tree.yaml、契约文件或说明目录。部门本身不持有实现，边界落在三个程序：任何树规则判断、写盘回滚与备份都应下沉到内核，接口层只做协议、参数和输出适配。对应代码入口是 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs 与同级的 CLI、Serve 项目；改动接口时必须保证三处输出语义一致，并让 tools/list 的工具目录与内核分发分支保持一一对应。
+    
+
+
+节点：interface.mcp-server · MCP 协议服务
+
+  类型/层级：program / 2；阶段：P1；状态：已完成
+  父节点：interface
+  依赖：interface
+  输入契约：tree.loaded
+  输出契约：tool.catalog、tool.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs、00-程序树/工具/csharp/src/PTree.Mcp/KernelInfo.cs
+  验收：命令：printf '%s\n%s\n%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' '{"jsonrpc":"2.0","method":"notifications/initialized"}' '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll mcp，tools/list 返回 26 个 tree_* 工具且进程退出码 0；测试：调用 program_tree_apply 返回 JSON-RPC 错误 -32601 而不是执行写盘；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读 tree.loaded，把 26 个 tree_* 工具编成 MCP 目录并经 stdio JSON-RPC 分发，返回 JSON 文本给 AI
+  不负责：不直接读写 program-tree.yaml，只调用内核工具；不实现校验规则与备份加密
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：tool.catalog → interface；tool.result → interface
+
+  说明（00-程序树/说明/interface.mcp-server.txt）：
+    这个程序负责 MCP stdio 服务的协议面与工具目录。它从 stdin 逐行读 JSON-RPC 2.0 消息，处理 initialize、notifications/initialized、tools/list、tools/call 与 ping，并把批量数组按顺序逐条响应；stdout 只写协议帧，运行日志全部走 stderr，避免污染传输。工具目录里维护 26 个 tree_* 工具，覆盖读、写、校验与备份四组；tools/call 按工具名分发到 NodeTools 或 BackupService，旧名 propose/apply 直接返回 -32601。它不直接读写清单，也不实现校验规则，失败与回滚由内核工具负责。实现集中在 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs，内核版本常量在 KernelInfo.cs；改工具时应同时改 ToolDefinitions 的 schema 与 CallTool 分发。
+    
+
+
+节点：interface.mcp-compat · 旧工具兼容层
+
+  类型/层级：program / 2；阶段：P1；状态：已完成
+  父节点：interface
+  依赖：interface
+  输入契约：tree.loaded
+  输出契约：compat.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Mcp/McpTools.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿；命令：rg program_tree_propose 在 McpServer.ToolDefinitions 中零命中，只在撤销分支与兼容函数中出现
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读 tree.loaded，保留旧版五个兼容函数，返回 JSON 并撤下 propose/apply 注册
+  不负责：不再把 propose/apply 注册为对外 MCP 工具；不复制 NodeTools 的节点读写逻辑
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：compat.result → interface
+
+  说明（00-程序树/说明/interface.mcp-compat.txt）：
+    这个程序保留旧版 MCP 工具函数的实现，用于历史调用方与回归对照。McpTools 里仍然能找到 status、read、check、propose、apply 五个入口，以及提案写文件、dry-run 与 apply 的参数解析；但当前 McpServer 的 CallTool 已不再把它们注册进对外目录，propose 与 apply 在新的 26 工具清单里没有位置。它的边界是兼容函数本身，不复制 NodeTools 的节点读写，也不承担新写链路；新功能应落到内核写工具，而不是往这里加工具。代码位置是 00-程序树/工具/csharp/src/PTree.Mcp/McpTools.cs；清理或复用前要先确认没有旧客户端依赖这些函数名与 JSON 形状。
+    
+
+
+节点：interface.cli · 命令行接口
+
+  类型/层级：program / 2；阶段：P1；状态：已完成
+  父节点：interface
+  依赖：interface
+  输入契约：tree.loaded
+  输出契约：cli.output
+  落地文件：00-程序树/工具/csharp/src/PTree.Cli/Program.cs
+  验收：命令：ptree-cs version --json 返回 kernel=csharp 且退出码 0；命令：ptree-cs validate --root examples/demo 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读 tree.loaded，把清单阅读、校验、生成、备份与写命令提供为 ptree-cs 子命令，输出 JSON 或文本与退出码
+  不负责：不实现命令背后的业务逻辑，只解析参数并调用内核；不承担 HTTP 服务与 MCP 帧协议
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：cli.output → interface
+
+  说明（00-程序树/说明/interface.cli.txt）：
+    这个程序把内核能力收成 ptree-cs 命令行。Main 先解析 --root 与全局选项，再按第一个位置参数进入子命令：index、read-node、status、map、guide、links、group、node 负责读取，validate、check、verify、view、order、book、brief、benchmark 负责校验与生成，apply、check-plan、relocate、delete、commit、init、backup 负责写入与运维，mcp 则转给 MCP 服务。每个子命令只做参数解析、调用内核和选择 --json 或纯文本输出，失败用非零退出码表达；bench 会抢在仓库加载前跑，避免冷启动被预热。实现集中在 00-程序树/工具/csharp/src/PTree.Cli/Program.cs；新增子命令时要同时补 usage、参数解析与退出码约定。
+    
+
+
+节点：interface.serve · 本地 HTTP 服务
+
+  类型/层级：program / 2；阶段：P1；状态：已完成
+  父节点：interface
+  依赖：interface
+  输入契约：tree.loaded
+  输出契约：http.response
+  落地文件：00-程序树/工具/csharp/src/PTree.Serve/Program.cs
+  验收：命令：启动 ptree-serve --port 7777 后 GET /api/health 返回 ok=true；测试：GET /api/node/core.app?format=full 与 tree_read_node 的 full 输出同源；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读 tree.loaded，用 BCL 在 127.0.0.1 提供 viewer 静态文件与读写 API，返回 JSON 或静态资源
+  不负责：不实现另一套校验或写盘路径，POST 必须复用 NodeTools；不做公网监听、鉴权与多用户隔离
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：http.response → interface
+
+  说明（00-程序树/说明/interface.serve.txt）：
+    这个程序提供只监听 127.0.0.1 的本地 HTTP 服务，让人和画布不必直接读文件。它用 TcpListener 手写 HTTP/1.1 解析，GET / 与白名单后缀返回 viewer 静态文件，GET /api/health、/api/status、/api/check、/api/node/{id}、/api/find 读取树，POST /api/node、/api/link、/api/node/update、/api/node/retire 把 body 原样交给 NodeTools 的写工具。写请求不另造校验或回滚路径，必须复用同一套内核实现；服务不做鉴权、不做公网监听，也不承担备份与提交。代码在 00-程序树/工具/csharp/src/PTree.Serve/Program.cs；改路由时要同步 viewer 的调用与静态白名单。
+    
+
+
+节点：interface.mcp-server.read · 只读工具组
+
+  类型/层级：step / 3；阶段：P1；状态：已完成
+  父节点：interface.mcp-server
+  依赖：interface.mcp-server
+  输入契约：无
+  输出契约：mcp.read.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs
+  验收：测试：tree_status 默认输出不超过 8 行，tree_read_node depth=1 默认输出不超过 9 行；测试：tree_find 最多返回 20 条且 status 过滤只返回匹配状态；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：把 status、map、guide、links、read_group、read_node、find、changes 编成只读工具卡
+  不负责：不写清单与说明文件；不跑备份与提交
+
+  连接：
+    上游：无
+    下游：mcp.read.result → interface
+
+  说明（00-程序树/说明/interface.mcp-server.read.txt）：
+    这个步骤是 MCP 目录里的只读工具组，负责让 AI 先看懂树再动手。它覆盖 tree_status、tree_map、tree_guide、tree_links、tree_read_group、tree_read_node、tree_find 与 tree_changes：状态卡给版本与计数，地图与阅读阶梯给功能块和组，节点读取按 depth 返回一圈邻居，查找最多 20 条，变更查询读台账。它只读 tree.loaded 与内核查询结果，不写清单、不跑备份、不提交；输出默认是短纯文本卡，format=full 才给完整 JSON。实现挂在 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs 的 ToolDefinitions 与 CallTool 分支上；加只读工具时先保证不引入写盘副作用。
+    
+
+
+节点：interface.mcp-server.write · 写工具组
+
+  类型/层级：step / 3；阶段：P1；状态：已完成
+  父节点：interface.mcp-server
+  依赖：interface.mcp-server
+  输入契约：无
+  输出契约：mcp.write.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs
+  验收：测试：tree_add_node 在 examples/demo 上写入成功后返回递增的 tree_version，回读父节点能看到新节点；测试：tree_update_node 只改传入字段并返回逐字段 diff；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：把 add、update、retire、relocate、delete、commit 与组工具接进目录，写后返回新 tree_version 与 errors
+  不负责：不实现写盘内核，只转发 NodeTools 与 GitSync；不绕过校验直接改 YAML
+
+  连接：
+    上游：无
+    下游：mcp.write.result → interface
+
+  说明（00-程序树/说明/interface.mcp-server.write.txt）：
+    这个步骤是 MCP 目录里的写工具组，负责把一次节点变更安全落到清单。它覆盖 tree_add_node、tree_add_group、tree_update_group、tree_add_link、tree_update_node、tree_retire_node、tree_relocate、tree_delete 与 tree_commit：新增节点自动推 id、层与组，改字段只动传入项，退役保留理由，迁移与删除处理路径，提交把一次写操作产生的文件归组。它只转发 NodeTools 与 GitSync 的结果，不自己拼 YAML、不跳过校验；每个成功写都要带回新的 tree_version、written_files 与 errors，失败必须由内核回滚。实现位于 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs；新增写工具时要先确认内核已有原子写与台账能力。
+    
+
+
+节点：interface.mcp-server.verify · 校验与备份工具组
+
+  类型/层级：step / 3；阶段：P1；状态：已完成
+  父节点：interface.mcp-server
+  依赖：interface.mcp-server
+  输入契约：无
+  输出契约：mcp.verify.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs
+  验收：测试：tree_check 返回 R01-R46 与 T01-T12 的错误明细且 ok 与 errors 一致；测试：tree_backup_config enabled=true 在未 setup 时拒绝并提示先跑 tree_backup_setup；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests 全绿
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：把 check、guard、scan 与 6 个 backup 工具接进目录，区分阻断校验与默认关闭的备份
+  不负责：不实现 R01-R46 与 T01-T12 规则；不生成备份密钥或改动全局凭据
+
+  连接：
+    上游：无
+    下游：mcp.verify.result → interface
+
+  说明（00-程序树/说明/interface.mcp-server.verify.txt）：
+    这个步骤是 MCP 目录里的校验与备份工具组，负责回答树现在能不能信。它覆盖 tree_check、tree_guard、tree_scan 与六个 tree_backup_*：check 跑 R01-R46 和跨树 T01-T12 并返回 E/W/I，guard 做操作前常检，scan 扫描固定目录里未登记的适配，backup_setup 配置凭据，backup_config 开关，backup_now 立即备份，backup_list 与 backup_verify 查备份点和可读性。它不实现规则、不生成密钥，只调用内核；备份默认关闭，未 setup 时必须拒绝启用。实现挂在 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs 的分发与 BackupService 调用上；改备份前置条件时要同步说明与验收。
+    
+
+
+节点：rules · 规则部
+
+  类型/层级：department / 1；阶段：P0；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：tree.loaded、rules.structure.report、rules.relations.report、rules.state.report、rules.docs.report、rules.backup.report、rules.planning.report、rules.structure.schema.result、rules.structure.identity.result、rules.structure.groups.result、rules.relations.contracts.result、rules.relations.dependency.result、rules.relations.links.result、rules.state.responsibility.result、rules.state.completion.result、rules.state.quality.result、rules.docs.spec.result、rules.docs.intro.result、rules.docs.standard.result、rules.backup.ledger.result、rules.backup.config.result、rules.backup.preset.result、rules.planning.cross-tree.result、rules.planning.coverage.result、rules.planning.scan.result
+  输出契约：无
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors、warnings、notes 三个数组均存在，每条带 code 与 message；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：有 E 时退出码为 1，无 E 时退出码为 0
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读入 program-tree.yaml、契约与四棵实例文档，按 R01-R46、T01-T12 逐条检查并产出带规则号与节点位置的 E/W/I 条目，供…
+  不负责：不改写被校验的树或契约；不替用户把节点标成已验证
+
+  连接：
+    上游：tree.loaded ← kernel.store；rules.structure.report ← rules.structure；rules.relations.report ← rules.relations；rules.state.report ← rules.state；rules.docs.report ← rules.docs；rules.backup.report ← rules.backup；rules.planning.report ← rules.planning；rules.structure.schema.result ← rules.structure.schema；rules.structure.identity.result ← rules.structure.identity；rules.structure.groups.result ← rules.structure.groups；rules.relations.contracts.result ← rules.relations.contracts；rules.relations.dependency.result ← rules.relations.dependency；rules.relations.links.result ← rules.relations.links；rules.state.responsibility.result ← rules.state.responsibility；rules.state.completion.result ← rules.state.completion；rules.state.quality.result ← rules.state.quality；rules.docs.spec.result ← rules.docs.spec；rules.docs.intro.result ← rules.docs.intro；rules.docs.standard.result ← rules.docs.standard；rules.backup.ledger.result ← rules.backup.ledger；rules.backup.config.result ← rules.backup.config；rules.backup.preset.result ← rules.backup.preset；rules.planning.cross-tree.result ← rules.planning.cross-tree；rules.planning.coverage.result ← rules.planning.coverage；rules.planning.scan.result ← rules.planning.scan
+    下游：无
+
+  说明（00-程序树/说明/rules.txt）：
+    规则部是程序树校验链路的总入口：从 00-程序树/program-tree.yaml 读取节点表，从 00-程序树/契约/contracts.yaml 读取契约，再读 00-程序树/树实例 下的策划、美术、UI 文档，交给 Validator.cs 与 ManifestChecker.cs 按 R01-R46、T01-T12 分派检查。处理时先建立节点 id 到原始字段的映射，再按结构、联系、状态、文档、备份、预设、跨树七组规则逐项比对，最终产出带 E/W/I 级别、规则号和节点位置的条目。边界是不改被校验的树、不替用户确认已验证，只报告可复核的问题。
+    
+
+
+节点：rules.structure · 结构与规模规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules
+  输入契约：tree.loaded
+  输出契约：rules.structure.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R01 且消息含缺失的顶层键名；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R03/R05/R06 且 node 为被改节点；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter "FullyQualifiedName~ValidationTests"；预期：0 failed
+  SPEC：00-程序树/规范/程序树规范_v1.txt
+
+  职责：读取清单顶层与节点表，执行 R01-R06 的顶层键、节点必填、id 唯一、根与父子、layer/kind 检查，并执行 R23 规模、R24 豁免、R38…
+  不负责：不判断职责文字是否重复；不扫描代码引用
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.structure.report → rules
+
+  说明（00-程序树/说明/rules.structure.txt）：
+    结构与规模规则从 PTreeRepository 加载的清单原始映射出发，在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中执行 R01-R06：检查顶层必填键、节点字段白名单、id 唯一、根节点存在、父子链闭合以及 layer 与 kind 的对应关系；随后执行 R23 规模提示、R24 豁免登记与 R38 组结构检查。处理时保留清单中的节点顺序，用 parent 链推导 layer，并把每个问题落到具体节点 id 或字段名。产出是结构类 E/W/I 条目，供规则部汇总；边界是不评价职责写法，也不扫描代码引用。
+    
+
+
+节点：rules.structure.schema · 顶层与字段检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.structure
+  依赖：rules.structure
+  输入契约：tree.loaded
+  输出契约：rules.structure.schema.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R01 且 node 为 rules；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R02 且 node 为被改节点
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读清单顶层键与节点必填字段表，按 R01/R02 比对允许键、类型与默认值，把缺键、未知键和非法枚举转成带节点 id 的条目
+  不负责：不检查父子链
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.structure.schema.result → rules
+
+  说明（00-程序树/说明/rules.structure.schema.txt）：
+    顶层与字段检查是结构规则的入口步骤，读取 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 里的 TopRequired、NodeRequired、NodeAllowed 常量，对清单顶层键、节点字段、kind 和 status 枚举逐项比对。它先确认 schema_version、tree_version、updated、root、phases、nodes 是否齐全，再检查节点必填字段是否缺项、是否出现白名单外的未知键，并把缺键名、非法值写进消息。产出是 R01/R02 条目，节点位置取被检查的节点 id；边界是只判断字段存在与取值，不判断父子关系是否闭合，也不推断业务语义。
+    
+
+
+节点：rules.structure.identity · 身份与层级检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.structure
+  依赖：rules.structure
+  输入契约：tree.loaded
+  输出契约：rules.structure.identity.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R04 且消息含根 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R05 且 node 为子节点
+  SPEC：00-程序树/规范/程序树规范_v1.txt
+
+  职责：读节点 id、root、parent 与 kind，按 R03-R06 检查 id 唯一与格式、根节点存在、父子闭合、layer 与 kind 匹配，并按…
+  不负责：不检查组结构
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.structure.identity.result → rules
+
+  说明（00-程序树/说明/rules.structure.identity.txt）：
+    身份与层级检查由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中的 R03-R06 实现，读取节点 id、root、parent、kind 与 layer，先查 id 唯一和格式，再查根节点是否指向真实节点、每个 parent 是否存在、父子链能否闭合，最后按 parent 链推导 layer 并与 kind 的合法层级比对。处理时对缺失父节点保留原始 id，对 layer 不一致给出推导值与警告，保证问题能定位到具体节点。产出是身份、根、父子、层级四类条目；边界是不检查 groups 段，也不判断节点职责和验收条件是否合理。
+    
+
+
+节点：rules.structure.groups · 规模豁免与组检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.structure
+  依赖：rules.structure
+  输入契约：tree.loaded
+  输出契约：rules.structure.groups.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R38 且消息含组 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 notes 中出现 R23 且消息含节点数
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读节点数量、豁免登记与 groups 段，按 R23 报规模提示、R24 校验豁免是否指向真实节点、R38 检查组 id、成员、parent 与两层上限
+  不负责：不自动修改组归属
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.structure.groups.result → rules
+
+  说明（00-程序树/说明/rules.structure.groups.txt）：
+    规模豁免与组检查读取 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中的 R23、R24、R38 逻辑，先统计节点数量给出规模提示，再核对豁免登记是否指向真实节点、是否重复，最后检查 groups 段的 id 格式、name、description、parent、成员存在性与两层深度上限。处理时把组成员同时允许节点 id 和组 id，遇到自指、环或超过两层的组直接报错。产出是规模与组结构条目，消息里带组 id、成员或深度；边界是不自动修改组归属，也不替设计者决定节点该放进哪个组。
+    
+
+
+节点：rules.relations · 联系与契约规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules、rules.structure
+  输入契约：tree.loaded
+  输出契约：rules.relations.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs、00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R09 或 R10 且消息含契约 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R11 或 R12 且 node 为被改节点；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R40 且消息含 from/to/type
+  SPEC：00-程序树/规范/核心/02_多树与对应.txt
+
+  职责：读取契约表与节点 inputs/outputs/depends_on，执行 R09-R12、R21、R22、R33 的契约引用、双向一致、依赖图、阶段与连接…
+  不负责：不判断节点职责写得对不对；不自动补 depends_on
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.relations.report → rules
+
+  说明（00-程序树/说明/rules.relations.txt）：
+    联系与契约规则读取 00-程序树/契约/contracts.yaml 与 00-程序树/工具/csharp/src/PTree.Core/Validator.cs，执行 R09-R12、R21、R22、R33、R40、R41：先确认节点 inputs/outputs 引用的契约存在，再检查契约 producers/consumers 与节点声明是否双向一致，随后查 depends_on 的自依赖、环、缺失目标和阶段顺序。R40 处理 links 段的 from/to/type/note，R41 扫描代码 using/import 并只提示未登记引用。产出是联系类条目，消息带契约 id、起止节点或重复键；边界是不自动补依赖，也不判断职责文本。
+    
+
+
+节点：rules.relations.contracts · 契约引用检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.relations
+  依赖：rules.relations
+  输入契约：tree.loaded
+  输出契约：rules.relations.contracts.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R09 且消息含不存在的契约 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R10 且 node 为节点 id
+  SPEC：00-程序树/规范/核心/02_多树与对应.txt
+
+  职责：读 contracts.yaml 与节点 inputs/outputs，按 R09 检查引用契约是否存在、按 R10 检查 producers/consum…
+  不负责：不检查依赖图
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.relations.contracts.result → rules
+
+  说明（00-程序树/说明/rules.relations.contracts.txt）：
+    契约引用检查集中在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R09、R10、R21，先读 contracts.yaml 建立契约 id 到 producer/consumer 的索引，再逐节点比对 inputs/outputs；R09 报引用不存在的契约，R10 报 producers 或 consumers 与本节点声明不一致，R21 对契约版本异常给提示。处理时保留契约在文件中的顺序，消息同时写契约 id 和节点 id，便于从 validate 输出直接定位。产出是契约类条目；边界是只检查契约连接，不检查依赖闭包，也不自动修改 contracts.yaml。
+    
+
+
+节点：rules.relations.dependency · 依赖与阶段检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.relations
+  依赖：rules.relations
+  输入契约：tree.loaded
+  输出契约：rules.relations.dependency.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R11 且消息含自依赖或环；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R12 且消息含非法 phase
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读 depends_on 与 phase 表，按 R11 查自依赖、环、缺失目标，按 R12 查阶段顺序，按 R22 查阶段覆盖，按 R33 查依赖是否有契…
+  不负责：不扫描代码 import
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.relations.dependency.result → rules
+
+  说明（00-程序树/说明/rules.relations.dependency.txt）：
+    依赖与阶段检查读取节点 depends_on、phase 与 phases 表，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R11、R12、R22、R33 执行：R11 查自依赖、依赖环和不存在的目标，R12 查阶段是否在 phases 中以及落地顺序是否倒退，R22 查阶段覆盖，R33 把依赖与契约产出对照，提示没有契约支撑的依赖。处理时用节点表和祖先闭包判断合法性，消息保留起止节点 id。产出是依赖与阶段条目；边界是不扫描代码文件里的 import，也不替用户补 depends_on。
+    
+
+
+节点：rules.relations.links · 联系登记与引用扫描
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.relations
+  依赖：rules.relations
+  输入契约：tree.loaded
+  输出契约：rules.relations.links.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R40 且消息含非法 type；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：notes 中出现 R41 且消息含来源文件
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读 manifests 的 links 段与登记文件的 using/import，按 R40 校验 from/to/type/note 与重复，按 R41…
+  不负责：不阻断未登记引用
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.relations.links.result → rules
+
+  说明（00-程序树/说明/rules.relations.links.txt）：
+    联系登记与引用扫描由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R40、R41 实现，先读清单 links 段，检查 from/to 是否指向真实节点或网格条目、type 是否在允许集合内、是否自连接或重复，再要求每条有效联系带 note；随后扫描已登记代码文件的 using/import，把跨节点但未登记的引用作为提示。处理时保留 links 原始下标，消息写 from、to、type 或来源文件。产出是联系结构条目与引用提示；边界是 R41 只提示不阻断，也不自动新增 links。
+    
+
+
+节点：rules.state · 状态质量与验收规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules、rules.structure、rules.relations
+  输入契约：tree.loaded
+  输出契约：rules.state.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/ValidationPayloads.cs、00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 warnings 中出现 R07 或 R08 且 node 为节点 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R13、R14、R16 或 R46 且 node 为节点 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 notes 中出现 R25-R29 或 R34 且 node 为节点 id
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读取节点职责、状态、验收、evidence、评价与标杆文件，执行 R07/R08 职责、R13/R14/R16 完成度、R25-R29 标杆与规模、R34…
+  不负责：不代替用户确认功能；不改节点状态
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.state.report → rules
+
+  说明（00-程序树/说明/rules.state.txt）：
+    状态质量与验收规则读取节点 responsibility、status、acceptance、evidence、evaluation 与标杆文件，在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中执行 R07/R08 职责检查、R13/R14/R16 完成度检查、R25-R29 标杆与规模检查、R34 评价检查、R46 已验证证据检查。处理时先比对各状态允许的产物，再核对 evidence 是否含 test/at/result，最后把问题落到节点 id。产出由 ValidationPayload 承载，供规则部汇总；边界是不改状态、不代替用户确认功能，也不生成评价内容。
+    
+
+
+节点：rules.state.responsibility · 职责声明与重复检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.state
+  依赖：rules.state
+  输入契约：tree.loaded
+  输出契约：rules.state.responsibility.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：warnings 中出现 R07 且 node 为节点 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：warnings 中出现 R08 且消息含两个节点 id
+  SPEC：00-程序树/规范/程序树规范_v1.txt
+
+  职责：读节点 responsibility 与兄弟节点，按 R07 检查职责是否写清输入到输出的动作，按 R08 用相似度检查跨节点职责重复
+  不负责：不检查验收条件
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.state.responsibility.result → rules
+
+  说明（00-程序树/说明/rules.state.responsibility.txt）：
+    职责声明与重复检查读取节点的 responsibility 字段和同层节点文本，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R07/R08 执行。R07 检查职责是否写成可执行的动作链，是否只是“负责某模块”这类空话，并检查不做什么是否写清；R08 对节点职责做相似度比较，把高度重复的节点对作为问题输出。处理时保留原文并只在消息里引用节点 id，方便作者回到清单修改。产出是职责类 W/E 条目；边界是不重写职责，也不判断功能本身是否值得做。
+    
+
+
+节点：rules.state.completion · 完成度与证据检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.state
+  依赖：rules.state
+  输入契约：tree.loaded
+  输出契约：rules.state.completion.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/ValidationPayloads.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R46 且 node 为已验证节点；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 warnings 中出现 R16 且消息含父子 id
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读节点 status、acceptance、evidence、files 与父子状态，按 R13 查状态与产物一致性、R14 查验收证据、R16 查父子完成…
+  不负责：不修改状态
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.state.completion.result → rules
+
+  说明（00-程序树/说明/rules.state.completion.txt）：
+    完成度与证据检查读取节点 status、acceptance、evidence、files 与父子状态，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R13/R14/R16/R46 执行：R13 查状态与产物是否一致，R14 查验收条件与 evidence 是否齐全，R16 查父节点完成时子节点是否拖后腿，R46 要求已验证节点必须带 result=pass 的记录。处理时把每个缺失项落到节点 id，消息写清缺的是验收、证据还是实现文件。产出由 ValidationPayload 承载；边界是不修改状态，也不把未完成节点自动标成已完成。
+    
+
+
+节点：rules.state.quality · 标杆与评价检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.state
+  依赖：rules.state
+  输入契约：tree.loaded
+  输出契约：rules.state.quality.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R26 且消息含节点与标杆 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R34 且 node 为节点 id
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读 benchmarks.yaml、绑定.yaml、evaluation 文本与健康检查输出，按 R25-R29 校验标杆定义、绑定、覆盖、时效与规模，按…
+  不负责：不创建标杆
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.state.quality.result → rules
+
+  说明（00-程序树/说明/rules.state.quality.txt）：
+    标杆与评价检查读取 00-程序树/标杆/benchmarks.yaml、绑定.yaml、节点 evaluation 与健康检查结果，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R25-R29、R34 执行：检查标杆 schema、level 集合、绑定覆盖、差距时效、规模上限与评价四行格式，同时用 HealthCheck.cs 报告登记文件消失、目录缺失、已完成无实现三类问题。处理时保留标杆 id、节点 id 与缺失项，产出质量类条目；边界是不创建标杆、不修改评价，也不把健康提示升级成阻断错误。
+    
+
+
+节点：rules.docs · 文档与阅读项规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules、rules.structure
+  输入契约：tree.loaded
+  输出契约：rules.docs.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R31、R37 或 R39 且消息含文件路径或条目 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 warnings 中出现 R15、R17、R18 或 R36 且 node 为节点 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：warnings 中出现 R42 且消息含节点 id
+  SPEC：00-程序树/规范/程序介绍格式_v2.txt
+
+  职责：读取 spec、说明、短介绍、网格实例与预设文案，执行 R15/R17/R18/R36 的路径与 SPEC 检查、R31/R37/R39 的说明与短介绍检查…
+  不负责：不判断程序功能是否正确；不改写说明文本
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.docs.report → rules
+
+  说明（00-程序树/说明/rules.docs.txt）：
+    文档与阅读项规则读取节点 spec、home、说明文件、短介绍、网格实例与预设文案，在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 与 TreeStore.cs 中执行 R15/R17/R18/R36 的路径与 SPEC 检查、R31/R37/R39 的说明与短介绍检查、R42 的预设转正文案检查。处理时按节点 id 定位说明文件，按文本去空白字数、占位词、行首标记和路径片段逐项比对，再读网格条目核对短介绍。产出是文档类 E/W 条目；边界是不改说明、不替作者补写，也不判断文笔。
+    
+
+
+节点：rules.docs.spec · spec 与物理目录检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.docs
+  依赖：rules.docs
+  输入契约：tree.loaded
+  输出契约：rules.docs.spec.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R15 且消息含 spec 路径；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R17 且 node 为节点 id
+  SPEC：00-程序树/规范/核心/04_权限与动文件.txt
+
+  职责：读节点 spec、home、files 与 program.yaml，按 R15 查 spec 路径可追溯、R17 查 home 目录与 program.y…
+  不负责：不检查说明正文
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.docs.spec.result → rules
+
+  说明（00-程序树/说明/rules.docs.spec.txt）：
+    spec 与物理目录检查读取节点 spec、home、files 和 program.yaml，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R15/R17/R18/R36 执行：R15 查 spec 路径是否真实存在且可追溯，R17 查 home 目录、program.yaml 与登记文件是否一致，R18 查 SPEC 内容是否齐全，R36 查自动适配目录与模式是否合法。处理时把相对仓库根的路径与节点 id 一起写入消息，遇到目录整体缺失时明确指出。产出是路径与 SPEC 条目；边界是不创建目录、不生成 SPEC，也不修改自动适配配置。
+    
+
+
+节点：rules.docs.intro · 说明与阅读项检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.docs
+  依赖：rules.docs
+  输入契约：tree.loaded
+  输出契约：rules.docs.intro.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R31 且消息含说明文件路径；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：warnings 中出现 R37 或 R39 且消息含条目 id
+  SPEC：00-程序树/规范/程序介绍格式_v2.txt
+
+  职责：读说明文件、短介绍与网格实例，按 R31 查 200 字下限、占位词、Markdown、数字编号与路径片段，按 R37 查节点短介绍、R39 查网格条目短介…
+  不负责：不判断文笔
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.docs.intro.result → rules
+
+  说明（00-程序树/说明/rules.docs.intro.txt）：
+    说明与阅读项检查读取 00-程序树/说明/<节点id>.txt、00-程序树/短介绍 与网格实例，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R31/R37/R39/R42 执行。R31 检查说明去空白后是否达到 200 字、是否含占位词、行首是否出现 Markdown 或数字编号、通篇是否出现真实路径；R37 检查短介绍长度和占位词；R39 检查网格条目短介绍；R42 检查预设转正后的文案是否与建成状态一致。产出是说明类条目；边界是不修改文本，只报告需要作者改的位置。
+    
+
+
+节点：rules.docs.standard · 规范目录核对
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.docs
+  依赖：rules.docs
+  输入契约：tree.loaded
+  输出契约：rules.docs.standard.result
+  落地文件：00-程序树/规范/核心/00_文档写法.txt、00-程序树/规范/核心/01_程序树核心.txt、00-程序树/规范/核心/02_多树与对应.txt、00-程序树/规范/核心/03_时间与版本.txt、00-程序树/规范/核心/04_权限与动文件.txt、00-程序树/规范/核心/05_文档形态与确认.txt、00-程序树/规范/校验规则_v1.txt、00-程序树/规范/程序树规范_v1.txt、00-程序树/规范/阅读阶梯_v1.txt、00-程序树/规范/程序介绍格式_v2.txt、00-程序树/规范/备份_v1.txt
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：11 篇规范文件的 spec 路径均存在且 errors 中无 R15；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter "FullyQualifiedName~ValidationTests"；预期：0 failed
+  SPEC：00-程序树/规范/核心/00_文档写法.txt
+
+  职责：读六篇核心规范与五篇专题文档，核对版本行、日期、状态词、校验规则编号与实现文件路径是否一致，把过期条款列为待修订条目
+  不负责：不修改规范正文
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.docs.standard.result → rules
+
+  说明（00-程序树/说明/rules.docs.standard.txt）：
+    规范目录核对读取 00-程序树/规范 下六篇核心规范与五篇专题文档，逐篇核对版本行、日期、状态词、规则编号与实现文件路径。处理时先按目录确认 00_文档写法、01_程序树核心、02_多树与对应、03_时间与版本、04_权限与动文件、05_文档形态与确认 六篇齐全，再核对 校验规则_v1、程序树规范_v1、阅读阶梯_v1、程序介绍格式_v2、备份_v1 五篇专题的条款能否在 Validator.cs、BackupService.cs 与 TreeStore.cs 中找到对应。产出是规范缺口清单；边界是不改规范正文，也不替作者补条款。
+    
+
+
+节点：rules.backup · 备份台账与预设规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules
+  输入契约：tree.loaded
+  输出契约：rules.backup.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/BackupService.cs、00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R32 且消息含台账行号；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R43 且消息含配置键；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 notes 中出现 R35 或 R44 且 node 为节点 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll backup scan --json；预期：命中密钥时 findings 非空且退出码 1，不生成 bundle、不写成功台账
+  SPEC：00-程序树/规范/备份_v1.txt
+
+  职责：读取变更台账、运维备份配置与预设节点，执行 R32 台账结构、R43 备份配置、R35 预设节点、R44 预设长期未转正检查，输出台账与备份条目
+  不负责：不执行真实备份；不读取密钥内容
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.backup.report → rules
+
+  说明（00-程序树/说明/rules.backup.txt）：
+    备份台账与预设规则读取 00-程序树/变更/台账.jsonl、00-程序树/运维/备份.yaml 与预设节点，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs、BackupService.cs、BackupConfig.cs 执行 R32/R35/R43/R44。R32 检查台账每行的 id、时间、目标、validation 计数与 result；R43 检查 enabled、mode、retention、targets、last_run 的类型和取值范围；R35 检查预设节点的状态与输出；R44 提示超过 30 天未转正的预设。产出是台账与备份条目；边界是不执行真实备份、不读取密钥内容。
+    
+
+
+节点：rules.backup.ledger · 变更台账检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.backup
+  依赖：rules.backup
+  输入契约：tree.loaded
+  输出契约：rules.backup.ledger.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R32 且消息含行号；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R32 且消息含重复 chg id
+  SPEC：00-程序树/规范/备份_v1.txt
+
+  职责：读台账.jsonl 每行 JSON，按 R32 检查 id 形如 chg-YYYYMMDD-NNNN、必填字段、validation 计数、result 取…
+  不负责：不写台账
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.backup.ledger.result → rules
+
+  说明（00-程序树/说明/rules.backup.ledger.txt）：
+    变更台账检查读取 00-程序树/变更/台账.jsonl，每行按 JSON 解析，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R32 检查 id 是否符合 chg-YYYYMMDD-NNNN、at 与 tree_version 是否齐全、validation.errors/warnings 是否为非负整数、result 是否为 applied 或 rolled_back、proposal 字段是否合法，并查重复 id。处理时保留行号，解析失败也落到具体行。产出是台账类 E/W 条目；边界是不写台账、不修改历史记录，也不判断 proposal 内容是否合理。
+    
+
+
+节点：rules.backup.config · 备份配置检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.backup
+  依赖：rules.backup
+  输入契约：tree.loaded
+  输出契约：rules.backup.config.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R43 且消息含 mode；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R43 且消息含 retention；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：secret_scan 非布尔或 secret_allowlist 项缺 path/fingerprint/reason 时返回 R43
+  SPEC：00-程序树/规范/备份_v1.txt
+
+  职责：读运维/备份.yaml，按 R43 检查 enabled、mode、retention、targets、last_run、secret_scan 与 sec…
+  不负责：不接触备份产物
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.backup.config.result → rules
+
+  说明（00-程序树/说明/rules.backup.config.txt）：
+    备份配置检查读取 00-程序树/运维/备份.yaml，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R43 执行：先确认顶层是映射，再检查 enabled 是否为布尔值、mode 是否为 git-bundle/tag/copy、retention 是否在 1 到上限之间、targets 是否为非空字符串列表，最后检查 last_run 与 last_tree_version 的类型并提示未知字段。处理时把错误落到配置键，启用但 targets 为空时给警告。产出是备份配置条目；边界是只校验形状与取值，不接触密钥、不执行备份。
+    
+
+
+节点：rules.backup.preset · 预设节点检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.backup
+  依赖：rules.backup
+  输入契约：tree.loaded
+  输出契约：rules.backup.preset.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 中出现 R35 且 node 为 preset 节点；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：notes 中出现 R44 且消息含天数
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读节点 preset、preset_outputs、status、files 与 created_at，按 R35 检查占位节点状态与输出，按 R44 提示…
+  不负责：不自动转正
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.backup.preset.result → rules
+
+  说明（00-程序树/说明/rules.backup.preset.txt）：
+    预设节点检查读取节点 preset、preset_outputs、status、files 与 created_at，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R35/R44 执行。R35 检查占位节点状态是否仍为未完成、是否用 preset_outputs 或 outputs 说明将来产出、是否误写了实现文件；R44 按 PresetStaleDays 计算创建天数，对超过 30 天仍未转正的预设给提示。处理时保留节点 id 与天数，产出预设类 E/I 条目；边界是不自动转正、不修改节点状态，也不判断预设功能是否值得保留。
+    
+
+
+节点：rules.planning · 跨树与策划对账规则
+
+  类型/层级：program / 2；阶段：P0；状态：已完成
+  父节点：rules
+  依赖：rules、rules.relations、rules.docs
+  输入契约：tree.loaded
+  输出契约：rules.planning.report
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs、00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T02-T06 无 E 且 node 为策划树或程序条目；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T07-T12 无 E 且 node 为策划树或清单；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 notes 中出现 R19、R20 或 R45 且消息含目录或条目 id
+  SPEC：00-程序树/规范/核心/05_文档形态与确认.txt
+
+  职责：读取四棵实例文档与清单，执行 T02-T12 的确认状态、引用存在、美术/UI 字段、状态、组、时间、策划覆盖、附件、文档形态与预设节点检查，并执行 R19…
+  不负责：不修改策划条目；不代替用户确认策划
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.planning.report → rules
+
+  说明（00-程序树/说明/rules.planning.txt）：
+    跨树与策划对账规则读取 00-程序树/树实例 下的程序、策划、美术、UI 文档与清单，在 00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs、TreeStore.cs、Validator.cs 中执行 T02-T12 与 R19/R20/R45：检查策划确认状态、引用存在、美术/UI 字段、四值状态、组、时间、策划覆盖、附件、文档形态与体验预设节点，再扫未登记代码和跨节点 import。产出是跨树与策划条目；边界是不改策划条目、不代替用户确认，也不把提示升级成阻断。
+    
+
+
+节点：rules.planning.cross-tree · 跨树引用与字段检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.planning
+  依赖：rules.planning
+  输入契约：tree.loaded
+  输出契约：rules.planning.cross-tree.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs、00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T02 或 T03 出现 E 且消息含策划条目 id；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T04、T05 或 T06 出现 E 且 node 为条目 id
+  SPEC：00-程序树/规范/核心/02_多树与对应.txt
+
+  职责：读程序、策划、美术、UI 四份实例与字段定义，按 T02 查确认状态、T03 查引用存在、T04/T05 查美术与 UI 必填、T06 查四值状态
+  不负责：不查策划覆盖
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.planning.cross-tree.result → rules
+
+  说明（00-程序树/说明/rules.planning.cross-tree.txt）：
+    跨树引用与字段检查读取程序、策划、美术、UI 四份实例与字段定义，由 00-程序树/工具/csharp/src/PTree.Core/TreeStore.cs 与 ManifestChecker.cs 的 T02-T06 执行：T02 查策划条目的确认状态，T03 查条目引用是否指向存在的目标，T04/T05 查美术与 UI 条目的必填字段，T06 查四值状态与退役记录。处理时保留实例中的行号，断链会同时写来源条目和目标 id。产出是跨树条目；边界是不检查策划全覆盖，也不修改实例文档。
+    
+
+
+节点：rules.planning.coverage · 策划覆盖与文档形态检查
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.planning
+  依赖：rules.planning
+  输入契约：tree.loaded
+  输出契约：rules.planning.coverage.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T09 出现 E 且 node 为未映射的 program 节点；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll check；预期：T11 或 T12 出现 E 且 node 为策划条目 id
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读策划树的对应程序、文档形态与确认状态，按 T09 检查每个 program 是否被引用或带 planning_exemption、按 T11/T12 检查…
+  不负责：不代替用户确认
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.planning.coverage.result → rules
+
+  说明（00-程序树/说明/rules.planning.coverage.txt）：
+    策划覆盖与文档形态检查读取策划树的对应程序、文档形态与确认状态，由 00-程序树/工具/csharp/src/PTree.Core/ManifestChecker.cs 的 T07-T12 执行：T09 要求每个 program 被策划条目引用或带 planning_exemption，T11 检查文档形态只能是整合稿或转述稿，T12 检查确认状态与体验预设节点，同时核对组、时间戳、附件。处理时把未覆盖的 program 和策划条目行号写进消息，产出覆盖类条目；边界是不代替用户确认策划，也不自动补条目。
+    
+
+
+节点：rules.planning.scan · 未登记代码与缺口扫描
+
+  类型/层级：step / 3；阶段：P0；状态：已完成
+  父节点：rules.planning
+  依赖：rules.planning
+  输入契约：tree.loaded
+  输出契约：rules.planning.scan.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/Validator.cs、00-程序树/工具/csharp/src/PTree.Core/ProgramWalker.cs
+  验收：命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：errors 或 notes 中出现 R19 且消息含未登记目录；命令：dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll validate --json；预期：notes 中出现 R45 且 node 为策划条目 id
+  SPEC：00-程序树/规范/阅读阶梯_v1.txt
+
+  职责：读登记目录、代码文件的 import/using 与策划文档列，按 R19 扫未登记代码目录、R20 扫跨节点 import、R45 列有对应程序但缺文档的…
+  不负责：不修改目录
+
+  连接：
+    上游：tree.loaded ← kernel.store
+    下游：rules.planning.scan.result → rules
+
+  说明（00-程序树/说明/rules.planning.scan.txt）：
+    未登记代码与缺口扫描读取清单 conventions.program_root 指定的程序根目录、已登记文件与策划文档列，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R19/R20/R45 执行：R19 找含代码但没有 program.yaml 或未登记的目录，R20 扫跨节点 import/using 并提示依赖，R45 列有对应程序但缺策划文档的条目。处理时跳过隐藏目录、node_modules 与共享目录，保留目录或条目 id。产出是扫描类 E/I 条目；边界是不移动文件、不创建 program.yaml，也不改策划文档。
+    
+
+
+节点：canvas · 画布部
+
+  类型/层级：department / 1；阶段：P2；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：无
+  输出契约：无
+  验收：命令：node --check 00-程序树/工具/viewer/viewer.js 退出码 0；人工清单：file:// 打开 index.html 无 JS 报错，画布、工具栏与状态栏全部出图
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+  备注：两处已知缺陷见 canvas.viewer-grid 与 canvas.grid-export 的 notes，对应 README 已知不足第 1、8 条
+
+  职责：把树数据导出成快照并渲染成可缩放、可筛选、可下钻的只读网格视图
+  不负责：不实现内核校验与清单写盘；不维护发布打包与示例骨架
+
+  连接：
+    上游：无
+    下游：无
+
+  说明（00-程序树/说明/canvas.txt）：
+    画布部是程序树工具的面子层，负责把机器清单与四张树实例变成人能直接看、能缩放点选的只读网格。它分成两半：一半由 00-程序树/工具/适配/grid_export.py 把 program-tree.yaml 与 树实例 解析成 window.GRID_DATA 快照，另一半由 00-程序树/工具/viewer/index.html、style.css 与 viewer.js 把快照画成画布与表格。画布部只读清单，不在树数据上做判断，也不承担内核的命令行与 MCP 接口。判断这一部是否做成的看三条：直接打开 index.html 能出图且无脚本报错，重跑导出后快照计数与清单一致，实时模式下写操作失败会把 errors 原样显示。已知两处缺口是组框折叠状态不持久、快照需要手动重导，分别记在画布渲染引擎与网格导出器的说明里。
+    
+
+
+节点：canvas.viewer-shell · 视图外壳
+
+  类型/层级：program / 2；阶段：P2；状态：已完成
+  父节点：canvas
+  依赖：canvas
+  输入契约：canvas.page-status
+  输出契约：canvas.page-shell
+  落地文件：00-程序树/工具/viewer/index.html、00-程序树/工具/viewer/style.css
+  验收：人工清单：双击 index.html 打开无 404 资源，顶部出现七个网格页签；人工清单：工具栏含搜索、图形与表格切换、状态与部门与阶段筛选、显示层数与边类型开关；命令：Select-String -Path 00-程序树/工具/viewer/index.html -SimpleMatch -Pattern 'id="searchInput"','id="graph"','id="detail"','id="statLine"','id="gridTabs"' 命中 5 行
+  SPEC：00-程序树/工具/viewer/README.txt
+
+  职责：提供单页骨架与深色主题样式，按工具栏、画布、详情与状态栏分区承接渲染脚本
+  不负责：不计算布局与画节点；不读取树数据
+
+  连接：
+    上游：canvas.page-status ← canvas.viewer-grid
+    下游：canvas.page-shell → canvas.viewer-grid
+
+  说明（00-程序树/说明/canvas.viewer-shell.txt）：
+    视图外壳是画布的静态骨架，文件是 00-程序树/工具/viewer/index.html 与 00-程序树/工具/viewer/style.css。它把页面切成顶部页签与标题、工具栏、左侧画布或表格区、右侧详情栏、底部状态条五块，并给关键控件留固定锚点：搜索框 searchInput、画布 canvas 的 graph、详情栏 detail、状态条 statLine、页签容器 gridTabs，渲染脚本靠这些 id 找元素。样式是深色主题，状态色与四类关系的线色都写在 style.css 的根变量里，未完成灰、已完成蓝、已验证绿、退役灰并划线。它的边界是只搭壳不画内容：节点、关系线、组框、详情文字全由 viewer.js 填，它也不读取任何树数据。改动时保持 id 与 class 稳定，否则脚本会静默失效。
+    
+
+
+节点：canvas.viewer-grid · 网格渲染引擎
+
+  类型/层级：program / 2；阶段：P2；状态：未完成
+  父节点：canvas
+  依赖：canvas.viewer-shell、canvas.grid-export
+  输入契约：canvas.page-shell、canvas.grid-data、canvas.view-state
+  输出契约：canvas.page-status
+  验收：命令：node --check 00-程序树/工具/viewer/viewer.js 退出码 0；命令：Select-String -Path 00-程序树/工具/viewer/viewer.js -SimpleMatch -Pattern 'function buildGrid(','function computeLayout(','function walk(','function include(','function relayout(','function render(','function drawEdges(','function drawBlocks(','function renderNodeDetail(' 命中 9 行；人工清单：点节点右侧出现一圈联系，搜索命中自动聚焦首个节点，状态与部门筛选同时生效时可见数与画布一致
+  SPEC：00-程序树/工具/viewer/README.txt
+  备注：折叠状态刷新后不保持，缺持久化；规格见 说明/canvas.viewer-grid.txt，代码在 00-程序树/工具/viewer/viewer.js
+
+  职责：读页面骨架与画布快照，按 parent 与 layer 布局节点并把筛选、详情与写操作写回页面状态
+  不负责：不生成快照数据；不实现服务端读写接口
+
+  连接：
+    上游：canvas.page-shell ← canvas.viewer-shell；canvas.grid-data ← canvas.grid-export；canvas.view-state ← canvas.viewer-grid.interaction
+    下游：canvas.page-status → canvas.viewer-shell
+
+  说明（00-程序树/说明/canvas.viewer-grid.txt）：
+    网格渲染引擎是画布的主脚本，入口是 00-程序树/工具/viewer/viewer.js，约两千行且零外部依赖。它从 window.GRID_DATA 建索引，用 buildGrid 按页签组装当前网格，布局交给 computeLayout、walk、include、relayout 按 parent 与 layer 分行并处理折叠与筛选，绘制交给 render、drawNodes、drawEdges、drawBlocks 画四类关系线与组框，命中测试 hitTest、缩放平移 fitView 与 setZoom 处理交互，详情与写操作在 renderNodeDetail、renderBlockDetail、renderTable、submitAddNode、postUpdateCompat 里，实时模式走 /api 请求，只读模式只读快照。它的边界是不产快照、不实现服务端接口。已知缺口是组框折叠状态只存本次会话，刷新后恢复展开。
+    
+
+
+节点：canvas.viewer-grid.layout · 布局与可见性
+
+  类型/层级：step / 3；阶段：P2；状态：已完成
+  父节点：canvas.viewer-grid
+  依赖：canvas.viewer-grid
+  输入契约：canvas.grid-data
+  输出契约：canvas.layout-plan
+  落地文件：00-程序树/工具/viewer/viewer.js
+  验收：人工清单：切换显示到 N 层后只保留前 N 层节点，状态栏可见数与画布一致；人工清单：折叠组框后成员节点与相关边同时收起，展开后坐标回到原层；命令：Select-String -Path 00-程序树/工具/viewer/viewer.js -SimpleMatch -Pattern 'function computeLayout(','function walk(','function include(','function relayout(' 命中 4 行
+  SPEC：00-程序树/工具/viewer/README.txt
+
+  职责：按节点 parent 与 layer 计算分行坐标、可见性与组框包围盒，筛选或折叠后整体重排
+  不负责：不绘制像素；不处理搜索输入
+
+  连接：
+    上游：canvas.grid-data ← canvas.grid-export
+    下游：canvas.layout-plan → canvas.viewer-grid.draw
+
+  说明（00-程序树/说明/canvas.viewer-grid.layout.txt）：
+    布局与可见性管 00-程序树/工具/viewer/viewer.js 里的坐标与可见集合。computeLayout 按当前网格的根与显示层数建层级带，walk 深度优先把每个节点的可见性与位置写进 layout 的位置表，include 判断节点是否被折叠组框或筛选器挡住，relayout 在筛选、折叠、切页签之后统一重算并触发重绘。它把结果交给绘制步骤，自身不碰画布像素，也不处理搜索输入。需要知道的折中是组框按成员包围盒算，嵌套组会互相压边，所以部门组默认不画。验证方法是切换显示层数与折叠几个组框，看状态栏可见数是否与画布上的节点数一致。
+    
+
+
+节点：canvas.viewer-grid.draw · 画布绘制
+
+  类型/层级：step / 3；阶段：P2；状态：已完成
+  父节点：canvas.viewer-grid
+  依赖：canvas.viewer-grid
+  输入契约：canvas.layout-plan
+  输出契约：canvas.draw-frame
+  落地文件：00-程序树/工具/viewer/viewer.js
+  验收：人工清单：四类线型与图例一致，包含为细淡线、依赖为实线箭头、契约流为虚线箭头、策划为点线箭头；人工清单：滚轮缩放与拖拽平移后双击画布，全部节点回到可见范围；命令：Select-String -Path 00-程序树/工具/viewer/viewer.js -SimpleMatch -Pattern 'function render(','function drawEdges(','function drawBlocks(','function drawNodes(','function hitTest(','function fitView(' 命中 6 行
+  SPEC：00-程序树/工具/viewer/README.txt
+
+  职责：把布局结果画成节点卡片、四类关系线、组框与层级标签，并提供命中测试与缩放平移
+  不负责：不决定谁可见；不刷新详情面板
+
+  连接：
+    上游：canvas.layout-plan ← canvas.viewer-grid.layout
+    下游：canvas.draw-frame → canvas.viewer-grid.interaction
+
+  说明（00-程序树/说明/canvas.viewer-grid.draw.txt）：
+    画布绘制独占 00-程序树/工具/viewer/viewer.js 里的 canvas 绘制代码。render 先清屏再按组框、边、节点的顺序画，保证节点压在组框上层；drawBlocks 画半透明组框与标题条，drawEdges 按类型画包含、依赖、契约流、对应策划四类线并加箭头，drawNodes 画节点卡片、状态点与层级标签，drawLayerLabels 标左侧层名，fitText 做文字截断。hitTest 与 drawEdges 共用边几何做点选命中，fitView 与 setZoom 处理双击适配与滚轮缩放。边界是不决定谁可见、不刷新详情面板。已知代价是组框折叠后成员原位置留白，不做布局避让。
+    
+
+
+节点：canvas.viewer-grid.interaction · 交互与详情
+
+  类型/层级：step / 3；阶段：P2；状态：已完成
+  父节点：canvas.viewer-grid
+  依赖：canvas.viewer-grid
+  输入契约：canvas.draw-frame
+  输出契约：canvas.view-state
+  落地文件：00-程序树/工具/viewer/viewer.js
+  验收：人工清单：点节点、边、组框分别出节点卡、联系卡与组卡；人工清单：实时模式写操作回显 tree_version 前后值与 errors，失败不吞错；命令：Select-String -Path 00-程序树/工具/viewer/viewer.js -SimpleMatch -Pattern 'function renderNodeDetail(','function renderBlockDetail(','function renderTable(','function applyFilters(','function submitAddNode(' 命中 5 行
+  SPEC：00-程序树/工具/viewer/README.txt
+
+  职责：处理悬停与点选、搜索筛选与表格视图，并在实时模式把写操作结果渲染到详情与状态栏
+  不负责：不实现内核写接口；不缓存树数据
+
+  连接：
+    上游：canvas.draw-frame ← canvas.viewer-grid.draw
+    下游：canvas.view-state → canvas.viewer-grid
+
+  说明（00-程序树/说明/canvas.viewer-grid.interaction.txt）：
+    交互与详情管 00-程序树/工具/viewer/viewer.js 里的选中、搜索、表格与写操作回显。selectNode、selectPlan、selectBlock、selectEdge 维护当前选中，renderDetail 分派到节点卡、策划卡、网格条目卡、组卡、联系卡五种；refreshMatches、focusFirstMatch、applyFilters 管搜索高亮与状态、部门、阶段筛选；renderTable 在表格视图按字段出列。实时模式由 initMode、ensureBridge、apiFetch 探测数据源，submitAddNode、submitAddLink、setNodeStatus 走写接口，showWriteResult 把 tree_version 前后值与 errors 原样显示，不吞错。边界是不实现内核写接口、不缓存树数据。
+    
+
+
+节点：canvas.grid-export · 网格导出器
+
+  类型/层级：program / 2；阶段：P2；状态：未完成
+  父节点：canvas
+  依赖：canvas
+  输入契约：canvas.grid-graph
+  输出契约：canvas.grid-data
+  验收：命令：python 00-程序树/工具/适配/grid_export.py --root . 退出码 0 且 data.js 的 meta.tree_version 与清单一致；命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern 'def parse_rows(','def read_short(','def build_row_graph(','def graph_for_program(' 命中 4 行；人工清单：重跑导出后 meta.generated_at 更新，nodes 与 links 与 grids 计数和清单一致
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+  备注：data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；README 提到的 bridge.html 实际缺失
+
+  职责：读清单与四份树实例，解析网格行并拼出父子、依赖、契约流、策划与组联系，写出 data.js 快照
+  不负责：不渲染画布；不修改清单与树实例
+
+  连接：
+    上游：canvas.grid-graph ← canvas.grid-export.graph
+    下游：canvas.grid-data → canvas.viewer-grid、canvas.viewer-grid.layout
+
+  说明（00-程序树/说明/canvas.grid-export.txt）：
+    网格导出器是快照的唯一生成者，代码在 00-程序树/工具/适配/grid_export.py。它用 yaml 读 00-程序树/program-tree.yaml，按清单的 trees 段把程序、策划、美术、UI 与预留网格逐张解析；parse_rows 从 树实例 的每行字段顺序取列，read_short 读 00-程序树/短介绍 把短介绍压成一行；graph_for_program 与 build_row_graph 把节点按 parent 建树并补合成的视图根；联系分五类：包含边来自 parent，依赖边来自节点依赖，契约流按 outputs 与 inputs 连产出方到消费方，策划边把策划条目连到对应程序，功能块边把 groups 成员连进画布；最后序列化成 window.GRID_DATA 写入 00-程序树/工具/viewer/data.js。边界是不渲染、不改清单与树实例。已知缺口是产物为快照，实时写操作后不自动重导，另外 README 提到的 bridge.html 实际不存在。
+    
+
+
+节点：canvas.grid-export.rows · 行解析
+
+  类型/层级：step / 3；阶段：P2；状态：已完成
+  父节点：canvas.grid-export
+  依赖：canvas.grid-export
+  输入契约：无
+  输出契约：canvas.tree-rows
+  落地文件：00-程序树/工具/适配/grid_export.py
+  验收：命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern 'def parse_rows(','def read_short(' 命中 2 行；人工清单：导出日志打印每张网格 fields 与 rows 计数，程序网格 rows 与清单节点数相等
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：解析树实例的字段行与短介绍，把网格条目和程序节点整理成统一行数据
+  不负责：不拼联系；不写文件
+
+  连接：
+    上游：无
+    下游：canvas.tree-rows → canvas.grid-export.graph
+
+  说明（00-程序树/说明/canvas.grid-export.rows.txt）：
+    行解析在 00-程序树/工具/适配/grid_export.py 的前半段。parse_rows 打开 树实例/程序树.txt、树实例/策划树.txt、树实例/美术树.txt、树实例/UI树.txt，先找含每行字段顺序的行取字段名，再逐行按竖线切单元格，只把首列像编号的行当条目，跳过分组行、版本行与说明行；随后 read_short 从 00-程序树/短介绍/<编号>.txt 取一行说明并按八十个字截断，挂到每行上。它的输出是每张网格的字段名与行数据，供联系拼装与序列化使用。边界是不拼联系、不写文件。改字段顺序时两边要一起改，否则界面会读到错列。
+    
+
+
+节点：canvas.grid-export.graph · 联系拼装
+
+  类型/层级：step / 3；阶段：P2；状态：已完成
+  父节点：canvas.grid-export
+  依赖：canvas.grid-export
+  输入契约：canvas.tree-rows
+  输出契约：canvas.grid-graph
+  落地文件：00-程序树/工具/适配/grid_export.py
+  验收：命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern 'def graph_for_program(','def build_row_graph(' 命中 2 行；人工清单：导出日志的 blocks 与 block links 计数和清单 groups 段一致；人工清单：策划联系只连清单里存在的节点，清单外条目不出现在 links
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：读统一行数据，按 parent 建图并拼出四类联系与功能块成员，产出待序列化的图数据
+  不负责：不解析原始 txt；不带界面逻辑
+
+  连接：
+    上游：canvas.tree-rows ← canvas.grid-export.rows
+    下游：canvas.grid-graph → canvas.grid-export
+
+  说明（00-程序树/说明/canvas.grid-export.graph.txt）：
+    联系拼装在 00-程序树/工具/适配/grid_export.py 的后半段。它拿统一行数据，按 parent 补包含边，按节点依赖补依赖边，按 outputs 与 inputs 的契约配对补契约流边并把契约 id 记进说明，按策划条目的对应程序列补策划边；再用清单 groups 段生成功能块边，记下每个组的成员并按网格裁剪，只留这张网格里存在的节点；graph_for_program 与 build_row_graph 负责每张网格的节点、parent、层级与合成视图根。产出交给序列化写出 data.js。边界是不解析原始 txt、不带界面逻辑。验证看导出日志里功能块与功能块边计数是否与清单 groups 段一致。
+    
+
+
+节点：quality · 质量部
+
+  类型/层级：department / 1；阶段：P3；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：quality.kernel.report、quality.rule.report、quality.read.report、quality.link.report、quality.health.report、quality.perf.budget
+  输出契约：无
+  验收：命令：ptree-cs validate --root examples/demo 退出码 0；人工清单：六个程序子节点的状态与各自测试结论一致
+  SPEC：00-程序树/规范/程序树规范_v1.txt
+
+  职责：把内核与各外壳的产出跑成测试结论，输出六组用例通过清单与基线差异
+  不负责：不改内核与外壳的实现；不替代人工复核快照与性能数字
+
+  连接：
+    上游：quality.kernel.report ← quality.kernel-tests；quality.rule.report ← quality.rule-tests；quality.read.report ← quality.read-tests；quality.link.report ← quality.link-tests；quality.health.report ← quality.health-tests；quality.perf.budget ← quality.baseline.perf
+    下游：无
+
+  说明（00-程序树/说明/quality.txt）：
+    质量部读 tests/PTree.Tests 下的二十一个测试类与一个定位帮助类，另读 examples/demo 里的示例树，把内核与各外壳的行为跑成通过或失败的结论。它不实现产品功能，也不替代人工复核快照与性能数字，只负责让改动有没有弄坏东西这件事有可执行的证据。
+    
+    落盘位置固定在 00-程序树/工具/csharp/tests/PTree.Tests，命令一律 dotnet test 走 PTree.sln。示例树只有根、一个部门与一个程序三节点，清单在 examples/demo/00-程序树/program-tree.yaml，快照基线写在该示例树的 Snapshots 目录下，测试根靠 RepoLocator 从 PTREE_TEST_ROOT、examples/demo、仓库根三段回退找到。
+    
+    产出分三类：各组用例的通过数与失败用例全名、快照差异键与超预算项。改这一片之前先读 tests 目录的 README.txt 与 RepoLocator.cs，再按组跑过滤器确认失败面；新增用例要按真实行为断言，不许放宽成永远为真。
+    
+
+
+节点：quality.kernel-tests · 内核行为测试
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：quality.tests.root
+  输出契约：quality.kernel.report
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/CoreTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/TreeStoreConfigTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/KernelCompletionTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/ContractSyncTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~CoreTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ContractSyncTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~KernelCompletionTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~TreeStoreConfigTests 退出码 0
+  SPEC：00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+
+  职责：读示例树与内核 API 跑 Core、树配置、内核完成度、契约同步四组用例，输出内核失败清单
+  不负责：不校验规则条目本身；不修改内核源码
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.kernel.report → quality
+
+  说明（00-程序树/说明/quality.kernel-tests.txt）：
+    内核行为测试读示例树与内核 API，跑四组用例：清单加载与索引、树实例的严格开关、内核完成度检查、契约同步。它只断言内核输出的结构与语义，不校验规则条目本身，也不改内核源码。
+    
+    具体落在 00-程序树/工具/csharp/tests/PTree.Tests/CoreTests.cs、TreeStoreConfigTests.cs、KernelCompletionTests.cs、ContractSyncTests.cs 四个文件。CoreTests 走 manifest、index、root 与 node 载荷；TreeStoreConfigTests 用临时目录验证 trees 段的 strict 开关；KernelCompletionTests 用内联最小清单验内核完成度检查；ContractSyncTests 验预设转正时契约生产者被正确替换。
+    
+    这些用例的节点与字段全部从 RepoLocator.Root 派生，不写死内部项目的数据，所以换一棵树也能跑。改断言前先读对应测试文件里的最小清单常量，确认它描述的是内核契约还是某棵树的具体数据。
+    
+
+
+节点：quality.rule-tests · 规则与提案测试
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：quality.tests.root、quality.snapshot.entries
+  输出契约：quality.rule.report
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/ValidationTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/ManifestCheckerTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/ProposalEngineTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/PythonTextTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/YamlOracleTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ValidationTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ProposalEngineTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ManifestCheckerTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~YamlOracleTests 退出码 0
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读示例树与快照跑规则、提案引擎、YAML 文本对照用例，输出快照差异与提案拒绝清单
+  不负责：不做跨树 T01 至 T12 的对应检查；不实现新增规则
+
+  连接：
+    上游：quality.tests.root ← quality.baseline；quality.snapshot.entries ← quality.baseline.snapshot
+    下游：quality.rule.report → quality
+
+  说明（00-程序树/说明/quality.rule-tests.txt）：
+    规则与提案测试读示例树与规则快照，跑四组用例：校验条目与顺序、清单扩展检查、提案引擎的新增与剪枝、YAML 与文本语义对照。它不做跨树对应检查，也不实现新增规则，规则判据仍以内核为准。
+    
+    文件是 00-程序树/工具/csharp/tests/PTree.Tests 下的 ValidationTests.cs、ManifestCheckerTests.cs、ProposalEngineTests.cs、PythonTextTests.cs、YamlOracleTests.cs。ValidationTests 把校验条目的错误码、节点、消息与顺序钉成快照；ManifestCheckerTests 验策划覆盖的通配词与断链报错；ProposalEngineTests 走 add 与 prune 两条提案路径；PythonTextTests 与 YamlOracleTests 只对照文本与解析语义，不判断规则口径。
+    
+    改规则或改快照时先跑过滤器确认失败面，再决定是改断言还是改实现；快照重基只允许在人工复核口径变化后做，且要复查 diff 里不含内部项目数据。
+    
+
+
+节点：quality.read-tests · 阅读阶梯与卡片测试
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：quality.tests.root
+  输出契约：quality.read.report
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/ReadLadderTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/NodeCardsTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/GridReadingsTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/GridWriteTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ReadLadderTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~NodeCardsTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GridReadingsTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GridWriteTests 退出码 0
+  SPEC：00-程序树/规范/阅读阶梯_v1.txt
+
+  职责：读示例树跑阶梯、卡片、网格读写四组用例，输出卡片行数与网格行为失败清单
+  不负责：不做画布渲染验证；不生成网格导出数据
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.read.report → quality
+
+  说明（00-程序树/说明/quality.read-tests.txt）：
+    阅读与卡片测试读示例树，跑四组用例：阅读阶梯工具、节点与树状态卡片、网格条目读写、网格覆盖统计。它不做画布渲染验证，也不生成网格导出数据，只断言命令行与工具层的可读性约定。
+    
+    文件在 00-程序树/工具/csharp/tests/PTree.Tests 下：ReadLadderTests.cs 验 guide 不超过十行且先指功能块、blocks 模式不列成员清单、read_group 的名称与简介两档；NodeCardsTests.cs 验九行卡、第二行短介绍、depth 图与 full 原 JSON 的键集；GridReadingsTests.cs 验网格条目收录与短介绍检查；GridWriteTests.cs 验 tree_update_node 的短介绍只写短介绍文件、不动清单。
+    
+    卡片与阶梯的断言以行数、字节与键集为主，属于可读性预算，不是审美判断；改输出格式先改这些预算并说明依据，别只把数字调大。
+    
+
+
+节点：quality.link-tests · 联系与预设测试
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：quality.tests.root
+  输出契约：quality.link.report
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/LinkAndPresetTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/LinkEvidenceTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/GroupsTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~LinkAndPresetTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~LinkEvidenceTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~GroupsTests 退出码 0
+  SPEC：00-程序树/规范/校验规则_v1.txt
+
+  职责：读示例树与临时树跑联系登记、分组、预设、证据闭环用例，输出行为失败清单
+  不负责：不校验契约字段形状；不修改预设声明
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.link.report → quality
+
+  说明（00-程序树/说明/quality.link-tests.txt）：
+    联系与预设测试读示例树与临时树，跑三组用例：显式联系的登记与清点、功能块的建组与成员校验、已验证状态的证据闭环，另含预设节点在读工具里的标记。它不校验契约字段形状，也不改预设声明。
+    
+    文件是 00-程序树/工具/csharp/tests/PTree.Tests 下的 LinkAndPresetTests.cs、LinkEvidenceTests.cs、GroupsTests.cs。LinkAndPresetTests 覆盖联系的四类错误与基址写法、预设节点在建卡、map、find 三处的记号；LinkEvidenceTests 验没有证据就标已验证必须被拦住并回滚；GroupsTests 验建组、并成员、组介绍缺失与成员不存在的报错。
+    
+    这些用例大量用临时目录造树，断言里只出现临时 id 或示例树 id；新增用例沿用同样做法，别把内部项目节点写进断言。
+    
+
+
+节点：quality.health-tests · 健康与备份测试
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：quality.tests.root
+  输出契约：quality.health.report
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/HealthAndLifecycleTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/HealthChangesTests.cs、00-程序树/工具/csharp/tests/PTree.Tests/BackupTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthAndLifecycleTests 退出码 0；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~BackupTests 退出码 0；人工清单：备份用例只写临时 PTreeBackupHome，不碰真实仓库；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~HealthChangesTests 退出码 0
+  SPEC：00-程序树/规范/备份_v1.txt
+
+  职责：读临时项目与备份目录跑健康卡、生命周期、备份用例，输出健康行数与保留策略核对结果
+  不负责：不读写真实仓库的备份目录；不做数据恢复演练
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.health.report → quality
+
+  说明（00-程序树/说明/quality.health-tests.txt）：
+    健康与备份测试读临时项目与临时备份目录，跑三组用例：健康卡与生命周期、常规改动与危险改动的分流、自动备份的开关加密保留与校验。它不读写真实仓库的备份目录，也不做数据恢复演练。
+    
+    文件在 00-程序树/工具/csharp/tests/PTree.Tests 下：HealthAndLifecycleTests.cs 验缺文件、陈旧代码、完成后没有实现的报错，健康卡行数上限与目录迁移后校验仍绿；HealthChangesTests.cs 验常规代码改动只进台账、不进健康问题；BackupTests.cs 用临时 PTreeBackupHome 验默认关闭、未配置拒绝启用、凭据加密与脱敏、保留最近十份、bundle 校验。
+    
+    这一组是唯一全部用临时目录、不依赖示例树形状的用例，改成任何一棵树都不影响结论；如要加恢复演练，先补临时目录夹具再写断言。
+    
+
+
+节点：quality.baseline · 快照与性能基线
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：quality
+  依赖：quality
+  输入契约：无
+  输出契约：quality.tests.root
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/RepoLocator.cs、00-程序树/工具/csharp/tests/PTree.Tests/PTree.Tests.csproj、00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+  验收：人工清单：根清单缺失时 RepoLocator.Root 指向 examples/demo；命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ParityTests 退出码 0；命令：ptree-cs validate --root examples/demo 退出码 0；人工清单：examples/demo 下 Snapshots 目录的 parity_snapshot.json 与 validation_snapshot.json 都存在
+  SPEC：00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+
+  职责：在仓库任意位置定位测试树根并维护快照与性能预算，输出根路径、快照差异与超预算项
+  不负责：不在未人工复核时刷新快照；不修改测试用例断言
+
+  连接：
+    上游：无
+    下游：quality.tests.root → quality.baseline.perf、quality.baseline.snapshot、quality.health-tests、quality.kernel-tests、quality.link-tests、quality.read-tests、quality.rule-tests
+
+  说明（00-程序树/说明/quality.baseline.txt）：
+    快照与性能基线读仓库结构，按三段顺序定位测试树根，再维护两条基线：索引与节点负载的快照期望值、三项核心操作的耗时预算。它不在未人工复核时刷新快照，也不修改测试用例的断言。
+    
+    定位逻辑在 00-程序树/工具/csharp/tests/PTree.Tests/RepoLocator.cs，顺序是环境变量 PTREE_TEST_ROOT、examples/demo 示例树、仓库根清单，三处都找不到就抛错并说明缺哪份清单。工程文件是同目录的 PTree.Tests.csproj，说明与刷新流程写在同一目录的 README.txt。
+    
+    产出是根路径、快照差异与超预算项。改这一段要同时确认快照写到哪里：快照路径跟随定位到的树根，指向别的树时快照会落到那棵树下，必须人工复核再提交。
+    
+
+
+节点：quality.baseline.snapshot · 校验与索引快照
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：quality.baseline
+  依赖：quality.baseline
+  输入契约：quality.tests.root
+  输出契约：quality.snapshot.entries
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/ParityTests.cs、examples/demo/00-程序树/工具/csharp/tests/PTree.Tests/Snapshots/parity_snapshot.json、examples/demo/00-程序树/工具/csharp/tests/PTree.Tests/Snapshots/validation_snapshot.json
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~ParityTests 退出码 0；人工清单：设 PTREE_UPDATE_SNAPSHOT=1 重跑后 git diff 只出现快照文件，再用常规模式复跑 0 失败
+  SPEC：00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+
+  职责：读示例树算索引与节点负载同快照逐键逐序比对，输出缺失或漂移的快照键清单
+  不负责：不比较 tree_version 与 generated_at；不降低断言强度
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.snapshot.entries → quality.rule-tests
+
+  说明（00-程序树/说明/quality.baseline.snapshot.txt）：
+    快照基线读示例树算出的索引与节点负载，与已经固化的快照逐键逐序比对，报出缺失的键与漂移的值。它有两种忽略：对象键顺序无关、generated_at 与 tree_version 不参与比对；数组顺序是敏感的，不做重排。
+    
+    实现在 00-程序树/工具/csharp/tests/PTree.Tests/ParityTests.cs，快照文件在 examples/demo/00-程序树/工具/csharp/tests/PTree.Tests/Snapshots 下的 parity_snapshot.json；同一个目录还有 validation_snapshot.json，由校验测试使用。刷新用 PTREE_UPDATE_SNAPSHOT=1 跑一次测试，再人工复核 git diff，最后常规模式复跑确认零失败。
+    
+    快照是判据不是装饰：不许把它降级成数量或关键词包含，也不许在没确认口径变化时重基。改动内核输出结构时，先改实现与说明，再刷新快照。
+    
+
+
+节点：quality.baseline.perf · 性能护栏
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：quality.baseline
+  依赖：quality.baseline
+  输入契约：quality.tests.root
+  输出契约：quality.perf.budget
+  落地文件：00-程序树/工具/csharp/tests/PTree.Tests/PerformanceTests.cs
+  验收：命令：dotnet test 00-程序树/工具/csharp/tests/PTree.Tests -c Release --filter FullyQualifiedName~PerformanceTests 退出码 0；人工清单：validate 不超过 900 毫秒、read-node 不超过 420 毫秒、map names 不超过 480 毫秒；人工清单：BenchRunner 报告 6 项齐全且 min 不大于 median、median 不大于 p95
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读示例树预热后三次取最优量 validate、read-node、map 并与预算比较，输出超预算项
+  不负责：不把预算当精度基准；不为提速改实现
+
+  连接：
+    上游：quality.tests.root ← quality.baseline
+    下游：quality.perf.budget → quality
+
+  说明（00-程序树/说明/quality.baseline.perf.txt）：
+    性能护栏读示例树，先预热一次再取三次里的最小值，量三项核心操作：validate、读节点卡、map 的名称模式，并与预算比较，超出就报实测毫秒。它不是精度基准，也不为提速去改实现。
+    
+    实现在 00-程序树/工具/csharp/tests/PTree.Tests/PerformanceTests.cs，预算按实测中位数约三倍取整：validate 九百毫秒、读节点四百二十毫秒、map 名称模式四百八十毫秒。同一文件还验 BenchRunner 报告六项齐全、min 不大于 median、median 不大于 p95，并用集合定义关闭并行，避免互相污染计时。
+    
+    这一组是别退一个数量级的护栏，机器抖动不该红；连续变红先看是否新增了全树扫描，再决定是调实现还是调预算，调预算要写清实测依据。
+    
+
+  SPEC 摘要：
+
+
+节点：release · 发布部
+
+  类型/层级：department / 1；阶段：P3；状态：已完成
+  父节点：ptree
+  依赖：ptree
+  输入契约：release.build.lock.result、release.publish.cli.result、release.publish.serve.result、release.examples.demo.result、release.examples.texts.result、release.open-source.result
+  输出契约：无
+  验收：命令：bash 00-程序树/工具/csharp/build-lock.sh src/PTree.Cli；命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe validate --root examples/demo && 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe check --root examples/demo；命令：test -f README.md && test -f LICENSE && head -n 1 LICENSE | grep -qx 'MIT License'
+  SPEC：README.md
+
+  职责：读取 PTree.sln、两侧 csproj、build-lock.sh 与 examples/demo，组织 Release 构建、可执行产物、示例脚手架…
+  不负责：不实现校验规则与 CLI 命令逻辑；不打标签、不签名、不做应用商店打包；不提供打包脚本，也不把内部项目的树数据写进公开仓库
+
+  连接：
+    上游：release.build.lock.result ← release.build.lock；release.publish.cli.result ← release.publish.cli；release.publish.serve.result ← release.publish.serve；release.examples.demo.result ← release.examples.demo；release.examples.texts.result ← release.examples.texts；release.open-source.result ← release.open-source
+    下游：无
+
+  说明（00-程序树/说明/release.txt）：
+    发布部读 PTree.sln、两侧 csproj、build-lock.sh 与 examples/demo，做 Release 构建、可执行产物、示例脚手架与开源文档的收口，产出 ptree-cs 与 ptree-serve 可执行文件、E=0 的示例树和公开仓库入口。它不实现校验规则与 CLI 命令逻辑，也不打标签、不签名、不做商店打包。
+    构建与锁在 00-程序树/工具/csharp/PTree.sln 与 00-程序树/工具/csharp/build-lock.sh，发布读取 PTree.Cli 与 PTree.Serve 的 csproj，示例树在 examples/demo，公开入口是 README.md 与 LICENSE。对外只给源码、示例与文档，不含打包脚本和内部项目的树数据。
+    改这个部门先读 00-程序树/工具/csharp/README.md 的构建与发布说明，再跑 validate 与 check；常见坑是把 bin 产物当源码提交、只改文档不同步示例树。
+
+  SPEC 摘要：
+
+
+节点：release.build · 构建入口
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：release
+  依赖：release
+  输入契约：无
+  输出契约：release.build.result
+  落地文件：00-程序树/工具/csharp/PTree.sln、00-程序树/工具/csharp/Directory.Build.props、00-程序树/工具/csharp/build-lock.sh、00-程序树/工具/csharp/.gitignore
+  验收：命令：bash 00-程序树/工具/csharp/build-lock.sh src/PTree.Cli；命令：test ! -d 00-程序树/工具/csharp/.build-lock
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读取 PTree.sln 的 5 个项目与 Directory.Build.props 的编译属性，经 build-lock.sh 取仓库级互斥锁后执行 d…
+  不负责：不修改各 csproj 的 AssemblyName、目标框架与项目引用；不决定校验规则或树数据内容
+
+  连接：
+    上游：无
+    下游：release.build.result → release.publish
+
+  说明（00-程序树/说明/release.build.txt）：
+    构建入口读 00-程序树/工具/csharp/PTree.sln 的 5 个项目与 00-程序树/工具/csharp/Directory.Build.props 的编译属性，经 00-程序树/工具/csharp/build-lock.sh 取仓库级互斥锁后执行 dotnet build -c Release，产出各项目 bin/Release/net10.0 下的程序集与可执行文件。
+    它不修改 csproj 的 AssemblyName、目标框架与项目引用，也不决定校验规则或树数据；构建结束或中断时脚本删除 .build-lock。
+    改之前读 csharp/README.md 的构建节与 build-lock.sh 全文；新增项目要同时登记进解决方案，否则 Release 产物不会生成。常见坑是并发构建踩 obj、锁目录残留导致下一次等待。
+
+  SPEC 摘要：
+
+
+节点：release.build.lock · 构建互斥锁
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：release.build
+  依赖：release.build
+  输入契约：无
+  输出契约：release.build.lock.result
+  落地文件：00-程序树/工具/csharp/build-lock.sh
+  验收：命令：bash 00-程序树/工具/csharp/build-lock.sh；测试：创建 00-程序树/工具/csharp/.build-lock 并把时间改到 1201 秒前，再跑 build-lock.sh，旧锁被回收且构建继续
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读取第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdir 原子创建 .build-lock 并写入 pid，构建期间阻塞其它构建…
+  不负责：不编译项目本身，只串行化 dotnet build；不清理 bin 与 obj 内容
+
+  连接：
+    上游：无
+    下游：release.build.lock.result → release
+
+  说明（00-程序树/说明/release.build.lock.txt）：
+    构建互斥锁读第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdir 在 00-程序树/工具/csharp/.build-lock 上做原子锁并写 pid，构建期间阻塞其它构建，结束或中断时删除锁。
+    超过 1200 秒的锁被视为陈旧可回收，无参数退出 2，20 分钟拿不到锁退出 3；它只串行化 dotnet build，不编译项目，也不清理 bin 与 obj。
+    改之前完整读 00-程序树/工具/csharp/build-lock.sh；调整 STALE 会改变误回收边界，改锁路径要同步所有调用方。常见坑是长构建被误判为陈旧、多个锁目录残留。
+
+  SPEC 摘要：
+
+
+节点：release.publish · 产物发布
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：release
+  依赖：release.build
+  输入契约：release.build.result
+  输出契约：release.binary
+  落地文件：00-程序树/工具/csharp/src/PTree.Cli/PTree.Cli.csproj、00-程序树/工具/csharp/src/PTree.Serve/PTree.Serve.csproj、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.runtimeconfig.json、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.deps.json、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.exe、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.runtimeconfig.json、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.deps.json
+  验收：命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe version；命令：00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.exe --help；命令：grep -q tfm 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.runtimeconfig.json；命令：grep -q net10.0 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.runtimeconfig.json；命令：grep -q tfm 00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.runtimeconfig.json
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读取 PTree.Cli 与 PTree.Serve 的 csproj 和 Release 构建输出，固定 AssemblyName 为 ptree-cs…
+  不负责：不实现 CLI 子命令与 HTTP 路由；不把 bin 下的发布产物提交进公开仓库
+
+  连接：
+    上游：release.build.result ← release.build
+    下游：release.binary → release.examples、release.open-source
+
+  说明（00-程序树/说明/release.publish.txt）：
+    产物发布读 00-程序树/工具/csharp/src/PTree.Cli/PTree.Cli.csproj 与 src/PTree.Serve/PTree.Serve.csproj 的 AssemblyName、TargetFramework 和 Release 构建输出，把 ptree-cs 与 ptree-serve 整理成 exe、runtimeconfig.json、deps.json 与依赖 dll，放在各自的 bin/Release/net10.0 下。
+    它不实现 CLI 子命令与 HTTP 路由，也不把 bin 产物提交进公开仓库；目标框架固定 net10.0，两个可执行文件分别由 PTree.Cli 与 PTree.Serve 产出。
+    改之前读 csharp/README.md 的构建/运行节和两份 csproj；改目标框架要同步 runtimeconfig 与测试。常见坑是只改 csproj 不重建、把发布产物和源码混在一起。
+
+  SPEC 摘要：
+
+
+节点：release.publish.cli · ptree-cs 发布
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：release.publish
+  依赖：release.publish
+  输入契约：无
+  输出契约：release.publish.cli.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Cli/PTree.Cli.csproj、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.runtimeconfig.json、00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.deps.json
+  验收：命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe version；测试：删除 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0 后重跑 dotnet build 00-程序树/工具/csharp/PTree.sln，ptree-cs.exe 重新生成
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读取 PTree.Cli.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyName…
+  不负责：不实现命令解析与子命令分支；不改 CLR 版本与目标框架
+
+  连接：
+    上游：无
+    下游：release.publish.cli.result → release
+
+  说明（00-程序树/说明/release.publish.cli.txt）：
+    ptree-cs 发布读 00-程序树/工具/csharp/src/PTree.Cli/PTree.Cli.csproj 的 OutputType、TargetFramework、AssemblyName 与两个 ProjectReference，生成 ptree-cs.exe 及其 runtimeconfig.json、deps.json。
+    它把 PTree.Core 与 PTree.Mcp 一起带进发布目录，支持 version 等命令；它不实现命令解析与子命令分支，也不改 CLR 版本与目标框架。
+    改之前读 csproj、csharp/README.md 的命令清单和 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0 下的产物；改 AssemblyName 会破坏 README 与调用脚本。常见坑是只删 exe 不删 deps、把 Debug 产物当 Release。
+
+  SPEC 摘要：
+
+
+节点：release.publish.serve · ptree-serve 发布
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：release.publish
+  依赖：release.publish
+  输入契约：无
+  输出契约：release.publish.serve.result
+  落地文件：00-程序树/工具/csharp/src/PTree.Serve/PTree.Serve.csproj、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.exe、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.runtimeconfig.json、00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.deps.json
+  验收：命令：00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.exe --help；测试：启动 ptree-serve.exe --root examples/demo --port 7788，GET /api/health 返回 ok 为 true
+  SPEC：00-程序树/工具/csharp/README.md
+
+  职责：读取 PTree.Serve.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyNam…
+  不负责：不实现 HTTP 路由与写操作；不改 PTree.Core 引用关系
+
+  连接：
+    上游：无
+    下游：release.publish.serve.result → release
+
+  说明（00-程序树/说明/release.publish.serve.txt）：
+    ptree-serve 发布读 00-程序树/工具/csharp/src/PTree.Serve/PTree.Serve.csproj 的 OutputType、TargetFramework、AssemblyName 与 PTree.Core 引用，生成 ptree-serve.exe 及其 runtimeconfig.json、deps.json。
+    它支持 --root、--port、--viewer 与 --help，启动后监听本地 HTTP 端口；它不实现 HTTP 路由与写操作，也不改 PTree.Core 引用关系。
+    改之前读 csproj、csharp/README.md 的 serve 用法和 00-程序树/工具/csharp/src/PTree.Serve/Program.cs；改端口默认值要同步 README 与视图调用。常见坑是端口被占用仍按成功处理、把视图目录写死。
+
+  SPEC 摘要：
+
+
+节点：release.examples · 示例树脚手架
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：release
+  依赖：release.publish
+  输入契约：release.binary
+  输出契约：release.demo.tree
+  落地文件：examples/demo/00-程序树/program-tree.yaml、examples/demo/00-程序树/契约/contracts.yaml、examples/demo/00-程序树/标杆/benchmarks.yaml、examples/demo/00-程序树/标杆/绑定.yaml、examples/demo/00-程序树/树实例/程序树.txt、examples/demo/00-程序树/树实例/策划树.txt、examples/demo/00-程序树/树实例/美术树.txt、examples/demo/00-程序树/树实例/UI树.txt、examples/demo/00-程序树/说明/demo.txt、examples/demo/00-程序树/说明/core.txt、examples/demo/00-程序树/说明/core.app.txt、examples/demo/00-程序树/短介绍/demo.txt、examples/demo/00-程序树/短介绍/core.txt、examples/demo/00-程序树/短介绍/core.app.txt、examples/demo/00-程序树/短介绍/D01.txt、examples/demo/00-程序树/短介绍/M01.txt、examples/demo/00-程序树/短介绍/U01.txt、examples/demo/00-程序树/评价/demo.txt、examples/demo/00-程序树/评价/core.txt、examples/demo/00-程序树/评价/core.app.txt
+  验收：命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe validate --root examples/demo；命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe check --root examples/demo；测试：examples/demo/00-程序树/program-tree.yaml 含 3 个节点，契约文件含 2 条契约
+  SPEC：examples/demo/00-程序树/README.txt
+
+  职责：读取 examples/demo 下的清单、契约、标杆、四棵树实例与三类文本（该目录由 ptree-cs init 生成），维护 demo、core、cor…
+  不负责：不写真实业务代码；不把示例树当内部生产树使用
+
+  连接：
+    上游：release.binary ← release.publish
+    下游：release.demo.tree → release.open-source
+
+  说明（00-程序树/说明/release.examples.txt）：
+    示例树脚手架读 00-程序树/工具/csharp 的 CLI 与 examples/demo 下的清单、契约、标杆、四棵树实例、说明、短介绍与评价，维护 demo、core、core.app 三个节点的最小示例树，并用 ptree-cs 跑 validate 与 check。
+    它不写真实业务代码，也不把示例树当内部生产树；demo 的 2 条契约、空标杆与跨树 D01、M01、U01 只用于演示结构。
+    改之前读 examples/demo/00-程序树/README.txt 与 program-tree.yaml；换示例节点要同步契约、四棵树实例与三类文本。常见坑是只改清单导致 check 断链、把 init 生成的文本留成占位。
+
+
+节点：release.examples.demo · demo 示例树
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：release.examples
+  依赖：release.examples
+  输入契约：无
+  输出契约：release.examples.demo.result
+  落地文件：examples/demo/00-程序树/program-tree.yaml、examples/demo/00-程序树/契约/contracts.yaml、examples/demo/00-程序树/标杆/benchmarks.yaml、examples/demo/00-程序树/标杆/绑定.yaml、examples/demo/00-程序树/树实例/程序树.txt、examples/demo/00-程序树/树实例/策划树.txt、examples/demo/00-程序树/树实例/美术树.txt、examples/demo/00-程序树/树实例/UI树.txt
+  验收：命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe validate --root examples/demo；命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe check --root examples/demo
+  SPEC：examples/demo/00-程序树/README.txt
+
+  职责：读取 demo 清单、契约、空标杆与四棵树实例，保持 3 个节点与策划 D01、美术 M01、UI U01 的引用字段完整，输出可被 validate 与…
+  不负责：不生成说明、短介绍与评价文本；不改程序的真实代码目录
+
+  连接：
+    上游：无
+    下游：release.examples.demo.result → release
+
+  说明（00-程序树/说明/release.examples.demo.txt）：
+    demo 示例树读 examples/demo/00-程序树/program-tree.yaml、契约/contracts.yaml、标杆/benchmarks.yaml、标杆/绑定.yaml 与四份树实例，保持 demo、core、core.app 三个节点和 D01、M01、U01 的引用字段一致。
+    它产出可被 validate 与 check 直接读取的示例骨架，不生成说明、短介绍与评价，也不改程序的真实代码目录。
+    改之前读 demo 的程序树清单与四棵树实例；节点或契约变更要同时改对应实例。常见坑是只改清单导致 check 断链、标杆与绑定字段不合法。
+
+
+节点：release.examples.texts · 示例文本
+
+  类型/层级：step / 3；阶段：P3；状态：已完成
+  父节点：release.examples
+  依赖：release.examples
+  输入契约：无
+  输出契约：release.examples.texts.result
+  落地文件：examples/demo/00-程序树/说明/demo.txt、examples/demo/00-程序树/说明/core.txt、examples/demo/00-程序树/说明/core.app.txt、examples/demo/00-程序树/短介绍/demo.txt、examples/demo/00-程序树/短介绍/core.txt、examples/demo/00-程序树/短介绍/core.app.txt、examples/demo/00-程序树/短介绍/D01.txt、examples/demo/00-程序树/短介绍/M01.txt、examples/demo/00-程序树/短介绍/U01.txt、examples/demo/00-程序树/评价/demo.txt、examples/demo/00-程序树/评价/core.txt、examples/demo/00-程序树/评价/core.app.txt
+  验收：命令：ls examples/demo/00-程序树/说明/demo.txt examples/demo/00-程序树/说明/core.txt examples/demo/00-程序树/说明/core.app.txt；命令：ls examples/demo/00-程序树/短介绍/demo.txt examples/demo/00-程序树/短介绍/core.txt examples/demo/00-程序树/短介绍/core.app.txt examples/demo/00-程序树/短介绍/D01.txt examples/demo/00-程序树/短介绍/M01.txt examples/demo/00-程序树/短介绍/U01.txt；命令：ls examples/demo/00-程序树/评价/demo.txt examples/demo/00-程序树/评价/core.txt examples/demo/00-程序树/评价/core.app.txt
+  SPEC：examples/demo/00-程序树/README.txt
+
+  职责：读取 demo、core、core.app 与跨树 D01、M01、U01 的职责，生成说明、短介绍与评价三类文本，输出 3 份说明、6 份短介绍与 3 份…
+  不负责：不改清单节点与契约字段；不复制内部项目的真实说明
+
+  连接：
+    上游：无
+    下游：release.examples.texts.result → release
+
+  说明（00-程序树/说明/release.examples.texts.txt）：
+    示例文本读 demo、core、core.app 三个节点与跨树 D01、M01、U01 的职责，生成 3 份说明、6 份短介绍与 3 份评价，落在 examples/demo/00-程序树/说明、短介绍、评价目录。
+    说明讲读什么、做什么、产出与边界；短介绍一行写功能；评价固定判断、位置、做法、缺四行。它不改清单节点与契约字段，也不复制内部项目的真实说明。
+    改之前读 examples/demo/00-程序树/说明/demo.txt 与 README；换节点名要同步短介绍与评价文件名。常见坑是说明只写套话、评价缺判断行。
+
+
+节点：release.open-source · 开源入口
+
+  类型/层级：program / 2；阶段：P3；状态：已完成
+  父节点：release
+  依赖：release.publish、release.examples
+  输入契约：release.binary、release.demo.tree
+  输出契约：release.open-source.result
+  落地文件：README.md、LICENSE、.gitignore、00-程序树/工具/csharp/README.md
+  验收：命令：00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe validate --root examples/demo && 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.exe check --root examples/demo；命令：head -n 1 LICENSE | grep -qx 'MIT License'；命令：grep -q '^bin/$' .gitignore && grep -q '^obj/$' .gitignore && grep -q '00-程序树/运维/快照/' .gitignore && grep -q '00-程序树/运维/备份/' .gitignore
+  SPEC：README.md
+
+  职责：读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 许可，声明公开仓库不…
+  不负责：不做发布签名、商店打包与 CI 配置；不公开内部项目的树数据与备份快照
+
+  连接：
+    上游：release.binary ← release.publish；release.demo.tree ← release.examples
+    下游：release.open-source.result → release
+
+  说明（00-程序树/说明/release.open-source.txt）：
+    开源入口读 Release 产物事实、examples/demo 与 00-程序树/工具/csharp/README.md，组织公开仓库的用户入口、构建运行命令与 MIT 许可，输出 README.md、LICENSE 与 .gitignore。
+    它声明公开仓库不含打包脚本与内部项目的树数据，只保留可复现的源码、示例与文档；它不做发布签名、商店打包与 CI 配置。
+    改之前读 README.md、LICENSE 和 csharp/README.md；命令、目录或许可变更要三处同步。常见坑是把内部树数据写进示例、README 命令与 examples/demo 现状不一致。
+
+  SPEC 摘要：
+
+
+节点：quality.smoke-e2e · 端到端冒烟
+
+  类型/层级：step / 3；阶段：P3；状态：未完成
+  父节点：quality.baseline
+  依赖：quality.baseline
+  输入契约：无
+  输出契约：quality.smoke.result
+  验收：命令：printf '' | ptree-cs --root examples/demo mcp 后 tools/list 返回 27 个 tree_ 工具；命令：ptree-cs --root examples/demo check 退出码 0
+  SPEC：00-程序树/规范/核心/01_程序树核心.txt
+
+  职责：起一次真实 MCP 会话与 CLI 调用，验证工具目录、读写与校验链路连通
+  不负责：不替代单元测试
+
+  连接：
+    上游：无
+    下游：quality.smoke.result → 外部消费者
+
+
+节点：quality.snapshot-hygiene · 快照治理
+
+  类型/层级：step / 3；阶段：P3；状态：未完成
+  父节点：quality.baseline
+  依赖：quality.baseline
+  输入契约：无
+  输出契约：quality.snapshot.result
+  验收：测试：PTREE_UPDATE_SNAPSHOT=1 重基后 git diff 为空；人工清单：ParityTests 里两个 CSharpAndPython 测试名改成不暗示 Python 的名字
+  SPEC：00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+
+  职责：清掉快照里的时间戳噪声，修正误导性测试名与 README 里的测试数量
+  不负责：不改快照比对算法
+
+  连接：
+    上游：无
+    下游：quality.snapshot.result → 外部消费者
+
+
+节点：kernel.scaffold.book-llm · 程序书 DeepSeek 生成
+
+  类型/层级：step / 3；阶段：P1；状态：已完成
+  父节点：kernel.scaffold
+  依赖：kernel.scaffold.products
+  输入契约：无
+  输出契约：kernel.book.text
+  落地文件：00-程序树/工具/csharp/src/PTree.Core/DeepSeekClient.cs、00-程序树/工具/csharp/src/PTree.Core/ProgramBookGenerator.cs
+  验收：命令：ptree-cs --root examples/demo book --llm --out out.txt（未配置密钥时退出码 2 且仍输出模板）；测试：dotnet test --filter FullyQualifiedName~DeepSeekClientTests；命令：环境变量清空后在仓库根跑 book 仍退出 0
+  SPEC：00-程序树/规范/模型接入_v1.txt
+
+  职责：用 DeepSeek 把树事实改写成程序书正文，未配置或失败时回退离线模板
+  不负责：不让模型决定状态与校验结论
+
+  连接：
+    上游：无
+    下游：kernel.book.text → 外部消费者
+
+
+变更历史入口
+
+  提案目录：00-程序树/变更/（AI 编写的变更提案，apply 处理）
+  历史归档：00-程序树/变更/历史/（apply 落地后自动归档）
+  剪枝候选：00-程序树/变更/剪枝候选.yaml
+  写入口：ptree-cs apply --file <提案>（默认 dry-run，--write 落地）
+
+待处理提案：chg-book-llm.yaml（chg-book-llm）；chg_truth.yaml（chg-baseline-truth）
+
+已修剪节点（来自变更历史）
+
+  （暂无）
+
+最近归档：无
+

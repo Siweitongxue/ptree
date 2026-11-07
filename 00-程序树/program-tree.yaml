@@ -1649,7 +1649,7 @@ nodes:
   layer: 2
   parent: canvas
   phase: P2
-  status: 已完成
+  status: 未完成
   responsibility: 读页面骨架与画布快照，按 parent 与 layer 布局节点并把筛选、详情与写操作写回页面状态
   not_responsible:
   - 不生成快照数据
@@ -1663,15 +1663,13 @@ nodes:
   depends_on:
   - canvas.viewer-shell
   - canvas.grid-export
-  files:
-  - 00-程序树/工具/viewer/viewer.js
-  - 00-程序树/工具/viewer/README.txt
+  files: []
   acceptance:
   - 命令：node --check 00-程序树/工具/viewer/viewer.js 退出码 0
   - 命令：Select-String -Path 00-程序树/工具/viewer/viewer.js -SimpleMatch -Pattern 'function buildGrid(','function computeLayout(','function walk(','function include(','function relayout(','function render(','function drawEdges(','function drawBlocks(','function renderNodeDetail(' 命中 9 行
   - 人工清单：点节点右侧出现一圈联系，搜索命中自动聚焦首个节点，状态与部门筛选同时生效时可见数与画布一致
   spec: 00-程序树/工具/viewer/README.txt
-  notes: 已知缺陷：组框折叠状态只存本次会话，刷新后恢复展开，持久化待落 localStorage 键 ptree.viewer.prefs.v1
+  notes: 折叠状态刷新后不保持，缺持久化；规格见 说明/canvas.viewer-grid.txt，代码在 00-程序树/工具/viewer/viewer.js
   created_at: '2026-11-07'
   updated_at: '2026-11-07'
 - id: canvas.viewer-grid.layout
@@ -1758,7 +1756,7 @@ nodes:
   layer: 2
   parent: canvas
   phase: P2
-  status: 已完成
+  status: 未完成
   responsibility: 读清单与四份树实例，解析网格行并拼出父子、依赖、契约流、策划与组联系，写出 data.js 快照
   not_responsible:
   - 不渲染画布
@@ -1769,15 +1767,13 @@ nodes:
   - canvas.grid-data
   depends_on:
   - canvas
-  files:
-  - 00-程序树/工具/适配/grid_export.py
-  - 00-程序树/工具/viewer/data.js
+  files: []
   acceptance:
   - 命令：python 00-程序树/工具/适配/grid_export.py --root . 退出码 0 且 data.js 的 meta.tree_version 与清单一致
   - 命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern 'def parse_rows(','def read_short(','def build_row_graph(','def graph_for_program(' 命中 4 行
   - 人工清单：重跑导出后 meta.generated_at 更新，nodes 与 links 与 grids 计数和清单一致
   spec: 00-程序树/规范/核心/01_程序树核心.txt
-  notes: 已知缺陷：data.js 是脚本导出快照，实时写操作后画布不自动重导，整图需重跑导出并刷新；README 声称的 bridge.html 实际未落盘，file:// 加 api 参数模式不可用
+  notes: data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；README 提到的 bridge.html 实际缺失
   created_at: '2026-11-07'
   updated_at: '2026-11-07'
 - id: canvas.grid-export.rows
@@ -2401,6 +2397,78 @@ nodes:
   spec: README.md
   created_at: '2026-11-07'
   updated_at: '2026-11-07'
+- id: quality.smoke-e2e
+  name: 端到端冒烟
+  kind: step
+  layer: 3
+  parent: quality.baseline
+  phase: P3
+  status: 未完成
+  responsibility: 起一次真实 MCP 会话与 CLI 调用，验证工具目录、读写与校验链路连通
+  not_responsible:
+  - 不替代单元测试
+  inputs: []
+  outputs:
+  - quality.smoke.result
+  depends_on:
+  - quality.baseline
+  files: []
+  acceptance:
+  - 命令：printf '' | ptree-cs --root examples/demo mcp 后 tools/list 返回 27 个 tree_ 工具
+  - 命令：ptree-cs --root examples/demo check 退出码 0
+  spec: 00-程序树/规范/核心/01_程序树核心.txt
+  created_at: '2026-11-07'
+  updated_at: '2026-11-07'
+  attachments: []
+- id: quality.snapshot-hygiene
+  name: 快照治理
+  kind: step
+  layer: 3
+  parent: quality.baseline
+  phase: P3
+  status: 未完成
+  responsibility: 清掉快照里的时间戳噪声，修正误导性测试名与 README 里的测试数量
+  not_responsible:
+  - 不改快照比对算法
+  inputs: []
+  outputs:
+  - quality.snapshot.result
+  depends_on:
+  - quality.baseline
+  files: []
+  acceptance:
+  - 测试：PTREE_UPDATE_SNAPSHOT=1 重基后 git diff 为空
+  - 人工清单：ParityTests 里两个 CSharpAndPython 测试名改成不暗示 Python 的名字
+  spec: 00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+  created_at: '2026-11-07'
+  updated_at: '2026-11-07'
+  attachments: []
+- id: kernel.scaffold.book-llm
+  name: 程序书 DeepSeek 生成
+  kind: step
+  layer: 3
+  parent: kernel.scaffold
+  phase: P1
+  status: 已完成
+  responsibility: 用 DeepSeek 把树事实改写成程序书正文，未配置或失败时回退离线模板
+  not_responsible:
+  - 不让模型决定状态与校验结论
+  inputs: []
+  outputs:
+  - kernel.book.text
+  depends_on:
+  - kernel.scaffold.products
+  files:
+  - 00-程序树/工具/csharp/src/PTree.Core/DeepSeekClient.cs
+  - 00-程序树/工具/csharp/src/PTree.Core/ProgramBookGenerator.cs
+  acceptance:
+  - 命令：ptree-cs --root examples/demo book --llm --out out.txt（未配置密钥时退出码 2 且仍输出模板）
+  - 测试：dotnet test --filter FullyQualifiedName~DeepSeekClientTests
+  - 命令：环境变量清空后在仓库根跑 book 仍退出 0
+  spec: 00-程序树/规范/模型接入_v1.txt
+  created_at: '2026-11-07'
+  updated_at: '2026-11-07'
+  attachments: []
 groups:
 - id: group.all
   name: 全树
@@ -2443,6 +2511,7 @@ groups:
   - kernel.backup.config
   - kernel.backup.run
   - kernel.backup.secret-scan
+  - kernel.scaffold.book-llm
 - id: group.dept-interface
   name: 接口部组
   description: 接口部下的程序与步骤
@@ -2514,6 +2583,8 @@ groups:
   - quality.baseline
   - quality.baseline.snapshot
   - quality.baseline.perf
+  - quality.smoke-e2e
+  - quality.snapshot-hygiene
 - id: group.dept-release
   name: 发布部组
   description: 发布部下的程序与步骤

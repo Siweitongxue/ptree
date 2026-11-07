@@ -1,0 +1,85 @@
+proposal: chg-baseline-truth
+author: lead
+reason: 让树能说真话：把已知缺陷节点改成未完成，并把两项欠账登记成待办节点
+contracts:
+- id: quality.smoke.result
+  version: 1.0.0
+  purpose: MCP 与 CLI 端到端冒烟一次运行的结果记录
+  fields:
+    result:
+      type: object
+  required: [result]
+  external_consumers: true
+  producers: [quality.smoke-e2e]
+  consumers: []
+- id: quality.snapshot.result
+  version: 1.0.0
+  purpose: 快照治理后的比对结果与噪声清理记录
+  fields:
+    result:
+      type: object
+  required: [result]
+  external_consumers: true
+  producers: [quality.snapshot-hygiene]
+  consumers: []
+ops:
+- op: modify
+  node: canvas.viewer-grid
+  changes:
+    status: 未完成
+    files: []
+    notes: 折叠状态刷新后不保持，缺持久化；规格见 说明/canvas.viewer-grid.txt，代码在 00-程序树/工具/viewer/viewer.js
+- op: modify
+  node: canvas.grid-export
+  changes:
+    status: 未完成
+    files: []
+    notes: data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；README 提到的 bridge.html 实际缺失
+- op: add
+  node:
+    id: quality.smoke-e2e
+    name: 端到端冒烟
+    kind: step
+    layer: 3
+    parent: quality.baseline
+    phase: P3
+    status: 未完成
+    responsibility: 起一次真实 MCP 会话与 CLI 调用，验证工具目录、读写与校验链路连通
+    not_responsible:
+    - 不替代单元测试
+    inputs: []
+    outputs:
+    - quality.smoke.result
+    depends_on:
+    - quality.baseline
+    files: []
+    acceptance:
+    - 命令：printf '' | ptree-cs --root examples/demo mcp 后 tools/list 返回 27 个 tree_ 工具
+    - 命令：ptree-cs --root examples/demo check 退出码 0
+    spec: 00-程序树/规范/核心/01_程序树核心.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'
+- op: add
+  node:
+    id: quality.snapshot-hygiene
+    name: 快照治理
+    kind: step
+    layer: 3
+    parent: quality.baseline
+    phase: P3
+    status: 未完成
+    responsibility: 清掉快照里的时间戳噪声，修正误导性测试名与 README 里的测试数量
+    not_responsible:
+    - 不改快照比对算法
+    inputs: []
+    outputs:
+    - quality.snapshot.result
+    depends_on:
+    - quality.baseline
+    files: []
+    acceptance:
+    - 测试：PTREE_UPDATE_SNAPSHOT=1 重基后 git diff 为空
+    - 人工清单：ParityTests 里两个 CSharpAndPython 测试名改成不暗示 Python 的名字
+    spec: 00-程序树/工具/csharp/tests/PTree.Tests/README.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'

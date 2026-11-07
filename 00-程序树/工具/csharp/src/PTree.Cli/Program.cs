@@ -125,7 +125,7 @@ internal static class Program
                 }
                 case "view": return Generate(repository, GeneratedProducts.ViewFile, GeneratedProducts.RenderView, options.Json);
                 case "order": return Generate(repository, GeneratedProducts.OrderFile, GeneratedProducts.RenderOrder, options.Json);
-                case "book": return Generate(repository, GeneratedProducts.BookFile, GeneratedProducts.RenderBook, options.Json);
+                case "book": return Book(repository, options);
                 case "brief": return Brief(repository, options.Json);
                 case "benchmark": return Benchmark(repository, options);
                 case "log": return Log(repository, options);
@@ -182,6 +182,8 @@ internal static class Program
         public string? Token { get; set; }
         public string? Target { get; set; }
         public bool? SecretScanFlag { get; set; }
+        public bool Llm { get; set; }
+        public string? Out { get; set; }
         public int? Repeat { get; set; }
     }
 
@@ -219,6 +221,8 @@ internal static class Program
                 case "--target": if (index + 1 < tokens.Count) options.Target = tokens[++index]; break;
                 case "--secret-scan": if (index + 1 < tokens.Count && bool.TryParse(tokens[++index], out var secretScan)) options.SecretScanFlag = secretScan; break;
                 case "--no-secret-scan": options.SecretScanFlag = false; break;
+                case "--llm": options.Llm = true; break;
+                case "--out": if (index + 1 < tokens.Count) options.Out = tokens[++index]; break;
                 case "--repeat": if (index + 1 < tokens.Count && int.TryParse(tokens[++index], out var repeat)) options.Repeat = repeat; break;
                 case "--include-trimmed": options.Write = true; break;
                 case "--dry-run": break;
@@ -404,6 +408,68 @@ internal static class Program
         File.WriteAllText(reportPath, report, new UTF8Encoding(false));
         if (json) WriteJson(JsonOutput.Serialize(result)); else Console.Write(report);
         return result.ExitCode;
+    }
+
+    /// <summary>book：默认保持离线模板；--llm 走 DeepSeek，失败/未配置时回退模板并说明原因。</summary>
+    private static int Book(PTreeRepository repository, Options options)
+    {
+        if (!options.Llm && options.Node is null && options.Out is null)
+            return Generate(repository, GeneratedProducts.BookFile, GeneratedProducts.RenderBook, options.Json);
+
+        var validation = Validator.Validate(repository);
+        var template = GeneratedProducts.RenderBook(repository, validation);
+        if (!options.Llm)
+        {
+            var path = WriteBookOutput(repository, options.Out, template);
+            if (options.Json)
+                WriteJson(JsonOutput.Serialize(new { ok = validation.Ok, llm = false, fallback = true, reason = "离线模板", path, content = template }));
+            else
+            {
+                Console.WriteLine("已生成：" + path + "（离线模板）");
+                Console.Write(template);
+            }
+            return validation.Ok ? 0 : 1;
+        }
+
+        var config = DeepSeekClient.LoadConfig();
+        if (!config.Configured)
+        {
+            var path = WriteBookOutput(repository, options.Out, template);
+            const string reason = "未配置 DeepSeek API Key（DEEPSEEK_API_KEY / global.yaml deepseek.api_key / credentials.enc），已回退离线模板";
+            if (options.Json)
+                WriteJson(JsonOutput.Serialize(new { ok = false, llm = false, fallback = true, reason, path, content = template }));
+            else
+            {
+                Console.Error.WriteLine("DeepSeek 未配置：" + reason);
+                Console.WriteLine("已生成：" + path + "（离线模板）");
+                Console.Write(template);
+            }
+            return 2;
+        }
+
+        using var client = new DeepSeekClient(config);
+        var result = ProgramBookGenerator.GenerateAsync(repository, client, options.Node).GetAwaiter().GetResult();
+        var output = WriteBookOutput(repository, options.Out, result.Content);
+        var fallbackReason = result.Llm ? "" : result.Reason;
+        if (options.Json)
+            WriteJson(JsonOutput.Serialize(new { ok = result.Ok, llm = result.Llm, fallback = result.Fallback, reason = fallbackReason, path = output, content = result.Content, attempts = result.Attempts }));
+        else
+        {
+            if (!result.Llm) Console.Error.WriteLine("DeepSeek 回退：" + fallbackReason);
+            Console.WriteLine("已生成：" + output + "（" + (result.Llm ? "DeepSeek" : "离线模板") + "）");
+            Console.Write(result.Content);
+        }
+        return 0;
+    }
+
+    private static string WriteBookOutput(PTreeRepository repository, string? outPath, string content)
+    {
+        if (string.IsNullOrWhiteSpace(outPath))
+            return WriteGenerated(repository, GeneratedProducts.BookFile, content);
+        var full = Path.IsPathRooted(outPath) ? outPath : Path.GetFullPath(outPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(full)!);
+        File.WriteAllText(full, content, new UTF8Encoding(false));
+        return full;
     }
 
     private static int Generate(PTreeRepository repository, string filename, Func<PTreeRepository, ValidationPayload, string> renderer, bool json)
@@ -688,5 +754,5 @@ internal static class Program
         return 0;
     }
 
-    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|apply|check-plan|verify|init|version|mcp> [--json]");
+    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book [--llm] [--node <id>] [--out <path>]|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|apply|check-plan|verify|init|version|mcp> [--json]");
 }

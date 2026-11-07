@@ -1,0 +1,210 @@
+AI Company 程序树总览
+
+由 ptree-cs 生成，禁止手改
+生成时间：2026-11-07 22:56:41
+tree_version：1.0.0
+校验状态：通过校验（E=0，W=3）
+
+节点统计：共 89 个（root=1 · department=6 · program=29 · step=53）
+
+一、树结构
+
+ptree [已完成 P0] 程序树
+├── kernel [已完成 P0] 内核部
+│   ├── kernel.store [已完成 P0] 树清单读写
+│   │   ├── kernel.store.yaml [已完成 P0] YAML 与值树解析
+│   │   ├── kernel.store.repository [已完成 P0] 仓库与节点表
+│   │   └── kernel.store.output [已完成 P0] 输出与兼容层
+│   ├── kernel.reading [已完成 P0] 节点阅读与渲染
+│   │   ├── kernel.reading.card [已完成 P0] 卡片与关系图
+│   │   └── kernel.reading.brief [已完成 P0] 速览与粗读
+│   ├── kernel.write [已完成 P0] 节点写工具
+│   │   ├── kernel.write.node [已完成 P0] 节点增改退删
+│   │   ├── kernel.write.group [已完成 P0] 功能块维护
+│   │   └── kernel.write.query [已完成 P0] 查询与提交
+│   ├── kernel.scaffold [已完成 P0] 提案与脚手架
+│   │   ├── kernel.scaffold.proposal [已完成 P0] 提案评估与落盘
+│   │   ├── kernel.scaffold.products [已完成 P0] 生成物渲染
+│   │   ├── kernel.scaffold.init [已完成 P0] 新项目脚手架
+│   │   └── kernel.scaffold.book-llm [已完成 P1] 程序书 DeepSeek 生成
+│   ├── kernel.ops [已完成 P0] 运维与校验
+│   │   ├── kernel.ops.health [已完成 P0] 健康与变更记录
+│   │   ├── kernel.ops.verify [已完成 P0] 跨树校验与验证
+│   │   └── kernel.ops.adapt [已完成 P0] 目录适配与基准
+│   └── kernel.backup [已完成 P0] 备份子系统
+│       ├── kernel.backup.config [已完成 P0] 备份配置与凭据
+│       ├── kernel.backup.run [已完成 P0] 备份点与保留
+│       └── kernel.backup.secret-scan [已完成 P0] 备份密钥扫描
+├── interface [已完成 P1] 接口部
+│   ├── interface.mcp-server [已完成 P1] MCP 协议服务
+│   │   ├── interface.mcp-server.read [已完成 P1] 只读工具组
+│   │   ├── interface.mcp-server.write [已完成 P1] 写工具组
+│   │   └── interface.mcp-server.verify [已完成 P1] 校验与备份工具组
+│   ├── interface.mcp-compat [已完成 P1] 旧工具兼容层
+│   ├── interface.cli [已完成 P1] 命令行接口
+│   └── interface.serve [已完成 P1] 本地 HTTP 服务
+├── rules [已完成 P0] 规则部
+│   ├── rules.structure [已完成 P0] 结构与规模规则
+│   │   ├── rules.structure.schema [已完成 P0] 顶层与字段检查
+│   │   ├── rules.structure.identity [已完成 P0] 身份与层级检查
+│   │   └── rules.structure.groups [已完成 P0] 规模豁免与组检查
+│   ├── rules.relations [已完成 P0] 联系与契约规则
+│   │   ├── rules.relations.contracts [已完成 P0] 契约引用检查
+│   │   ├── rules.relations.dependency [已完成 P0] 依赖与阶段检查
+│   │   └── rules.relations.links [已完成 P0] 联系登记与引用扫描
+│   ├── rules.state [已完成 P0] 状态质量与验收规则
+│   │   ├── rules.state.responsibility [已完成 P0] 职责声明与重复检查
+│   │   ├── rules.state.completion [已完成 P0] 完成度与证据检查
+│   │   └── rules.state.quality [已完成 P0] 标杆与评价检查
+│   ├── rules.docs [已完成 P0] 文档与阅读项规则
+│   │   ├── rules.docs.spec [已完成 P0] spec 与物理目录检查
+│   │   ├── rules.docs.intro [已完成 P0] 说明与阅读项检查
+│   │   └── rules.docs.standard [已完成 P0] 规范目录核对
+│   ├── rules.backup [已完成 P0] 备份台账与预设规则
+│   │   ├── rules.backup.ledger [已完成 P0] 变更台账检查
+│   │   ├── rules.backup.config [已完成 P0] 备份配置检查
+│   │   └── rules.backup.preset [已完成 P0] 预设节点检查
+│   └── rules.planning [已完成 P0] 跨树与策划对账规则
+│       ├── rules.planning.cross-tree [已完成 P0] 跨树引用与字段检查
+│       ├── rules.planning.coverage [已完成 P0] 策划覆盖与文档形态检查
+│       └── rules.planning.scan [已完成 P0] 未登记代码与缺口扫描
+├── canvas [已完成 P2] 画布部
+│   ├── canvas.viewer-shell [已完成 P2] 视图外壳
+│   ├── canvas.viewer-grid [未完成 P2] 网格渲染引擎
+│   │   ├── canvas.viewer-grid.layout [已完成 P2] 布局与可见性
+│   │   ├── canvas.viewer-grid.draw [已完成 P2] 画布绘制
+│   │   └── canvas.viewer-grid.interaction [已完成 P2] 交互与详情
+│   └── canvas.grid-export [未完成 P2] 网格导出器
+│       ├── canvas.grid-export.rows [已完成 P2] 行解析
+│       └── canvas.grid-export.graph [已完成 P2] 联系拼装
+├── quality [已完成 P3] 质量部
+│   ├── quality.kernel-tests [已完成 P3] 内核行为测试
+│   ├── quality.rule-tests [已完成 P3] 规则与提案测试
+│   ├── quality.read-tests [已完成 P3] 阅读阶梯与卡片测试
+│   ├── quality.link-tests [已完成 P3] 联系与预设测试
+│   ├── quality.health-tests [已完成 P3] 健康与备份测试
+│   └── quality.baseline [已完成 P3] 快照与性能基线
+│       ├── quality.baseline.snapshot [已完成 P3] 校验与索引快照
+│       ├── quality.baseline.perf [已完成 P3] 性能护栏
+│       ├── quality.smoke-e2e [未完成 P3] 端到端冒烟
+│       └── quality.snapshot-hygiene [未完成 P3] 快照治理
+└── release [已完成 P3] 发布部
+    ├── release.build [已完成 P3] 构建入口
+    │   └── release.build.lock [已完成 P3] 构建互斥锁
+    ├── release.publish [已完成 P3] 产物发布
+    │   ├── release.publish.cli [已完成 P3] ptree-cs 发布
+    │   └── release.publish.serve [已完成 P3] ptree-serve 发布
+    ├── release.examples [已完成 P3] 示例树脚手架
+    │   ├── release.examples.demo [已完成 P3] demo 示例树
+    │   └── release.examples.texts [已完成 P3] 示例文本
+    └── release.open-source [已完成 P3] 开源入口
+
+二、状态图例
+
+  planned：已规划，尚未开工（files/evidence 必须为空）
+  in_progress：进行中（acceptance 必须已写）
+  built：已落地（files 必须都存在）
+  verified：已验证（built + evidence 全 pass）
+  legacy：历史资产，保留但由 authority 指向新实现
+  deprecated：已废弃，replaced_by 指向替代节点
+
+三、按部门统计
+
+  canvas（画布部）：节点 8；已落地 6；推进中 2；其它 0
+  interface（接口部）：节点 7；已落地 7；推进中 0；其它 0
+  kernel（内核部）：节点 24；已落地 24；推进中 0；其它 0
+  quality（质量部）：节点 10；已落地 8；推进中 2；其它 0
+  release（发布部）：节点 9；已落地 9；推进中 0；其它 0
+  rules（规则部）：节点 24；已落地 24；推进中 0；其它 0
+
+四、依赖与父子关系
+
+  kernel（内核部 · 已完成）：依赖 ptree；父节点 ptree
+  kernel.store（树清单读写 · 已完成）：依赖 kernel；父节点 kernel
+  kernel.store.yaml（YAML 与值树解析 · 已完成）：依赖 kernel.store；父节点 kernel.store
+  kernel.store.repository（仓库与节点表 · 已完成）：依赖 kernel.store、kernel.store.yaml；父节点 kernel.store
+  kernel.store.output（输出与兼容层 · 已完成）：依赖 kernel.store、kernel.store.repository；父节点 kernel.store
+  kernel.reading（节点阅读与渲染 · 已完成）：依赖 kernel、kernel.store；父节点 kernel
+  kernel.reading.card（卡片与关系图 · 已完成）：依赖 kernel.reading；父节点 kernel.reading
+  kernel.reading.brief（速览与粗读 · 已完成）：依赖 kernel.reading；父节点 kernel.reading
+  kernel.write（节点写工具 · 已完成）：依赖 kernel、kernel.store、kernel.reading；父节点 kernel
+  kernel.write.node（节点增改退删 · 已完成）：依赖 kernel.write；父节点 kernel.write
+  kernel.write.group（功能块维护 · 已完成）：依赖 kernel.write；父节点 kernel.write
+  kernel.write.query（查询与提交 · 已完成）：依赖 kernel.write；父节点 kernel.write
+  kernel.scaffold（提案与脚手架 · 已完成）：依赖 kernel、kernel.store、kernel.ops；父节点 kernel
+  kernel.scaffold.proposal（提案评估与落盘 · 已完成）：依赖 kernel.scaffold；父节点 kernel.scaffold
+  kernel.scaffold.products（生成物渲染 · 已完成）：依赖 kernel.scaffold；父节点 kernel.scaffold
+  kernel.scaffold.init（新项目脚手架 · 已完成）：依赖 kernel.scaffold；父节点 kernel.scaffold
+  kernel.ops（运维与校验 · 已完成）：依赖 kernel、kernel.store、kernel.backup；父节点 kernel
+  kernel.ops.health（健康与变更记录 · 已完成）：依赖 kernel.ops；父节点 kernel.ops
+  kernel.ops.verify（跨树校验与验证 · 已完成）：依赖 kernel.ops；父节点 kernel.ops
+  kernel.ops.adapt（目录适配与基准 · 已完成）：依赖 kernel.ops；父节点 kernel.ops
+  kernel.backup（备份子系统 · 已完成）：依赖 kernel、kernel.store；父节点 kernel
+  kernel.backup.config（备份配置与凭据 · 已完成）：依赖 kernel.backup；父节点 kernel.backup
+  kernel.backup.run（备份点与保留 · 已完成）：依赖 kernel.backup；父节点 kernel.backup
+  kernel.backup.secret-scan（备份密钥扫描 · 已完成）：依赖 kernel.backup；父节点 kernel.backup
+  interface（接口部 · 已完成）：依赖 ptree；父节点 ptree
+  interface.mcp-server（MCP 协议服务 · 已完成）：依赖 interface；父节点 interface
+  interface.mcp-compat（旧工具兼容层 · 已完成）：依赖 interface；父节点 interface
+  interface.cli（命令行接口 · 已完成）：依赖 interface；父节点 interface
+  interface.serve（本地 HTTP 服务 · 已完成）：依赖 interface；父节点 interface
+  interface.mcp-server.read（只读工具组 · 已完成）：依赖 interface.mcp-server；父节点 interface.mcp-server
+  interface.mcp-server.write（写工具组 · 已完成）：依赖 interface.mcp-server；父节点 interface.mcp-server
+  interface.mcp-server.verify（校验与备份工具组 · 已完成）：依赖 interface.mcp-server；父节点 interface.mcp-server
+  rules（规则部 · 已完成）：依赖 ptree；父节点 ptree
+  rules.structure（结构与规模规则 · 已完成）：依赖 rules；父节点 rules
+  rules.structure.schema（顶层与字段检查 · 已完成）：依赖 rules.structure；父节点 rules.structure
+  rules.structure.identity（身份与层级检查 · 已完成）：依赖 rules.structure；父节点 rules.structure
+  rules.structure.groups（规模豁免与组检查 · 已完成）：依赖 rules.structure；父节点 rules.structure
+  rules.relations（联系与契约规则 · 已完成）：依赖 rules、rules.structure；父节点 rules
+  rules.relations.contracts（契约引用检查 · 已完成）：依赖 rules.relations；父节点 rules.relations
+  rules.relations.dependency（依赖与阶段检查 · 已完成）：依赖 rules.relations；父节点 rules.relations
+  rules.relations.links（联系登记与引用扫描 · 已完成）：依赖 rules.relations；父节点 rules.relations
+  rules.state（状态质量与验收规则 · 已完成）：依赖 rules、rules.structure、rules.relations；父节点 rules
+  rules.state.responsibility（职责声明与重复检查 · 已完成）：依赖 rules.state；父节点 rules.state
+  rules.state.completion（完成度与证据检查 · 已完成）：依赖 rules.state；父节点 rules.state
+  rules.state.quality（标杆与评价检查 · 已完成）：依赖 rules.state；父节点 rules.state
+  rules.docs（文档与阅读项规则 · 已完成）：依赖 rules、rules.structure；父节点 rules
+  rules.docs.spec（spec 与物理目录检查 · 已完成）：依赖 rules.docs；父节点 rules.docs
+  rules.docs.intro（说明与阅读项检查 · 已完成）：依赖 rules.docs；父节点 rules.docs
+  rules.docs.standard（规范目录核对 · 已完成）：依赖 rules.docs；父节点 rules.docs
+  rules.backup（备份台账与预设规则 · 已完成）：依赖 rules；父节点 rules
+  rules.backup.ledger（变更台账检查 · 已完成）：依赖 rules.backup；父节点 rules.backup
+  rules.backup.config（备份配置检查 · 已完成）：依赖 rules.backup；父节点 rules.backup
+  rules.backup.preset（预设节点检查 · 已完成）：依赖 rules.backup；父节点 rules.backup
+  rules.planning（跨树与策划对账规则 · 已完成）：依赖 rules、rules.relations、rules.docs；父节点 rules
+  rules.planning.cross-tree（跨树引用与字段检查 · 已完成）：依赖 rules.planning；父节点 rules.planning
+  rules.planning.coverage（策划覆盖与文档形态检查 · 已完成）：依赖 rules.planning；父节点 rules.planning
+  rules.planning.scan（未登记代码与缺口扫描 · 已完成）：依赖 rules.planning；父节点 rules.planning
+  canvas（画布部 · 已完成）：依赖 ptree；父节点 ptree
+  canvas.viewer-shell（视图外壳 · 已完成）：依赖 canvas；父节点 canvas
+  canvas.viewer-grid（网格渲染引擎 · 未完成）：依赖 canvas.viewer-shell、canvas.grid-export；父节点 canvas
+  canvas.viewer-grid.layout（布局与可见性 · 已完成）：依赖 canvas.viewer-grid；父节点 canvas.viewer-grid
+  canvas.viewer-grid.draw（画布绘制 · 已完成）：依赖 canvas.viewer-grid；父节点 canvas.viewer-grid
+  canvas.viewer-grid.interaction（交互与详情 · 已完成）：依赖 canvas.viewer-grid；父节点 canvas.viewer-grid
+  canvas.grid-export（网格导出器 · 未完成）：依赖 canvas；父节点 canvas
+  canvas.grid-export.rows（行解析 · 已完成）：依赖 canvas.grid-export；父节点 canvas.grid-export
+  canvas.grid-export.graph（联系拼装 · 已完成）：依赖 canvas.grid-export；父节点 canvas.grid-export
+  quality（质量部 · 已完成）：依赖 ptree；父节点 ptree
+  quality.kernel-tests（内核行为测试 · 已完成）：依赖 quality；父节点 quality
+  quality.rule-tests（规则与提案测试 · 已完成）：依赖 quality；父节点 quality
+  quality.read-tests（阅读阶梯与卡片测试 · 已完成）：依赖 quality；父节点 quality
+  quality.link-tests（联系与预设测试 · 已完成）：依赖 quality；父节点 quality
+  quality.health-tests（健康与备份测试 · 已完成）：依赖 quality；父节点 quality
+  quality.baseline（快照与性能基线 · 已完成）：依赖 quality；父节点 quality
+  quality.baseline.snapshot（校验与索引快照 · 已完成）：依赖 quality.baseline；父节点 quality.baseline
+  quality.baseline.perf（性能护栏 · 已完成）：依赖 quality.baseline；父节点 quality.baseline
+  release（发布部 · 已完成）：依赖 ptree；父节点 ptree
+  release.build（构建入口 · 已完成）：依赖 release；父节点 release
+  release.build.lock（构建互斥锁 · 已完成）：依赖 release.build；父节点 release.build
+  release.publish（产物发布 · 已完成）：依赖 release.build；父节点 release
+  release.publish.cli（ptree-cs 发布 · 已完成）：依赖 release.publish；父节点 release.publish
+  release.publish.serve（ptree-serve 发布 · 已完成）：依赖 release.publish；父节点 release.publish
+  release.examples（示例树脚手架 · 已完成）：依赖 release.publish；父节点 release
+  release.examples.demo（demo 示例树 · 已完成）：依赖 release.examples；父节点 release.examples
+  release.examples.texts（示例文本 · 已完成）：依赖 release.examples；父节点 release.examples
+  release.open-source（开源入口 · 已完成）：依赖 release.publish、release.examples；父节点 release
+  quality.smoke-e2e（端到端冒烟 · 未完成）：依赖 quality.baseline；父节点 quality.baseline
+  quality.snapshot-hygiene（快照治理 · 未完成）：依赖 quality.baseline；父节点 quality.baseline
+  kernel.scaffold.book-llm（程序书 DeepSeek 生成 · 已完成）：依赖 kernel.scaffold.products；父节点 kernel.scaffold
+

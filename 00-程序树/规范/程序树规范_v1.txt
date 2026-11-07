@@ -23,6 +23,8 @@
 6 状态定稿四个值：未完成、已完成、已验证、退役；必须如实填写。
   1 旧值 planned、in_progress、built、verified、legacy、deprecated 只作读入兼容，读入即映射为四值，输出一律四值。
 7 父节点验收通过前，子节点不许全部完成，判据见 校验规则 R16。
+  1 程序可以已完成而其步骤仍为未完成，这种父子状态不一致按 R16 报 W 是预期结果，用来表达已知缺口。
+  2 缺口必须在节点 notes 写清缺什么，不许把状态改成已完成来消 W。
 8 组以清单 groups 段为唯一真相，字段为 id、name、description、parent、members；组最多两层。
 9 组 id 以 group. 开头，只含小写字母、数字、点与连字符；实例里的组列必须写清单组 id，不得另造编号。
   1 过渡映射：实例的 G0 到 group.all，其余部门组按 group.dept-<部门 id> 与清单 groups 段一一对应，例如 group.dept-core。

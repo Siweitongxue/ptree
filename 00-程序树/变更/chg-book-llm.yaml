@@ -1,0 +1,42 @@
+proposal: chg-book-llm
+author: lead
+reason: 程序书接入 DeepSeek，把生成能力登记成节点与契约
+contracts:
+- id: kernel.book.text
+  version: 1.0.0
+  purpose: 程序书正文，由离线模板或 DeepSeek 生成，内容只引用树里登记过的路径
+  fields:
+    result:
+      type: object
+  required: [result]
+  external_consumers: true
+  producers: [kernel.scaffold.book-llm]
+  consumers: []
+ops:
+- op: add
+  node:
+    id: kernel.scaffold.book-llm
+    name: 程序书 DeepSeek 生成
+    kind: step
+    layer: 3
+    parent: kernel.scaffold
+    phase: P1
+    status: 已完成
+    responsibility: 用 DeepSeek 把树事实改写成程序书正文，未配置或失败时回退离线模板
+    not_responsible:
+    - 不让模型决定状态与校验结论
+    inputs: []
+    outputs:
+    - kernel.book.text
+    depends_on:
+    - kernel.scaffold.products
+    files:
+    - 00-程序树/工具/csharp/src/PTree.Core/DeepSeekClient.cs
+    - 00-程序树/工具/csharp/src/PTree.Core/ProgramBookGenerator.cs
+    acceptance:
+    - 命令：ptree-cs --root examples/demo book --llm --out out.txt（未配置密钥时退出码 2 且仍输出模板）
+    - 测试：dotnet test --filter FullyQualifiedName~DeepSeekClientTests
+    - 命令：环境变量清空后在仓库根跑 book 仍退出 0
+    spec: 00-程序树/规范/模型接入_v1.txt
+    created_at: '2026-11-07'
+    updated_at: '2026-11-07'
