@@ -1,0 +1,1 @@
+身份与层级检查由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中的 R03-R06 实现，读取节点 id、root、parent、kind 与 layer，先查 id 唯一和格式，再查根节点是否指向真实节点、每个 parent 是否存在、父子链能否闭合，最后按 parent 链推导 layer 并与 kind 的合法层级比对。处理时对缺失父节点保留原始 id，对 layer 不一致给出推导值与警告，保证问题能定位到具体节点。产出是身份、根、父子、层级四类条目；边界是不检查 groups 段，也不判断节点职责和验收条件是否合理。

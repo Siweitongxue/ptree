@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：BackupService 统一处理状态、配置、setup 与 run，BackupSettings 存非敏感项，BackupCrypto 只加解密凭据。
+缺：备份模式没有端到端集成测试，git-bundle 与 tag 的失败分支覆盖有限。

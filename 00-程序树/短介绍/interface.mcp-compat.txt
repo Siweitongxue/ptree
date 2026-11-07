@@ -1,0 +1,1 @@
+保留旧版 status/read/check/propose/apply 兼容函数，新目录不再暴露

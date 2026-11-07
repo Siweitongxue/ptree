@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：PTreeRepository.Load 统一解析清单与附属文件，TreeStore.Load 负责树实例与引用抽取，FromRaw 服务候选校验。
+缺：树实例字段数量变化时的解析错误只进 ParseIssues，尚未在工具层汇总成稳定提示。

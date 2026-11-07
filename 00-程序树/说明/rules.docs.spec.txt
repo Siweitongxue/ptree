@@ -1,0 +1,1 @@
+spec 与物理目录检查读取节点 spec、home、files 和 program.yaml，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R15/R17/R18/R36 执行：R15 查 spec 路径是否真实存在且可追溯，R17 查 home 目录、program.yaml 与登记文件是否一致，R18 查 SPEC 内容是否齐全，R36 查自动适配目录与模式是否合法。处理时把相对仓库根的路径与节点 id 一起写入消息，遇到目录整体缺失时明确指出。产出是路径与 SPEC 条目；边界是不创建目录、不生成 SPEC，也不修改自动适配配置。

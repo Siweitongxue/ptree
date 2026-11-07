@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：用契约映射比对节点 inputs/outputs 与 producers/consumers
+缺：暂无已知缺口，缺失契约与双向不一致均有反例

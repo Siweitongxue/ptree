@@ -1,0 +1,3 @@
+ptree-cs 发布读 00-程序树/工具/csharp/src/PTree.Cli/PTree.Cli.csproj 的 OutputType、TargetFramework、AssemblyName 与两个 ProjectReference，生成 ptree-cs.exe 及其 runtimeconfig.json、deps.json。
+它把 PTree.Core 与 PTree.Mcp 一起带进发布目录，支持 version 等命令；它不实现命令解析与子命令分支，也不改 CLR 版本与目标框架。
+改之前读 csproj、csharp/README.md 的命令清单和 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0 下的产物；改 AssemblyName 会破坏 README 与调用脚本。常见坑是只删 exe 不删 deps、把 Debug 产物当 Release。

@@ -1,0 +1,1 @@
+联系与契约规则读取 00-程序树/契约/contracts.yaml 与 00-程序树/工具/csharp/src/PTree.Core/Validator.cs，执行 R09-R12、R21、R22、R33、R40、R41：先确认节点 inputs/outputs 引用的契约存在，再检查契约 producers/consumers 与节点声明是否双向一致，随后查 depends_on 的自依赖、环、缺失目标和阶段顺序。R40 处理 links 段的 from/to/type/note，R41 扫描代码 using/import 并只提示未登记引用。产出是联系类条目，消息带契约 id、起止节点或重复键；边界是不自动补依赖，也不判断职责文本。

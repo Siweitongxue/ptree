@@ -1,0 +1,1 @@
+速览与粗读步骤读取树仓库的网格条目、状态、部门、关键契约与缺口，在 00-程序树/工具/csharp/src/PTree.Core/BriefRenderer.cs 生成 120 行、6KB 以内的项目速览；NodeCards.cs 另外生成阅读阶梯、功能块分区和组内成员清单，帮助 AI 先粗后细定位。它不读单节点细节、不生成 HTML，也不改清单；输出 kernel.reading.brief 给 MCP 的 tree_map、guide、read_group 与 CLI brief 使用。

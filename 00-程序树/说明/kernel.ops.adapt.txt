@@ -1,0 +1,1 @@
+目录适配与基准步骤接收清单 adapt 段和 iterations，在 00-程序树/工具/csharp/src/PTree.Core/AdaptScanner.cs 中遍历固定目录、跳过链接、按 patterns 过滤，再按节点 files 判断归属，输出已归属、未归属与忽略文件及最长前缀建议；Bench.cs 在进程内重复加载并执行 validate、check、read-node、map、status，统计首跑、最小值、中位数和 P95。它不自动写回归属，也不做子进程计时；输出 kernel.ops.adapt。

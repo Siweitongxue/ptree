@@ -1,0 +1,1 @@
+联系与契约规则的实现边界：读取契约表与节点 inputs/outputs/depends_on，执行 R09-R12、R21、R22、R33 的契约引用、双

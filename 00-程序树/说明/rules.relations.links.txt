@@ -1,0 +1,1 @@
+联系登记与引用扫描由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R40、R41 实现，先读清单 links 段，检查 from/to 是否指向真实节点或网格条目、type 是否在允许集合内、是否自连接或重复，再要求每条有效联系带 note；随后扫描已登记代码文件的 using/import，把跨节点但未登记的引用作为提示。处理时保留 links 原始下标，消息写 from、to、type 或来源文件。产出是联系结构条目与引用提示；边界是 R41 只提示不阻断，也不自动新增 links。

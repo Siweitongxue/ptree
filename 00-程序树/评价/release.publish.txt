@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：按两份 csproj 的 AssemblyName 与 net10.0 构建，检查 exe、runtimeconfig.json、deps.json 三件套。
+缺：没有发布打包脚本与校验和，bin 产物不进仓库。

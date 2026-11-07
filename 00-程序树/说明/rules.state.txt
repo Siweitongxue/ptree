@@ -1,0 +1,1 @@
+状态质量与验收规则读取节点 responsibility、status、acceptance、evidence、evaluation 与标杆文件，在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 中执行 R07/R08 职责检查、R13/R14/R16 完成度检查、R25-R29 标杆与规模检查、R34 评价检查、R46 已验证证据检查。处理时先比对各状态允许的产物，再核对 evidence 是否含 test/at/result，最后把问题落到节点 id。产出由 ValidationPayload 承载，供规则部汇总；边界是不改状态、不代替用户确认功能，也不生成评价内容。

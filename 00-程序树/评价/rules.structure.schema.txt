@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：用 TopRequired、NodeRequired、NodeAllowed 常量逐项比对后写 R01/R02
+缺：暂无已知缺口，缺键与未知键均有反例

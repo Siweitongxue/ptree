@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：HealthCheck 负责常检，VerifyRunner 组合检查项，ManifestChecker 管跨树，AdaptScanner 与 Bench 各自只读。
+缺：verify 只写报告，不会自动修复或阻断，需由调用方读取 ok 字段。

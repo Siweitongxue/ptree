@@ -181,6 +181,7 @@ internal static class Program
         public string? Username { get; set; }
         public string? Token { get; set; }
         public string? Target { get; set; }
+        public bool? SecretScanFlag { get; set; }
         public int? Repeat { get; set; }
     }
 
@@ -216,6 +217,8 @@ internal static class Program
                 case "--username": if (index + 1 < tokens.Count) options.Username = tokens[++index]; break;
                 case "--token": if (index + 1 < tokens.Count) options.Token = tokens[++index]; break;
                 case "--target": if (index + 1 < tokens.Count) options.Target = tokens[++index]; break;
+                case "--secret-scan": if (index + 1 < tokens.Count && bool.TryParse(tokens[++index], out var secretScan)) options.SecretScanFlag = secretScan; break;
+                case "--no-secret-scan": options.SecretScanFlag = false; break;
                 case "--repeat": if (index + 1 < tokens.Count && int.TryParse(tokens[++index], out var repeat)) options.Repeat = repeat; break;
                 case "--include-trimmed": options.Write = true; break;
                 case "--dry-run": break;
@@ -621,6 +624,7 @@ internal static class Program
         if (options.Username is not null) args["username"] = options.Username;
         if (options.Token is not null) args["token"] = options.Token;
         if (options.Target is not null) args["target"] = options.Target;
+        if (options.SecretScanFlag is not null) args["secret_scan"] = options.SecretScanFlag.Value;
         if (options.Limit > 0) args["limit"] = options.Limit;
         if (options.Write) args["include_trimmed"] = true;
         var arguments = args.Count == 0 ? (JsonElement?)null : JsonSerializer.SerializeToElement(args);
@@ -632,11 +636,12 @@ internal static class Program
             "now" => BackupService.Now(repository.Root, arguments),
             "list" => BackupService.List(repository.Root, arguments),
             "verify" => BackupService.Verify(repository.Root, arguments),
+            "scan" => BackupService.Scan(repository.Root, arguments),
             _ => null,
         };
         if (text is null)
         {
-            Console.Error.WriteLine("ptree-cs: backup 子命令只能是 status / config / setup / now / list / verify");
+            Console.Error.WriteLine("ptree-cs: backup 子命令只能是 status / config / setup / now / list / verify / scan");
             return 2;
         }
         WriteText(text);
@@ -683,5 +688,5 @@ internal static class Program
         return 0;
     }
 
-    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|apply|check-plan|verify|init|version|mcp> [--json]");
+    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|apply|check-plan|verify|init|version|mcp> [--json]");
 }

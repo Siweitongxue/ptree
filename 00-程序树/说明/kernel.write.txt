@@ -1,0 +1,1 @@
+节点写工具程序接收 AI 传入的节点、组、连接字段与当前树仓库，通过 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 在内存 RawMap 上增删改字段，校验父类型、id、契约引用与依赖，同步契约 producers 和 consumers，写盘前跑完整 validate，出现 E 时用备份还原并回滚。它还负责 find、changes、scan 与 git 归组提交等查询动作。程序不实现 MCP 传输、不解析 CLI 参数、不生成程序书；输出 tree.mutation、written_files、台账条目与新 tree_version。

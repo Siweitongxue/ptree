@@ -84,6 +84,7 @@ public sealed class BackupSettings
     public string Mode { get; set; } = "git-bundle";
     public int Retention { get; set; } = BackupLayout.DefaultRetention;
     public List<string> Targets { get; } = new();
+    public bool SecretScan { get; set; } = true;
     public string? LastRun { get; set; }
     public string? LastTreeVersion { get; set; }
     public string? Note { get; set; }
@@ -123,6 +124,8 @@ public sealed class BackupSettings
                 settings.RetentionExplicit = true;
             }
         }
+        if (map.TryGetValue("secret_scan", out var secretScan))
+            settings.SecretScan = ToBool(secretScan) ?? true;
         if (map.TryGetValue("targets", out var targets) && targets is List<object?> list)
         {
             foreach (var item in list.OfType<string>().Select(text => text.Trim()).Where(text => text.Length > 0))
@@ -142,6 +145,7 @@ public sealed class BackupSettings
         map.Set("enabled", Enabled);
         map.Set("mode", BackupLayout.NormalizeMode(Mode));
         map.Set("retention", (long)Retention);
+        map.Set("secret_scan", SecretScan);
         var targets = new List<object?>();
         foreach (var target in Targets) targets.Add(target);
         map.Set("targets", targets);

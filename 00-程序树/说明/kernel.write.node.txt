@@ -1,0 +1,1 @@
+节点增改退删步骤接收 add、update、retire、relocate、delete 参数，在 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 中校验父节点类型、id 格式、契约是否存在、preset 状态、依赖与子节点，随后修改 RawMap 字段、同步契约成员、写盘并追加台账，失败时恢复原文件。它不处理功能块，也不处理 find、changes 查询；输出 kernel.write.node 差异与新版本号，供写程序汇总成 tree.mutation。

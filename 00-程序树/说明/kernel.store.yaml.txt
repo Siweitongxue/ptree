@@ -1,0 +1,1 @@
+YAML 与值树解析步骤读取任意 YAML 文本，通过 00-程序树/工具/csharp/src/PTree.Core/YamlLoader.cs 调用 YamlDotNet 表示模型，再由 RawYaml 保留映射键顺序、处理合并键与重复键，把标量拆成字符串、整数、布尔、日期和 datetime。为对齐 Python 版行为，PyValue、PythonText、PythonImports 与 PyDateTimeValues 负责真值判断、土耳其字母与词尾 sigma 小写、受限 import 扫描和日期格式。产出 kernel.store.raw 原始值树与模型，供仓库步骤建节点表；该步骤不读取业务路径、不写回 YAML，也不承担节点字段校验。

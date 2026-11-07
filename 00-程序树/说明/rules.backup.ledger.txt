@@ -1,0 +1,1 @@
+变更台账检查读取 00-程序树/变更/台账.jsonl，每行按 JSON 解析，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R32 检查 id 是否符合 chg-YYYYMMDD-NNNN、at 与 tree_version 是否齐全、validation.errors/warnings 是否为非负整数、result 是否为 applied 或 rolled_back、proposal 字段是否合法，并查重复 id。处理时保留行号，解析失败也落到具体行。产出是台账类 E/W 条目；边界是不写台账、不修改历史记录，也不判断 proposal 内容是否合理。

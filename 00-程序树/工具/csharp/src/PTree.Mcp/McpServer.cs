@@ -129,7 +129,7 @@ public static class McpServer
                         ["name"] = KernelInfo.ServerName,
                         ["version"] = KernelInfo.Version,
                     },
-                    ["instructions"] = "程序树 MCP 服务：AI 只通过工具读写，不接触文件、不写 YAML。先 tree_status 确认树是绿的；tree_find 定位；tree_read_node 默认读一张 9 行以内的卡（depth=N 展开 N 层关系，0 = 全部；format=full 才返回原 JSON）；新增节点一次一个用 tree_add_node；关系用 tree_add_link；改字段用 tree_update_node；退役用 tree_retire_node。所有写操作自动校验、失败回滚、追加台账，并返回写入后的 tree_version。另有 tree_guard 常检（一切操作前先跑一次）、tree_relocate 迁移登记路径、tree_delete 彻底删除（不可恢复，退役用 tree_retire_node）、tree_scan 扫描 adapt 登记目录（只读）、tree_commit 把一次写操作的 written_files 归组提交。另有 tree_backup_* 六个工具管理自动备份（附属功能、默认关闭）：启用前必须先 tree_backup_setup 完成配置（token/用户名加密存全局目录），再 tree_backup_config enabled=true；tree_backup_now 立即备份一次，tree_backup_list / tree_backup_verify 查备份点与其可读性。",
+                    ["instructions"] = "程序树 MCP 服务：AI 只通过工具读写，不接触文件、不写 YAML。先 tree_status 确认树是绿的；tree_find 定位；tree_read_node 默认读一张 9 行以内的卡（depth=N 展开 N 层关系，0 = 全部；format=full 才返回原 JSON）；新增节点一次一个用 tree_add_node；关系用 tree_add_link；改字段用 tree_update_node；退役用 tree_retire_node。所有写操作自动校验、失败回滚、追加台账，并返回写入后的 tree_version。另有 tree_guard 常检（一切操作前先跑一次）、tree_relocate 迁移登记路径、tree_delete 彻底删除（不可恢复，退役用 tree_retire_node）、tree_scan 扫描 adapt 登记目录（只读）、tree_commit 把一次写操作的 written_files 归组提交。另有 tree_backup_* 七个工具管理自动备份（附属功能、默认关闭）：启用前必须先 tree_backup_setup 完成配置（token/用户名加密存全局目录），再 tree_backup_config enabled=true；tree_backup_now 立即备份一次，tree_backup_list / tree_backup_verify 查备份点与其可读性。",
                 });
             }
             case "ping":
@@ -191,6 +191,7 @@ public static class McpServer
                 "tree_backup_now" => BackupService.Now(root, arguments),
                 "tree_backup_list" => BackupService.List(root, arguments),
                 "tree_backup_verify" => BackupService.Verify(root, arguments),
+                "tree_backup_scan" => BackupService.Scan(root, arguments),
                 _ => null,
             };
             if (text is null)
@@ -363,7 +364,7 @@ public static class McpServer
         }),
         Tool("tree_read_group", "组内视图：列出某功能块/部门组里的成员。mode=names 只给成员名；mode=summary 每行再加一行短介绍与用法（首个代码文件，或「无代码」）。组 id 用 tree_map mode=blocks 查。", new Dictionary<string, object?>
         {
-            ["id"] = Property("string", "组 id，例如 group.tree-toolchain 或 group.dept-info"),
+            ["id"] = Property("string", "组 id，例如 group.<名称>（用 tree_map mode=blocks 查）"),
             ["mode"] = Property("string", "names（默认，成员名）；summary（加简介与用法）", new[] { "names", "summary" }),
         }, new[] { "id" }),
         Tool("tree_check", "跑完整校验（清单 R01-R46 + 跨树 T01-T12），返回错误明细。", new Dictionary<string, object?>()),
@@ -385,6 +386,7 @@ public static class McpServer
             ["enabled"] = Property("boolean", "是否启用自动备份；默认 false（关闭）"),
             ["mode"] = Property("string", "备份方式", new[] { "git-bundle", "tag", "copy" }),
             ["retention"] = Property("integer", "同一 target 保留多少个备份点，默认 10，范围 1-1000"),
+            ["secret_scan"] = Property("boolean", "备份前是否扫描疑似密钥，默认 true；只有确认过命中内容安全时才设 false"),
             ["targets"] = ArrayProperty("整体替换 targets：内层 git 仓路径（相对项目根或绝对路径）或节点 id"),
             ["add_targets"] = ArrayProperty("追加 targets（去重）"),
             ["remove_targets"] = ArrayProperty("移除 targets"),
@@ -394,7 +396,11 @@ public static class McpServer
             ["username"] = Property("string", "备份账号用户名（可全显）"),
             ["token"] = Property("string", "访问令牌；传空表示只改用户名，保留原 token"),
         }, new[] { "username" }),
-        Tool("tree_backup_now", "立即备份一次：对每个 target 执行 git bundle create（或 tag / copy），记录该仓当时 HEAD 的 commit，写 00-程序树/运维/备份.jsonl，并按 retention 裁掉超出的旧备份点。未启用时拒绝并提示先跑 tree_backup_setup + tree_backup_config。", new Dictionary<string, object?>()),
+        Tool("tree_backup_now", "立即备份一次：先按 targets 扫描疑似密钥，命中则整次拒绝且不写 bundle / 台账；未命中才执行 git bundle create（或 tag / copy），记录 HEAD、写备份.jsonl 并按 retention 裁剪。secret_scan=false 才会跳过扫描。", new Dictionary<string, object?>()),
+        Tool("tree_backup_scan", "只读扫描备份 targets 的疑似密钥：返回 findings（file/line/kind/redacted）与放行说明，不生成备份。", new Dictionary<string, object?>
+        {
+            ["target"] = Property("string", "可选：只扫描这个 target"),
+        }),
         Tool("tree_backup_list", "列备份点：按 tree_version 倒序，可按 target 过滤、限制条数；trimmed 记录默认不列（include_trimmed=true 才列）。", new Dictionary<string, object?>
         {
             ["target"] = Property("string", "只看这个 target 的备份点"),

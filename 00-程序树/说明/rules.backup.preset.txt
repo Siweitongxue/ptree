@@ -1,0 +1,1 @@
+预设节点检查读取节点 preset、preset_outputs、status、files 与 created_at，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R35/R44 执行。R35 检查占位节点状态是否仍为未完成、是否用 preset_outputs 或 outputs 说明将来产出、是否误写了实现文件；R44 按 PresetStaleDays 计算创建天数，对超过 30 天仍未转正的预设给提示。处理时保留节点 id 与天数，产出预设类 E/I 条目；边界是不自动转正、不修改节点状态，也不判断预设功能是否值得保留。

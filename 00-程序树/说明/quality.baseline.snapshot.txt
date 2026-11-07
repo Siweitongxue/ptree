@@ -1,0 +1,5 @@
+快照基线读示例树算出的索引与节点负载，与已经固化的快照逐键逐序比对，报出缺失的键与漂移的值。它有两种忽略：对象键顺序无关、generated_at 与 tree_version 不参与比对；数组顺序是敏感的，不做重排。
+
+实现在 00-程序树/工具/csharp/tests/PTree.Tests/ParityTests.cs，快照文件在 examples/demo/00-程序树/工具/csharp/tests/PTree.Tests/Snapshots 下的 parity_snapshot.json；同一个目录还有 validation_snapshot.json，由校验测试使用。刷新用 PTREE_UPDATE_SNAPSHOT=1 跑一次测试，再人工复核 git diff，最后常规模式复跑确认零失败。
+
+快照是判据不是装饰：不许把它降级成数量或关键词包含，也不许在没确认口径变化时重基。改动内核输出结构时，先改实现与说明，再刷新快照。

@@ -6,7 +6,7 @@
 1 每条规则给出级别、检查对象、判据；级别含义：E 错误，W 警告，I 提示。
 2 工具退出码：0 表示无 E；1 表示至少一条 E；2 表示用法或 IO 错误。
 3 人类可读输出一行一条，格式示例：
-  [E] R05 nodes.info.understanding: parent 不存在：info
+  [E] R05 nodes.core.app: parent 不存在：core
   [W] R08 nodes: 职责高度相似：x ≈ y（相似度 0.93）
 4 --json 输出对象含 ok、errors、warnings、notes 四个键；errors 与 warnings 的元素含 code、node、message。
 5 校验默认只读，不修改任何文件；view、order、book、benchmark 子命令才写 生成/ 目录。
@@ -21,7 +21,7 @@ R01 顶层结构 级别 E
 R02 节点字段 级别 E
   1 每个节点必须且只能包含 schema 声明的字段；必填字段缺一即错。root 允许缺 parent 或显式写 null；department 允许缺 inputs、outputs、depends_on，按空数组处理；program 与 step 保持严格。
   2 类型不符即错，例如数组写成字符串、layer 写成字符串。
-  3 契约引用 id 必须为小写字母、数字、连字符加点分段，如 scenario.brief、innovation.premise。
+  3 契约引用 id 必须为小写字母、数字、连字符加点分段，如 demo.result、core.request。
   4 节点 id 命名是约定不是闸门：root 与部门建议单段，更深节点建议 parent 前缀加字面点加末段；不符合前缀只报 I，不阻断。
   5 layer 缺失时按 parent 链自动推导；显式 layer 与推导值不一致只报 W，并按推导值处理。
 R03 id 唯一 级别 E
@@ -109,7 +109,7 @@ R16 父子完成度 级别 E 或 W
 2 从 v1 起，任何新增程序必须落在 10-程序/ 的树形目录里。
 R17 物理目录 级别 E
   1 home 必须是相对路径，且以 10-程序/ 开头。
-  2 home 期望值为 10-程序/加去 root 前缀的 id 路径，点换斜杠；例如 info.understanding 对应 10-程序/info/understanding。
+  2 home 期望值为 10-程序/加去 root 前缀的 id 路径，点换斜杠；例如 core.app 对应 10-程序/core/app。
   3 status 为 未完成、已完成 或 已验证 时，home 目录必须存在。
   4 home 下必须有 SPEC.md 与 program.yaml，内容由 R18 检查。
   5 一个 home 只能被一个节点声明。
@@ -127,7 +127,7 @@ R19 未登记代码扫描 级别 E 或 W
 R20 跨节点 import 级别 E
   1 对 10-程序/部门/程序/ 下的 Python 文件做 AST 解析。
   2 允许 import：标准库、第三方包、本程序包内模块、10-程序/共享/ 提供的模块。
-  3 禁止 import 另一个程序的包，例如 innovation 的程序 import info.understanding 的内部模块，报 E。
+  3 禁止 import 另一个程序的包，例如 core 的程序 import core.app 的内部模块，报 E。
   4 JS/TS 暂不做跨节点 import 检查，v1 记为 I，提示用依赖声明人工保证。
 
 七 豁免与治理（R21-R24）
@@ -284,15 +284,16 @@ R41 代码引用未登记 级别 I（只提示，不阻断）
 R42 预设转正一致性 级别 W
   1 preset 为 true 的节点不重复检查：files 非空已由 R35 报 E。
   2 preset 不为 true、files 非空、状态为已完成或已验证（即节点自称建成）时，说明与短介绍里不得再出现「尚未建成」「未建成」「预设占位」这类占位字样，出现报 W，提示改口。
-  3 状态仍未完成的不报：还在建的东西写「尚未建成」是实话。例：orchestration.office.understand 只有只读归档代码、状态未完成，报 W 会逼着写不实描述，故不报。
+  3 状态仍未完成的不报：还在建的东西写「尚未建成」是实话。例：core.app 只有只读归档代码、状态未完成，报 W 会逼着写不实描述，故不报。
   4 同一节点只报一条，message 指明是说明还是短介绍、命中的哪个字样。
 R43 备份配置结构 级别 E 或 W
   1 只校验 00-程序树/运维/备份.yaml 是否存在与结构；文件不存在直接跳过（备份默认关闭，不是错误）。
-  2 未知字段报 W（只认 enabled、mode、retention、targets、last_run、last_tree_version、note）。
+  2 未知字段报 W（只认 enabled、mode、retention、targets、last_run、last_tree_version、note、secret_scan、secret_allowlist）。
   3 enabled 不是布尔报 E；mode 不是 git-bundle/tag/copy 之一报 E；retention 不是整数或不在 1-1000 报 E。
   4 targets 不是列表、或元素不是非空字符串报 E；enabled=true 但 targets 为空/缺失报 W。
   5 last_run、last_tree_version 不是字符串或 null 报 E。
   6 本规则不读全局密钥与加密凭据，也不判断「启用但未配置」——那是 tree_guard / health 的 W（backup_unconfigured）。
+  7 secret_scan 为布尔键，默认 true；非布尔报 E。secret_allowlist 为列表键，默认空；每项必须是映射且含 path、fingerprint、reason 三个非空字符串，path 为仓库内相对路径或 glob，fingerprint 为 64 位以内十六进制串，结构或类型不对报 E；本规则不校验 allowlist 对应密钥是否真实存在，也不读取密钥内容。
 R44 预设节点长期未转正 级别 I
   1 只看 preset 为 true 的节点；preset 节点的 files/状态一致性由 R35/R42 管，本规则不重复。
   2 created_at 缺失或不是 YYYY-MM-DD 时不报（R08 管时间戳合法性），把「没法判」和「判为过期」分开。
@@ -326,7 +327,7 @@ R46 已验证必须带通过证据 级别 E
 9 node <id> --json：输出单节点 JSON，含说明全文、代码地图、连接、标杆、验收；默认 JSON。退出码 0 或 2。
 10 index --json：输出全树索引 JSON，部门到程序到状态与阶段，供插件 scope=tree 使用。退出码 0 或 1。
 11 log --node <id> --limit N --json：读 变更/台账.jsonl，输出变更记录，默认最近 20 条。退出码 0 或 2。
-12 check-plan 输入格式：顶层 node 键为节点片段，id 例为 info.archive，其余字段与 program-tree.yaml 节点同构，可缺 files、evidence；顶层 contracts 键可选，为契约数组，条目 id 例为 scenario.brief；只在新增或变更契约时提供，与现有契约同 id 时做字段对比。
+12 check-plan 输入格式：顶层 node 键为节点片段，id 例为 core.app，其余字段与 program-tree.yaml 节点同构，可缺 files、evidence；顶层 contracts 键可选，为契约数组，条目 id 例为 core.request；只在新增或变更契约时提供，与现有契约同 id 时做字段对比。
 13 节点 phase 晚于依赖节点允许；反向报错。check-plan 不写任何文件。
 14 adapt --json：按清单 adapt 段扫描登记目录，输出 assigned、unassigned、ignored、unaccounted 与计数；每个扫描文件必须进入其中一个清单，未归属项给最长路径前缀建议；只读，不写清单。退出码 0 或 1。
 15 git-sync --files <相对路径逗号列表> [--message <文本>]：只提交本次 written_files，按目录归组；message 缺省取台账最新 chg 条目；无改动不产生空提交；git 不可用或不在仓库内返回 ok=false。退出码 0。
@@ -421,7 +422,7 @@ T11 策划文档形态 级别 E
 
 T12 策划确认状态与体验预设节点 级别 E
   1 策划条目必须有确认状态，取值为未确认或已确认；缺失由 T02 报，出现无法识别的确认值由 T12 报 E。
-  2 仅当清单 root 为 ai-company 时，三个体验插件预设节点必须存在，状态为未完成，职责与非职责写清；其他项目不检查这三个 id。
+  2 仅当清单声明启用体验插件预设（清单顶层或项目配置）时，对应预设节点必须存在，状态为未完成，职责与非职责写清；未启用的项目不检查这些 id。
   3 体验插件预设节点不进入完成度统计。
 
 

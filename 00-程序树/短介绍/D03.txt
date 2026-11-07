@@ -1,0 +1,1 @@
+节点写工具的实现边界：接收 AI 的节点/组/连接参数与 tree.loaded→在内存清单改字段、同步契约 producers/consumers、写盘前

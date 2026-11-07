@@ -294,7 +294,7 @@ public sealed class Validator
         var rootId = RootId;
         if (!(rootId is string rootText && Matches(RootIdRe, rootText)))
         {
-            Add("E", "R01", "root 必须是单段 id（如 ai-company）（实际 " + PyValue.Repr(rootId) + "）");
+            Add("E", "R01", "root 必须是单段 id（如 my-project）（实际 " + PyValue.Repr(rootId) + "）");
         }
         if (_manifest.TryGetValue("conventions", out var conventionsValue) && conventionsValue is not null)
         {

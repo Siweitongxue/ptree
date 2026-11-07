@@ -1,0 +1,4 @@
+判断：应该有
+位置：对
+做法：固定 AssemblyName 为 ptree-cs，引用 PTree.Core 与 PTree.Mcp 后构建并跑 version。
+缺：没有单文件发布配置，分发依赖整个 bin 目录。

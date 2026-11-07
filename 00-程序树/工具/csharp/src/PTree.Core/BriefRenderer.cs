@@ -22,7 +22,7 @@ public static class BriefRenderer
             if (node.Status is { } status) statusCounts[status] = statusCounts.GetValueOrDefault(status) + 1;
         }
 
-        lines.Add("AI Company 项目速览");
+        lines.Add(repository.ProjectName + " 项目速览");
         lines.Add("生成时间：" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) +
                   "；tree_version：" + (repository.Manifest.TreeVersion ?? "?") + "；内核：ptree-cs");
         lines.Add("一句话：用程序树管全公司的程序、契约、说明、标杆，另有若干张实例网格；AI 先看网格定位再动手。");

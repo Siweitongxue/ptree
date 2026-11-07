@@ -1,0 +1,1 @@
+MCP 协议服务的实现边界：读 tree.loaded，把 26 个 tree_* 工具编成 MCP 目录并经 stdio JSON-RPC 分发，返回 J

@@ -1,0 +1,92 @@
+程序树（ptree 1.0.0）
+版本 1 2026-11-07，适用：本项目
+一 读法
+1 每行字段顺序：id ｜ 名称 ｜ 一句话职责 ｜ 状态 ｜ 退役 ｜ 组 ｜ 时间 ｜ 策划条目
+2 本文件只是清单的简读视图，冲突时以 00-程序树/program-tree.yaml 为准。
+二 节点
+ptree ｜ 程序树 ｜ 接收公开仓库根→界定程序树工具自身的程序、契约、说明与四棵树实例边界→输出 6 个部门可独立验收的架构树 ｜ 已完成 ｜ 无 ｜ group.all ｜ 2026-11-07 ｜ 见策划树
+kernel ｜ 内核部 ｜ 接收仓库根与树清单路径→加载并维护清单/契约/树实例，提供阅读、写入、提案、运维与备份能力→输出所有上层只调工具即可读写的内核 API ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.store ｜ 树清单读写 ｜ 读入 program-tree.yaml、contracts.yaml 与树实例→用 RawYaml/Models 建原始值树和节点/组表，并统一 JSON… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.store.yaml ｜ YAML 与值树解析 ｜ 接收 YAML 文本→用 YamlDotNet 事件流保留键顺序、合并键、日期与 Python 大小写语义→输出 RawMap/RawList 与节点/契约… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.store.repository ｜ 仓库与节点表 ｜ 接收仓库根→加载清单/契约/标杆/绑定/说明路径，按 id 建节点表与组归属，并从 RawMap 构造候选仓库→输出 PTreeRepository 与 T… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.store.output ｜ 输出与兼容层 ｜ 接收模型对象→统一 UTF-8 中文不转义 JSON 与 index/node 载荷，封装可预期异常→输出上层可直接序列化的结果 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.reading ｜ 节点阅读与渲染 ｜ 接收 tree.loaded 与节点 id→按 depth/format 读短介绍、契约、依赖、邻居并渲染卡片/关系图/速览，渲染前合并 tree.muta… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.reading.card ｜ 卡片与关系图 ｜ 接收节点与 depth→拼短介绍、进出契约、依赖、相关网格、边、文件与说明路径，按 800 字节/9 行预算截断→输出卡片或 N 层节点表边表 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.reading.brief ｜ 速览与粗读 ｜ 接收树仓库→汇总网格、状态、部门、关键契约与缺口，渲染阅读阶梯、功能块分区与组内成员→输出 120 行以内项目速览 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.write ｜ 节点写工具 ｜ 接收 AI 的节点/组/连接参数与 tree.loaded→在内存清单改字段、同步契约 producers/consumers、写盘前跑 validate… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.write.node ｜ 节点增改退删 ｜ 接收 add/update/retire/relocate/delete 参数与当前清单→校验父类型、id、契约与依赖，改字段并同步契约成员，原子写盘失败回… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.write.group ｜ 功能块维护 ｜ 接收组 id、成员与父组→校验组成员存在、组层级不超过两层且不成环，增改成员与简介→输出组差异与更新后的清单 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.write.query ｜ 查询与提交 ｜ 接收查询词、变更时间窗或 written_files→按 id/状态/联系检索、读取文件变更台账、按路径分组 git 提交→输出候选节点、短文本或提交结果 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.scaffold ｜ 提案与脚手架 ｜ 接收提案 YAML 或 init 参数与 tree.loaded→逐 op 应用候选清单、校验候选、渲染四份生成物或写最小脚手架→输出 tree.candi… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.scaffold.proposal ｜ 提案评估与落盘 ｜ 接收提案 YAML→解析 add/modify/deprecate/prune/split/merge/intro/meta/bench 操作，在内存逐 o… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.scaffold.products ｜ 生成物渲染 ｜ 接收树仓库与校验结果→渲染程序书、总览、落地顺序、标杆看板四份纯文本，统一写生成目录→输出带生成时间与禁改声明的全文 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.scaffold.init ｜ 新项目脚手架 ｜ 接收目标根与项目名→生成清单、契约、标杆、四树实例、节点说明与 README 的最小可校验集合，写入后自跑 validate/check→输出文件清单与自检计数 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.ops ｜ 运维与校验 ｜ 接收 tree.loaded、写结果与备份点→跑健康检查/跨树校验/一键 verify/固定目录扫描/性能基准并静默记变更→输出 tree.diagnost… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.ops.health ｜ 健康与变更记录 ｜ 接收树仓库→检查文件消失、登记目录缺失、已完成无实现三类问题，把 mtime 晚于 updated_at 的文件静默追加到文件变更 JSONL→输出健康报告… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.ops.verify ｜ 跨树校验与验证 ｜ 接收树仓库与生成物→跑 T07-T12 组/时间戳/附件/策划覆盖/文档形态检查与 validate/check/新鲜度/MCP 冒烟，汇总 PASS/FA… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.ops.adapt ｜ 目录适配与基准 ｜ 接收清单 adapt 段与 iterations→扫描固定目录并按节点 files 判断归属，或进程内重复跑 validate/read-node/stat… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.backup ｜ 备份子系统 ｜ 接收 tree.loaded 与备份配置/全局密钥→按 git-bundle、tag、copy 把 tree_version 映射为备份点并按保留策略裁剪… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.backup.config ｜ 备份配置与凭据 ｜ 接收 root 与全局 home→加载项目层 enabled/mode/retention/targets，校验全局 32 字节密钥与 AES-256-GC… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.backup.run ｜ 备份点与保留 ｜ 接收 tree_version、targets 与保留数→按模式创建 git bundle/tag/copy，写备份台账并按 retention 裁剪旧点… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.backup.secret-scan ｜ 备份密钥扫描 ｜ 接收备份 targets 与扫描开关→遍历目标目录，跳过 bin、obj、.git、备份目录、.enc 与二进制文件，按云厂商 token、私钥、JWT、通… ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+interface ｜ 接口部 ｜ 把内核能力封装成 MCP 工具、CLI 子命令与本地 HTTP 接口，确保 AI 只调工具不读文件 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.mcp-server ｜ MCP 协议服务 ｜ 读 tree.loaded，把 26 个 tree_* 工具编成 MCP 目录并经 stdio JSON-RPC 分发，返回 JSON 文本给 AI ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.mcp-compat ｜ 旧工具兼容层 ｜ 读 tree.loaded，保留旧版五个兼容函数，返回 JSON 并撤下 propose/apply 注册 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.cli ｜ 命令行接口 ｜ 读 tree.loaded，把清单阅读、校验、生成、备份与写命令提供为 ptree-cs 子命令，输出 JSON 或文本与退出码 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.serve ｜ 本地 HTTP 服务 ｜ 读 tree.loaded，用 BCL 在 127.0.0.1 提供 viewer 静态文件与读写 API，返回 JSON 或静态资源 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.mcp-server.read ｜ 只读工具组 ｜ 把 status、map、guide、links、read_group、read_node、find、changes 编成只读工具卡 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.mcp-server.write ｜ 写工具组 ｜ 把 add、update、retire、relocate、delete、commit 与组工具接进目录，写后返回新 tree_version 与 errors ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+interface.mcp-server.verify ｜ 校验与备份工具组 ｜ 把 check、guard、scan 与 6 个 backup 工具接进目录，区分阻断校验与默认关闭的备份 ｜ 已完成 ｜ 无 ｜ group.dept-interface ｜ 2026-11-07 ｜ 见策划树
+rules ｜ 规则部 ｜ 读入 program-tree.yaml、契约与四棵实例文档，按 R01-R46、T01-T12 逐条检查并产出带规则号与节点位置的 E/W/I 条目，供… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.structure ｜ 结构与规模规则 ｜ 读取清单顶层与节点表，执行 R01-R06 的顶层键、节点必填、id 唯一、根与父子、layer/kind 检查，并执行 R23 规模、R24 豁免、R38… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.structure.schema ｜ 顶层与字段检查 ｜ 读清单顶层键与节点必填字段表，按 R01/R02 比对允许键、类型与默认值，把缺键、未知键和非法枚举转成带节点 id 的条目 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.structure.identity ｜ 身份与层级检查 ｜ 读节点 id、root、parent 与 kind，按 R03-R06 检查 id 唯一与格式、根节点存在、父子闭合、layer 与 kind 匹配，并按… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.structure.groups ｜ 规模豁免与组检查 ｜ 读节点数量、豁免登记与 groups 段，按 R23 报规模提示、R24 校验豁免是否指向真实节点、R38 检查组 id、成员、parent 与两层上限 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.relations ｜ 联系与契约规则 ｜ 读取契约表与节点 inputs/outputs/depends_on，执行 R09-R12、R21、R22、R33 的契约引用、双向一致、依赖图、阶段与连接… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.relations.contracts ｜ 契约引用检查 ｜ 读 contracts.yaml 与节点 inputs/outputs，按 R09 检查引用契约是否存在、按 R10 检查 producers/consum… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.relations.dependency ｜ 依赖与阶段检查 ｜ 读 depends_on 与 phase 表，按 R11 查自依赖、环、缺失目标，按 R12 查阶段顺序，按 R22 查阶段覆盖，按 R33 查依赖是否有契… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.relations.links ｜ 联系登记与引用扫描 ｜ 读 manifests 的 links 段与登记文件的 using/import，按 R40 校验 from/to/type/note 与重复，按 R41… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.state ｜ 状态质量与验收规则 ｜ 读取节点职责、状态、验收、evidence、评价与标杆文件，执行 R07/R08 职责、R13/R14/R16 完成度、R25-R29 标杆与规模、R34… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.state.responsibility ｜ 职责声明与重复检查 ｜ 读节点 responsibility 与兄弟节点，按 R07 检查职责是否写清输入到输出的动作，按 R08 用相似度检查跨节点职责重复 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.state.completion ｜ 完成度与证据检查 ｜ 读节点 status、acceptance、evidence、files 与父子状态，按 R13 查状态与产物一致性、R14 查验收证据、R16 查父子完成… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.state.quality ｜ 标杆与评价检查 ｜ 读 benchmarks.yaml、绑定.yaml、evaluation 文本与健康检查输出，按 R25-R29 校验标杆定义、绑定、覆盖、时效与规模，按… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.docs ｜ 文档与阅读项规则 ｜ 读取 spec、说明、短介绍、网格实例与预设文案，执行 R15/R17/R18/R36 的路径与 SPEC 检查、R31/R37/R39 的说明与短介绍检查… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.docs.spec ｜ spec 与物理目录检查 ｜ 读节点 spec、home、files 与 program.yaml，按 R15 查 spec 路径可追溯、R17 查 home 目录与 program.y… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.docs.intro ｜ 说明与阅读项检查 ｜ 读说明文件、短介绍与网格实例，按 R31 查 200 字下限、占位词、Markdown、数字编号与路径片段，按 R37 查节点短介绍、R39 查网格条目短介… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.docs.standard ｜ 规范目录核对 ｜ 读六篇核心规范与五篇专题文档，核对版本行、日期、状态词、校验规则编号与实现文件路径是否一致，把过期条款列为待修订条目 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.backup ｜ 备份台账与预设规则 ｜ 读取变更台账、运维备份配置与预设节点，执行 R32 台账结构、R43 备份配置、R35 预设节点、R44 预设长期未转正检查，输出台账与备份条目 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.backup.ledger ｜ 变更台账检查 ｜ 读台账.jsonl 每行 JSON，按 R32 检查 id 形如 chg-YYYYMMDD-NNNN、必填字段、validation 计数、result 取… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.backup.config ｜ 备份配置检查 ｜ 读运维/备份.yaml，按 R43 检查 enabled、mode、retention、targets、last_run、secret_scan 与 sec… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.backup.preset ｜ 预设节点检查 ｜ 读节点 preset、preset_outputs、status、files 与 created_at，按 R35 检查占位节点状态与输出，按 R44 提示… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.planning ｜ 跨树与策划对账规则 ｜ 读取四棵实例文档与清单，执行 T02-T12 的确认状态、引用存在、美术/UI 字段、状态、组、时间、策划覆盖、附件、文档形态与预设节点检查，并执行 R19… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.planning.cross-tree ｜ 跨树引用与字段检查 ｜ 读程序、策划、美术、UI 四份实例与字段定义，按 T02 查确认状态、T03 查引用存在、T04/T05 查美术与 UI 必填、T06 查四值状态 ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.planning.coverage ｜ 策划覆盖与文档形态检查 ｜ 读策划树的对应程序、文档形态与确认状态，按 T09 检查每个 program 是否被引用或带 planning_exemption、按 T11/T12 检查… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+rules.planning.scan ｜ 未登记代码与缺口扫描 ｜ 读登记目录、代码文件的 import/using 与策划文档列，按 R19 扫未登记代码目录、R20 扫跨节点 import、R45 列有对应程序但缺文档的… ｜ 已完成 ｜ 无 ｜ group.dept-rules ｜ 2026-11-07 ｜ 见策划树
+canvas ｜ 画布部 ｜ 把树数据导出成快照并渲染成可缩放、可筛选、可下钻的只读网格视图 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.viewer-shell ｜ 视图外壳 ｜ 提供单页骨架与深色主题样式，按工具栏、画布、详情与状态栏分区承接渲染脚本 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.viewer-grid ｜ 网格渲染引擎 ｜ 读页面骨架与画布快照，按 parent 与 layer 布局节点并把筛选、详情与写操作写回页面状态 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.viewer-grid.layout ｜ 布局与可见性 ｜ 按节点 parent 与 layer 计算分行坐标、可见性与组框包围盒，筛选或折叠后整体重排 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.viewer-grid.draw ｜ 画布绘制 ｜ 把布局结果画成节点卡片、四类关系线、组框与层级标签，并提供命中测试与缩放平移 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.viewer-grid.interaction ｜ 交互与详情 ｜ 处理悬停与点选、搜索筛选与表格视图，并在实时模式把写操作结果渲染到详情与状态栏 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.grid-export ｜ 网格导出器 ｜ 读清单与四份树实例，解析网格行并拼出父子、依赖、契约流、策划与组联系，写出 data.js 快照 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.grid-export.rows ｜ 行解析 ｜ 解析树实例的字段行与短介绍，把网格条目和程序节点整理成统一行数据 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+canvas.grid-export.graph ｜ 联系拼装 ｜ 读统一行数据，按 parent 建图并拼出四类联系与功能块成员，产出待序列化的图数据 ｜ 已完成 ｜ 无 ｜ group.dept-canvas ｜ 2026-11-07 ｜ 见策划树
+quality ｜ 质量部 ｜ 把内核与各外壳的产出跑成测试结论，输出六组用例通过清单与基线差异 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.kernel-tests ｜ 内核行为测试 ｜ 读示例树与内核 API 跑 Core、树配置、内核完成度、契约同步四组用例，输出内核失败清单 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.rule-tests ｜ 规则与提案测试 ｜ 读示例树与快照跑规则、提案引擎、YAML 文本对照用例，输出快照差异与提案拒绝清单 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.read-tests ｜ 阅读阶梯与卡片测试 ｜ 读示例树跑阶梯、卡片、网格读写四组用例，输出卡片行数与网格行为失败清单 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.link-tests ｜ 联系与预设测试 ｜ 读示例树与临时树跑联系登记、分组、预设、证据闭环用例，输出行为失败清单 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.health-tests ｜ 健康与备份测试 ｜ 读临时项目与备份目录跑健康卡、生命周期、备份用例，输出健康行数与保留策略核对结果 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.baseline ｜ 快照与性能基线 ｜ 在仓库任意位置定位测试树根并维护快照与性能预算，输出根路径、快照差异与超预算项 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.baseline.snapshot ｜ 校验与索引快照 ｜ 读示例树算索引与节点负载同快照逐键逐序比对，输出缺失或漂移的快照键清单 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+quality.baseline.perf ｜ 性能护栏 ｜ 读示例树预热后三次取最优量 validate、read-node、map 并与预算比较，输出超预算项 ｜ 已完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
+release ｜ 发布部 ｜ 读取 PTree.sln、两侧 csproj、build-lock.sh 与 examples/demo，组织 Release 构建、可执行产物、示例脚手架… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.build ｜ 构建入口 ｜ 读取 PTree.sln 的 5 个项目与 Directory.Build.props 的编译属性，经 build-lock.sh 取仓库级互斥锁后执行 d… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.build.lock ｜ 构建互斥锁 ｜ 读取第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdir 原子创建 .build-lock 并写入 pid，构建期间阻塞其它构建… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.publish ｜ 产物发布 ｜ 读取 PTree.Cli 与 PTree.Serve 的 csproj 和 Release 构建输出，固定 AssemblyName 为 ptree-cs… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.publish.cli ｜ ptree-cs 发布 ｜ 读取 PTree.Cli.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyName… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.publish.serve ｜ ptree-serve 发布 ｜ 读取 PTree.Serve.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyNam… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.examples ｜ 示例树脚手架 ｜ 读取 examples/demo 下的清单、契约、标杆、四棵树实例与三类文本（该目录由 ptree-cs init 生成），维护 demo、core、cor… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.examples.demo ｜ demo 示例树 ｜ 读取 demo 清单、契约、空标杆与四棵树实例，保持 3 个节点与策划 D01、美术 M01、UI U01 的引用字段完整，输出可被 validate 与… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.examples.texts ｜ 示例文本 ｜ 读取 demo、core、core.app 与跨树 D01、M01、U01 的职责，生成说明、短介绍与评价三类文本，输出 3 份说明、6 份短介绍与 3 份… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树
+release.open-source ｜ 开源入口 ｜ 读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 许可，声明公开仓库不… ｜ 已完成 ｜ 无 ｜ group.dept-release ｜ 2026-11-07 ｜ 见策划树

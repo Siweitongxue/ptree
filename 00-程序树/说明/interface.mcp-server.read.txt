@@ -1,0 +1,1 @@
+这个步骤是 MCP 目录里的只读工具组，负责让 AI 先看懂树再动手。它覆盖 tree_status、tree_map、tree_guide、tree_links、tree_read_group、tree_read_node、tree_find 与 tree_changes：状态卡给版本与计数，地图与阅读阶梯给功能块和组，节点读取按 depth 返回一圈邻居，查找最多 20 条，变更查询读台账。它只读 tree.loaded 与内核查询结果，不写清单、不跑备份、不提交；输出默认是短纯文本卡，format=full 才给完整 JSON。实现挂在 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs 的 ToolDefinitions 与 CallTool 分支上；加只读工具时先保证不引入写盘副作用。

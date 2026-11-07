@@ -1,0 +1,1 @@
+健康与变更记录步骤读取树仓库与节点 files，在 00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs 中判断文件是否存在、父目录是否整体缺失、已完成或已验证节点是否有实现，只把这三类记为重要问题；代码 mtime 晚于 updated_at 时按 node 加 file 每天去重写入 00-程序树/运维/文件变更.jsonl，并提供 changes 查询。它不做跨树检查和性能测量；输出 kernel.ops.health 报告与 changes 短文本。

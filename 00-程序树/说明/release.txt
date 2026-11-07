@@ -1,0 +1,3 @@
+发布部读 PTree.sln、两侧 csproj、build-lock.sh 与 examples/demo，做 Release 构建、可执行产物、示例脚手架与开源文档的收口，产出 ptree-cs 与 ptree-serve 可执行文件、E=0 的示例树和公开仓库入口。它不实现校验规则与 CLI 命令逻辑，也不打标签、不签名、不做商店打包。
+构建与锁在 00-程序树/工具/csharp/PTree.sln 与 00-程序树/工具/csharp/build-lock.sh，发布读取 PTree.Cli 与 PTree.Serve 的 csproj，示例树在 examples/demo，公开入口是 README.md 与 LICENSE。对外只给源码、示例与文档，不含打包脚本和内部项目的树数据。
+改这个部门先读 00-程序树/工具/csharp/README.md 的构建与发布说明，再跑 validate 与 check；常见坑是把 bin 产物当源码提交、只改文档不同步示例树。

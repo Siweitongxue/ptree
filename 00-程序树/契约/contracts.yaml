@@ -1,0 +1,1328 @@
+schema_version: 1
+contracts_version: 1.0.0
+updated: '2026-11-07'
+notes: 契约是节点之间唯一的连接面：节点不调彼此内部，只按契约交换结构化文档。
+contracts:
+- id: backup.point
+  name: 按 tree_version 对应到内层代码仓的备份点、保留策略状态与脱敏后的凭
+  version: 1.0.0
+  purpose: 按 tree_version 对应到内层代码仓的备份点、保留策略状态与脱敏后的凭据状态
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 按 tree_version 对应到内层代码仓的备份点、保留策略状态与脱敏后的凭据状态
+  producers:
+  - kernel.backup
+  consumers:
+  - kernel.ops
+- id: canvas.draw-frame
+  name: 画布帧与命中几何，含节点矩形、四类边的线段与组框标题条位置
+  version: 1.0.0
+  purpose: 画布帧与命中几何，含节点矩形、四类边的线段与组框标题条位置
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 画布帧与命中几何，含节点矩形、四类边的线段与组框标题条位置
+  producers:
+  - canvas.viewer-grid.draw
+  consumers:
+  - canvas.viewer-grid.interaction
+- id: canvas.grid-data
+  name: window.GRID_DATA 快照，含 meta、七张网格、nodes、gr
+  version: 1.0.0
+  purpose: window.GRID_DATA 快照，含 meta、七张网格、nodes、groups、phases 与 links，是只读模式的唯一数据源
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: window.GRID_DATA 快照，含 meta、七张网格、nodes、groups、phases 与 links，是只读模式的唯一数据源
+  producers:
+  - canvas.grid-export
+  consumers:
+  - canvas.viewer-grid
+  - canvas.viewer-grid.layout
+- id: canvas.grid-graph
+  name: 待序列化的图数据，含每张网格的节点与 parent、四类联系与功能块成员
+  version: 1.0.0
+  purpose: 待序列化的图数据，含每张网格的节点与 parent、四类联系与功能块成员
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 待序列化的图数据，含每张网格的节点与 parent、四类联系与功能块成员
+  producers:
+  - canvas.grid-export.graph
+  consumers:
+  - canvas.grid-export
+- id: canvas.layout-plan
+  name: 节点坐标、分行带、可见集合与组框包围盒，供绘制与命中测试使用
+  version: 1.0.0
+  purpose: 节点坐标、分行带、可见集合与组框包围盒，供绘制与命中测试使用
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 节点坐标、分行带、可见集合与组框包围盒，供绘制与命中测试使用
+  producers:
+  - canvas.viewer-grid.layout
+  consumers:
+  - canvas.viewer-grid.draw
+- id: canvas.page-shell
+  name: 页面骨架与主题变量，含画布、工具栏、详情与状态栏的 DOM 锚点，渲染脚本只按锚
+  version: 1.0.0
+  purpose: 页面骨架与主题变量，含画布、工具栏、详情与状态栏的 DOM 锚点，渲染脚本只按锚点填内容
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 页面骨架与主题变量，含画布、工具栏、详情与状态栏的 DOM 锚点，渲染脚本只按锚点填内容
+  producers:
+  - canvas.viewer-shell
+  consumers:
+  - canvas.viewer-grid
+- id: canvas.page-status
+  name: 顶部元信息与页脚状态文本，含节点数、关系数、可见数、树版本与画布上的策划条目数
+  version: 1.0.0
+  purpose: 顶部元信息与页脚状态文本，含节点数、关系数、可见数、树版本与画布上的策划条目数
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 顶部元信息与页脚状态文本，含节点数、关系数、可见数、树版本与画布上的策划条目数
+  producers:
+  - canvas.viewer-grid
+  consumers:
+  - canvas.viewer-shell
+- id: canvas.tree-rows
+  name: 每张网格的字段名与行数据，含短介绍与原始单元格，导出与画布共用同一行模型
+  version: 1.0.0
+  purpose: 每张网格的字段名与行数据，含短介绍与原始单元格，导出与画布共用同一行模型
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 每张网格的字段名与行数据，含短介绍与原始单元格，导出与画布共用同一行模型
+  producers:
+  - canvas.grid-export.rows
+  consumers:
+  - canvas.grid-export.graph
+- id: canvas.view-state
+  name: 当前选中的节点或边、折叠集合、筛选条件与表格行，供程序汇总成页脚状态
+  version: 1.0.0
+  purpose: 当前选中的节点或边、折叠集合、筛选条件与表格行，供程序汇总成页脚状态
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 当前选中的节点或边、折叠集合、筛选条件与表格行，供程序汇总成页脚状态
+  producers:
+  - canvas.viewer-grid.interaction
+  consumers:
+  - canvas.viewer-grid
+- id: cli.output
+  name: ptree-cs 子命令的 stdout 文本或 JSON 加退出码，供脚本、C
+  version: 1.0.0
+  purpose: ptree-cs 子命令的 stdout 文本或 JSON 加退出码，供脚本、CI 与人直接消费
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: ptree-cs 子命令的 stdout 文本或 JSON 加退出码，供脚本、CI 与人直接消费
+  producers:
+  - interface.cli
+  consumers:
+  - interface
+- id: compat.result
+  name: 旧版 status/read/check/propose/apply 兼容函数返
+  version: 1.0.0
+  purpose: 旧版 status/read/check/propose/apply 兼容函数返回的 JSON，供历史调用方读取
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 旧版 status/read/check/propose/apply 兼容函数返回的 JSON，供历史调用方读取
+  producers:
+  - interface.mcp-compat
+  consumers:
+  - interface
+- id: http.response
+  name: 本地 HTTP 响应，GET 返回树数据或静态文件，POST 返回同一套内核工具
+  version: 1.0.0
+  purpose: 本地 HTTP 响应，GET 返回树数据或静态文件，POST 返回同一套内核工具的 JSON
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 本地 HTTP 响应，GET 返回树数据或静态文件，POST 返回同一套内核工具的 JSON
+  producers:
+  - interface.serve
+  consumers:
+  - interface
+- id: kernel.backup.config
+  name: 项目层备份配置、全局密钥与 AES-GCM 加密凭据，token 只回显脱敏值
+  version: 1.0.0
+  purpose: 项目层备份配置、全局密钥与 AES-GCM 加密凭据，token 只回显脱敏值
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 项目层备份配置、全局密钥与 AES-GCM 加密凭据，token 只回显脱敏值
+  producers:
+  - kernel.backup.config
+  consumers:
+  - kernel.backup
+- id: kernel.backup.run
+  name: 备份点台账、保留策略裁剪记录、磁盘占用与最近运行状态
+  version: 1.0.0
+  purpose: 备份点台账、保留策略裁剪记录、磁盘占用与最近运行状态
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 备份点台账、保留策略裁剪记录、磁盘占用与最近运行状态
+  producers:
+  - kernel.backup.run
+  consumers:
+  - kernel.backup
+- id: kernel.backup.secret-scan
+  name: 备份 targets 中疑似密钥的 findings（file/line/kin
+  version: 1.0.0
+  purpose: 备份 targets 中疑似密钥的 findings（file/line/kind/redacted）与是否放行的结论
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 备份 targets 中疑似密钥的 findings（file/line/kind/redacted）与是否放行的结论
+  producers:
+  - kernel.backup.secret-scan
+  consumers:
+  - kernel.backup
+- id: kernel.ops.adapt
+  name: 固定目录扫描的已归属/未归属/忽略文件与性能基准样本
+  version: 1.0.0
+  purpose: 固定目录扫描的已归属/未归属/忽略文件与性能基准样本
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 固定目录扫描的已归属/未归属/忽略文件与性能基准样本
+  producers:
+  - kernel.ops.adapt
+  consumers:
+  - kernel.ops
+- id: kernel.ops.health
+  name: 文件消失/登记目录缺失/已完成无实现三类问题，mtime 变更静默写 JSONL
+  version: 1.0.0
+  purpose: 文件消失/登记目录缺失/已完成无实现三类问题，mtime 变更静默写 JSONL
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 文件消失/登记目录缺失/已完成无实现三类问题，mtime 变更静默写 JSONL
+  producers:
+  - kernel.ops.health
+  consumers:
+  - kernel.ops
+- id: kernel.ops.verify
+  name: validate、check、生成物新鲜度、说明覆盖、MCP 冒烟等 PASS/
+  version: 1.0.0
+  purpose: validate、check、生成物新鲜度、说明覆盖、MCP 冒烟等 PASS/FAIL 检查项
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: validate、check、生成物新鲜度、说明覆盖、MCP 冒烟等 PASS/FAIL 检查项
+  producers:
+  - kernel.ops.verify
+  consumers:
+  - kernel.ops
+- id: kernel.reading.brief
+  name: 项目速览、阅读阶梯、功能块分区与组内成员纯文本
+  version: 1.0.0
+  purpose: 项目速览、阅读阶梯、功能块分区与组内成员纯文本
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 项目速览、阅读阶梯、功能块分区与组内成员纯文本
+  producers:
+  - kernel.reading.brief
+  consumers:
+  - kernel.reading
+- id: kernel.reading.card
+  name: depth=1 的 9 行卡片与 depth=0/N 的节点表边表纯文本
+  version: 1.0.0
+  purpose: depth=1 的 9 行卡片与 depth=0/N 的节点表边表纯文本
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: depth=1 的 9 行卡片与 depth=0/N 的节点表边表纯文本
+  producers:
+  - kernel.reading.card
+  consumers:
+  - kernel.reading
+- id: kernel.scaffold.init
+  name: 新项目最小脚手架的文件集合、覆盖清单与写入后自检结果
+  version: 1.0.0
+  purpose: 新项目最小脚手架的文件集合、覆盖清单与写入后自检结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 新项目最小脚手架的文件集合、覆盖清单与写入后自检结果
+  producers:
+  - kernel.scaffold.init
+  consumers:
+  - kernel.scaffold
+- id: kernel.scaffold.products
+  name: 程序书、总览、落地顺序、标杆看板四份生成物全文
+  version: 1.0.0
+  purpose: 程序书、总览、落地顺序、标杆看板四份生成物全文
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 程序书、总览、落地顺序、标杆看板四份生成物全文
+  producers:
+  - kernel.scaffold.products
+  consumers:
+  - kernel.scaffold
+- id: kernel.scaffold.proposal
+  name: 提案每 op 的应用摘要、候选校验 errors/warnings、写盘与台账结
+  version: 1.0.0
+  purpose: 提案每 op 的应用摘要、候选校验 errors/warnings、写盘与台账结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 提案每 op 的应用摘要、候选校验 errors/warnings、写盘与台账结果
+  producers:
+  - kernel.scaffold.proposal
+  consumers:
+  - kernel.scaffold
+- id: kernel.store.json
+  name: 统一 UTF-8 中文不转义的 JSON 输出、index/node 等载荷与可
+  version: 1.0.0
+  purpose: 统一 UTF-8 中文不转义的 JSON 输出、index/node 等载荷与可预期异常
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 统一 UTF-8 中文不转义的 JSON 输出、index/node 等载荷与可预期异常
+  producers:
+  - kernel.store.output
+  consumers:
+  - kernel.store
+- id: kernel.store.model
+  name: Manifest/NodeModel/ContractModel 等强类型模型与
+  version: 1.0.0
+  purpose: Manifest/NodeModel/ContractModel 等强类型模型与按 id 建好的节点表、组表
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: Manifest/NodeModel/ContractModel 等强类型模型与按 id 建好的节点表、组表
+  producers:
+  - kernel.store.repository
+  consumers:
+  - kernel.store.output
+- id: kernel.store.raw
+  name: 保留键顺序的 RawMap/RawList 原始值树与 Python 兼容值类型
+  version: 1.0.0
+  purpose: 保留键顺序的 RawMap/RawList 原始值树与 Python 兼容值类型
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 保留键顺序的 RawMap/RawList 原始值树与 Python 兼容值类型
+  producers:
+  - kernel.store.yaml
+  consumers:
+  - kernel.store.repository
+- id: kernel.write.group
+  name: 新增或更新功能块后的成员、父子组与简介差异
+  version: 1.0.0
+  purpose: 新增或更新功能块后的成员、父子组与简介差异
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 新增或更新功能块后的成员、父子组与简介差异
+  producers:
+  - kernel.write.group
+  consumers:
+  - kernel.write
+- id: kernel.write.node
+  name: 新增/更新/退役/迁移/删除节点后的清单差异与契约双向同步结果
+  version: 1.0.0
+  purpose: 新增/更新/退役/迁移/删除节点后的清单差异与契约双向同步结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 新增/更新/退役/迁移/删除节点后的清单差异与契约双向同步结果
+  producers:
+  - kernel.write.node
+  consumers:
+  - kernel.write
+- id: kernel.write.query
+  name: tree_find、tree_changes、tree_scan、tree_li
+  version: 1.0.0
+  purpose: tree_find、tree_changes、tree_scan、tree_links 与 git 归组提交的查询结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: tree_find、tree_changes、tree_scan、tree_links 与 git 归组提交的查询结果
+  producers:
+  - kernel.write.query
+  consumers:
+  - kernel.write
+- id: mcp.read.result
+  name: 只读类工具返回的 JSON 或 ≤9 行纯文本卡，AI 不接触文件
+  version: 1.0.0
+  purpose: 只读类工具返回的 JSON 或 ≤9 行纯文本卡，AI 不接触文件
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 只读类工具返回的 JSON 或 ≤9 行纯文本卡，AI 不接触文件
+  producers:
+  - interface.mcp-server.read
+  consumers:
+  - interface
+- id: mcp.verify.result
+  name: 校验与备份工具返回的 E/W/I 计数、≤10 行告警卡与备份点状态
+  version: 1.0.0
+  purpose: 校验与备份工具返回的 E/W/I 计数、≤10 行告警卡与备份点状态
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 校验与备份工具返回的 E/W/I 计数、≤10 行告警卡与备份点状态
+  producers:
+  - interface.mcp-server.verify
+  consumers:
+  - interface
+- id: mcp.write.result
+  name: '写类工具返回的 diff、written_files、tree_version '
+  version: 1.0.0
+  purpose: 写类工具返回的 diff、written_files、tree_version 与 errors，失败已回滚
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 写类工具返回的 diff、written_files、tree_version 与 errors，失败已回滚
+  producers:
+  - interface.mcp-server.write
+  consumers:
+  - interface
+- id: quality.health.report
+  name: 健康卡片行数、生命周期迁移、备份保留策略的核对结果
+  version: 1.0.0
+  purpose: 健康卡片行数、生命周期迁移、备份保留策略的核对结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 健康卡片行数、生命周期迁移、备份保留策略的核对结果
+  producers:
+  - quality.health-tests
+  consumers:
+  - quality
+- id: quality.kernel.report
+  name: 内核行为四组用例的通过数与失败用例全名清单
+  version: 1.0.0
+  purpose: 内核行为四组用例的通过数与失败用例全名清单
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 内核行为四组用例的通过数与失败用例全名清单
+  producers:
+  - quality.kernel-tests
+  consumers:
+  - quality
+- id: quality.link.report
+  name: 联系登记、分组、预设、证据闭环四类行为的通过数与失败用例全名清单
+  version: 1.0.0
+  purpose: 联系登记、分组、预设、证据闭环四类行为的通过数与失败用例全名清单
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 联系登记、分组、预设、证据闭环四类行为的通过数与失败用例全名清单
+  producers:
+  - quality.link-tests
+  consumers:
+  - quality
+- id: quality.perf.budget
+  name: validate 900 毫秒、read-node 420 毫秒、map nam
+  version: 1.0.0
+  purpose: validate 900 毫秒、read-node 420 毫秒、map names 480 毫秒三条预算与三次取最优的实测值
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: validate 900 毫秒、read-node 420 毫秒、map names 480 毫秒三条预算与三次取最优的实测值
+  producers:
+  - quality.baseline.perf
+  consumers:
+  - quality
+- id: quality.read.report
+  name: 阅读阶梯、节点卡片、网格读写三组用例的通过数与失败用例全名清单
+  version: 1.0.0
+  purpose: 阅读阶梯、节点卡片、网格读写三组用例的通过数与失败用例全名清单
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 阅读阶梯、节点卡片、网格读写三组用例的通过数与失败用例全名清单
+  producers:
+  - quality.read-tests
+  consumers:
+  - quality
+- id: quality.rule.report
+  name: 规则快照差异条目与提案被拒的规则号清单
+  version: 1.0.0
+  purpose: 规则快照差异条目与提案被拒的规则号清单
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 规则快照差异条目与提案被拒的规则号清单
+  producers:
+  - quality.rule-tests
+  consumers:
+  - quality
+- id: quality.snapshot.entries
+  name: 校验条目的 code、node、message 与出现顺序组成的 JSON 键值
+  version: 1.0.0
+  purpose: 校验条目的 code、node、message 与出现顺序组成的 JSON 键值基线，按用例键取值
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 校验条目的 code、node、message 与出现顺序组成的 JSON 键值基线，按用例键取值
+  producers:
+  - quality.baseline.snapshot
+  consumers:
+  - quality.rule-tests
+- id: quality.tests.root
+  name: 测试树根的绝对路径与 parity golden、Snapshots 目录位置，
+  version: 1.0.0
+  purpose: 测试树根的绝对路径与 parity golden、Snapshots 目录位置，两处清单都找不到时抛 InvalidOperationException
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 测试树根的绝对路径与 parity golden、Snapshots 目录位置，两处清单都找不到时抛 InvalidOperationException
+  producers:
+  - quality.baseline
+  consumers:
+  - quality.baseline.perf
+  - quality.baseline.snapshot
+  - quality.health-tests
+  - quality.kernel-tests
+  - quality.link-tests
+  - quality.read-tests
+  - quality.rule-tests
+- id: release.binary
+  name: ptree-cs 与 ptree-serve 的 exe、runtimeconf
+  version: 1.0.0
+  purpose: ptree-cs 与 ptree-serve 的 exe、runtimeconfig、deps.json 路径，目标框架 net10.0 与内核版本号。
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: ptree-cs 与 ptree-serve 的 exe、runtimeconfig、deps.json 路径，目标框架 net10.0 与内核版本号。
+  producers:
+  - release.publish
+  consumers:
+  - release.examples
+  - release.open-source
+- id: release.build.lock.result
+  name: 读取第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdi
+  version: 1.0.0
+  purpose: 读取第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdir 原子创建 .build-lock 并写入 pid，构建期间阻塞其它构建…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取第一个参数的项目相对路径与其余 dotnet build 参数，用 mkdir 原子创建 .build-lock 并写入 pid，构建期间阻塞其它构建…的结构化结果
+  producers:
+  - release.build.lock
+  consumers:
+  - release
+- id: release.build.result
+  name: 一次 Release 构建的退出码，以及 00-程序树/工具/csharp/sr
+  version: 1.0.0
+  purpose: 一次 Release 构建的退出码，以及 00-程序树/工具/csharp/src 各项目 bin/Release/net10.0 下程序集与可执行文件的路径清单。
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 一次 Release 构建的退出码，以及 00-程序树/工具/csharp/src 各项目 bin/Release/net10.0 下程序集与可执行文件的路径清单。
+  producers:
+  - release.build
+  consumers:
+  - release.publish
+- id: release.demo.tree
+  name: examples/demo 下 3 节点清单、2 条契约、四棵树实例与 vali
+  version: 1.0.0
+  purpose: examples/demo 下 3 节点清单、2 条契约、四棵树实例与 validate/check 的 E=0 结果摘要。
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: examples/demo 下 3 节点清单、2 条契约、四棵树实例与 validate/check 的 E=0 结果摘要。
+  producers:
+  - release.examples
+  consumers:
+  - release.open-source
+- id: release.examples.demo.result
+  name: 读取 demo 清单、契约、空标杆与四棵树实例，保持 3 个节点与策划 D01、
+  version: 1.0.0
+  purpose: 读取 demo 清单、契约、空标杆与四棵树实例，保持 3 个节点与策划 D01、美术 M01、UI U01 的引用字段完整，输出可被 validate 与…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取 demo 清单、契约、空标杆与四棵树实例，保持 3 个节点与策划 D01、美术 M01、UI U01 的引用字段完整，输出可被 validate 与…的结构化结果
+  producers:
+  - release.examples.demo
+  consumers:
+  - release
+- id: release.examples.texts.result
+  name: 读取 demo、core、core.app 与跨树 D01、M01、U01 的职
+  version: 1.0.0
+  purpose: 读取 demo、core、core.app 与跨树 D01、M01、U01 的职责，生成说明、短介绍与评价三类文本，输出 3 份说明、6 份短介绍与 3 份…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取 demo、core、core.app 与跨树 D01、M01、U01 的职责，生成说明、短介绍与评价三类文本，输出 3 份说明、6 份短介绍与 3 份…的结构化结果
+  producers:
+  - release.examples.texts
+  consumers:
+  - release
+- id: release.open-source.result
+  name: 读取 Release 产物事实、examples/demo 与 csharp 使
+  version: 1.0.0
+  purpose: 读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 许可，声明公开仓库不…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 许可，声明公开仓库不…的结构化结果
+  producers:
+  - release.open-source
+  consumers:
+  - release
+- id: release.publish.cli.result
+  name: 读取 PTree.Cli.csproj 的 OutputType 为 Exe、T
+  version: 1.0.0
+  purpose: 读取 PTree.Cli.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyName…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取 PTree.Cli.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyName…的结构化结果
+  producers:
+  - release.publish.cli
+  consumers:
+  - release
+- id: release.publish.serve.result
+  name: 读取 PTree.Serve.csproj 的 OutputType 为 Exe
+  version: 1.0.0
+  purpose: 读取 PTree.Serve.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyNam…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读取 PTree.Serve.csproj 的 OutputType 为 Exe、TargetFramework 为 net10.0、AssemblyNam…的结构化结果
+  producers:
+  - release.publish.serve
+  consumers:
+  - release
+- id: rules.backup.config.result
+  name: 读运维/备份.yaml，按 R43 检查 enabled、mode、retent
+  version: 1.0.0
+  purpose: 读运维/备份.yaml，按 R43 检查 enabled、mode、retention、targets、last_run、secret_scan 与 sec…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读运维/备份.yaml，按 R43 检查 enabled、mode、retention、targets、last_run、secret_scan 与 sec…的结构化结果
+  producers:
+  - rules.backup.config
+  consumers:
+  - rules
+- id: rules.backup.ledger.result
+  name: 读台账.jsonl 每行 JSON，按 R32 检查 id 形如 chg-YYY
+  version: 1.0.0
+  purpose: 读台账.jsonl 每行 JSON，按 R32 检查 id 形如 chg-YYYYMMDD-NNNN、必填字段、validation 计数、result 取…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读台账.jsonl 每行 JSON，按 R32 检查 id 形如 chg-YYYYMMDD-NNNN、必填字段、validation 计数、result 取…的结构化结果
+  producers:
+  - rules.backup.ledger
+  consumers:
+  - rules
+- id: rules.backup.preset.result
+  name: 读节点 preset、preset_outputs、status、files 与
+  version: 1.0.0
+  purpose: 读节点 preset、preset_outputs、status、files 与 created_at，按 R35 检查占位节点状态与输出，按 R44 提示…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点 preset、preset_outputs、status、files 与 created_at，按 R35 检查占位节点状态与输出，按 R44 提示…的结构化结果
+  producers:
+  - rules.backup.preset
+  consumers:
+  - rules
+- id: rules.backup.report
+  name: 台账、备份配置与预设节点状态的条目集合，含 E/W/I 级别、节点或配置键与消息
+  version: 1.0.0
+  purpose: 台账、备份配置与预设节点状态的条目集合，含 E/W/I 级别、节点或配置键与消息
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 台账、备份配置与预设节点状态的条目集合，含 E/W/I 级别、节点或配置键与消息
+  producers:
+  - rules.backup
+  consumers:
+  - rules
+- id: rules.docs.intro.result
+  name: 读说明文件、短介绍与网格实例，按 R31 查 200 字下限、占位词、Markd
+  version: 1.0.0
+  purpose: 读说明文件、短介绍与网格实例，按 R31 查 200 字下限、占位词、Markdown、数字编号与路径片段，按 R37 查节点短介绍、R39 查网格条目短介…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读说明文件、短介绍与网格实例，按 R31 查 200 字下限、占位词、Markdown、数字编号与路径片段，按 R37 查节点短介绍、R39 查网格条目短介…的结构化结果
+  producers:
+  - rules.docs.intro
+  consumers:
+  - rules
+- id: rules.docs.report
+  name: spec 路径、说明、短介绍、网格阅读项与预设转正文案的条目集合，按规则号与文件
+  version: 1.0.0
+  purpose: spec 路径、说明、短介绍、网格阅读项与预设转正文案的条目集合，按规则号与文件位置排列
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: spec 路径、说明、短介绍、网格阅读项与预设转正文案的条目集合，按规则号与文件位置排列
+  producers:
+  - rules.docs
+  consumers:
+  - rules
+- id: rules.docs.spec.result
+  name: 读节点 spec、home、files 与 program.yaml，按 R15
+  version: 1.0.0
+  purpose: 读节点 spec、home、files 与 program.yaml，按 R15 查 spec 路径可追溯、R17 查 home 目录与 program.y…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点 spec、home、files 与 program.yaml，按 R15 查 spec 路径可追溯、R17 查 home 目录与 program.y…的结构化结果
+  producers:
+  - rules.docs.spec
+  consumers:
+  - rules
+- id: rules.docs.standard.result
+  name: 读六篇核心规范与五篇专题文档，核对版本行、日期、状态词、校验规则编号与实现文件路
+  version: 1.0.0
+  purpose: 读六篇核心规范与五篇专题文档，核对版本行、日期、状态词、校验规则编号与实现文件路径是否一致，把过期条款列为待修订条目的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读六篇核心规范与五篇专题文档，核对版本行、日期、状态词、校验规则编号与实现文件路径是否一致，把过期条款列为待修订条目的结构化结果
+  producers:
+  - rules.docs.standard
+  consumers:
+  - rules
+- id: rules.planning.coverage.result
+  name: 读策划树的对应程序、文档形态与确认状态，按 T09 检查每个 program 是
+  version: 1.0.0
+  purpose: 读策划树的对应程序、文档形态与确认状态，按 T09 检查每个 program 是否被引用或带 planning_exemption、按 T11/T12 检查…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读策划树的对应程序、文档形态与确认状态，按 T09 检查每个 program 是否被引用或带 planning_exemption、按 T11/T12 检查…的结构化结果
+  producers:
+  - rules.planning.coverage
+  consumers:
+  - rules
+- id: rules.planning.cross-tree.result
+  name: 读程序、策划、美术、UI 四份实例与字段定义，按 T02 查确认状态、T03 查
+  version: 1.0.0
+  purpose: 读程序、策划、美术、UI 四份实例与字段定义，按 T02 查确认状态、T03 查引用存在、T04/T05 查美术与 UI 必填、T06 查四值状态的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读程序、策划、美术、UI 四份实例与字段定义，按 T02 查确认状态、T03 查引用存在、T04/T05 查美术与 UI 必填、T06 查四值状态的结构化结果
+  producers:
+  - rules.planning.cross-tree
+  consumers:
+  - rules
+- id: rules.planning.report
+  name: 跨树引用、策划全覆盖、文档形态确认、未登记代码与 import 扫描的条目集合，
+  version: 1.0.0
+  purpose: 跨树引用、策划全覆盖、文档形态确认、未登记代码与 import 扫描的条目集合，按 T 或 R 规则号定位
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 跨树引用、策划全覆盖、文档形态确认、未登记代码与 import 扫描的条目集合，按 T 或 R 规则号定位
+  producers:
+  - rules.planning
+  consumers:
+  - rules
+- id: rules.planning.scan.result
+  name: 读登记目录、代码文件的 import/using 与策划文档列，按 R19 扫未
+  version: 1.0.0
+  purpose: 读登记目录、代码文件的 import/using 与策划文档列，按 R19 扫未登记代码目录、R20 扫跨节点 import、R45 列有对应程序但缺文档的…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读登记目录、代码文件的 import/using 与策划文档列，按 R19 扫未登记代码目录、R20 扫跨节点 import、R45 列有对应程序但缺文档的…的结构化结果
+  producers:
+  - rules.planning.scan
+  consumers:
+  - rules
+- id: rules.relations.contracts.result
+  name: 读 contracts.yaml 与节点 inputs/outputs，按 R0
+  version: 1.0.0
+  purpose: 读 contracts.yaml 与节点 inputs/outputs，按 R09 检查引用契约是否存在、按 R10 检查 producers/consum…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读 contracts.yaml 与节点 inputs/outputs，按 R09 检查引用契约是否存在、按 R10 检查 producers/consum…的结构化结果
+  producers:
+  - rules.relations.contracts
+  consumers:
+  - rules
+- id: rules.relations.dependency.result
+  name: 读 depends_on 与 phase 表，按 R11 查自依赖、环、缺失目标
+  version: 1.0.0
+  purpose: 读 depends_on 与 phase 表，按 R11 查自依赖、环、缺失目标，按 R12 查阶段顺序，按 R22 查阶段覆盖，按 R33 查依赖是否有契…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读 depends_on 与 phase 表，按 R11 查自依赖、环、缺失目标，按 R12 查阶段顺序，按 R22 查阶段覆盖，按 R33 查依赖是否有契…的结构化结果
+  producers:
+  - rules.relations.dependency
+  consumers:
+  - rules
+- id: rules.relations.links.result
+  name: 读 manifests 的 links 段与登记文件的 using/import
+  version: 1.0.0
+  purpose: 读 manifests 的 links 段与登记文件的 using/import，按 R40 校验 from/to/type/note 与重复，按 R41…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读 manifests 的 links 段与登记文件的 using/import，按 R40 校验 from/to/type/note 与重复，按 R41…的结构化结果
+  producers:
+  - rules.relations.links
+  consumers:
+  - rules
+- id: rules.relations.report
+  name: 契约、依赖、阶段、链接与代码引用扫描的条目集合，保留规则号、起止节点、消息与顺序
+  version: 1.0.0
+  purpose: 契约、依赖、阶段、链接与代码引用扫描的条目集合，保留规则号、起止节点、消息与顺序
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 契约、依赖、阶段、链接与代码引用扫描的条目集合，保留规则号、起止节点、消息与顺序
+  producers:
+  - rules.relations
+  consumers:
+  - rules
+- id: rules.state.completion.result
+  name: 读节点 status、acceptance、evidence、files 与父子
+  version: 1.0.0
+  purpose: 读节点 status、acceptance、evidence、files 与父子状态，按 R13 查状态与产物一致性、R14 查验收证据、R16 查父子完成…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点 status、acceptance、evidence、files 与父子状态，按 R13 查状态与产物一致性、R14 查验收证据、R16 查父子完成…的结构化结果
+  producers:
+  - rules.state.completion
+  consumers:
+  - rules
+- id: rules.state.quality.result
+  name: 读 benchmarks.yaml、绑定.yaml、evaluation 文本与
+  version: 1.0.0
+  purpose: 读 benchmarks.yaml、绑定.yaml、evaluation 文本与健康检查输出，按 R25-R29 校验标杆定义、绑定、覆盖、时效与规模，按…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读 benchmarks.yaml、绑定.yaml、evaluation 文本与健康检查输出，按 R25-R29 校验标杆定义、绑定、覆盖、时效与规模，按…的结构化结果
+  producers:
+  - rules.state.quality
+  consumers:
+  - rules
+- id: rules.state.report
+  name: 职责、状态、验收、评价与标杆相关的条目集合，逐条带节点 id、级别与规则号
+  version: 1.0.0
+  purpose: 职责、状态、验收、评价与标杆相关的条目集合，逐条带节点 id、级别与规则号
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 职责、状态、验收、评价与标杆相关的条目集合，逐条带节点 id、级别与规则号
+  producers:
+  - rules.state
+  consumers:
+  - rules
+- id: rules.state.responsibility.result
+  name: 读节点 responsibility 与兄弟节点，按 R07 检查职责是否写清输
+  version: 1.0.0
+  purpose: 读节点 responsibility 与兄弟节点，按 R07 检查职责是否写清输入到输出的动作，按 R08 用相似度检查跨节点职责重复的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点 responsibility 与兄弟节点，按 R07 检查职责是否写清输入到输出的动作，按 R08 用相似度检查跨节点职责重复的结构化结果
+  producers:
+  - rules.state.responsibility
+  consumers:
+  - rules
+- id: rules.structure.groups.result
+  name: 读节点数量、豁免登记与 groups 段，按 R23 报规模提示、R24 校验豁
+  version: 1.0.0
+  purpose: 读节点数量、豁免登记与 groups 段，按 R23 报规模提示、R24 校验豁免是否指向真实节点、R38 检查组 id、成员、parent 与两层上限的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点数量、豁免登记与 groups 段，按 R23 报规模提示、R24 校验豁免是否指向真实节点、R38 检查组 id、成员、parent 与两层上限的结构化结果
+  producers:
+  - rules.structure.groups
+  consumers:
+  - rules
+- id: rules.structure.identity.result
+  name: 读节点 id、root、parent 与 kind，按 R03-R06 检查 i
+  version: 1.0.0
+  purpose: 读节点 id、root、parent 与 kind，按 R03-R06 检查 id 唯一与格式、根节点存在、父子闭合、layer 与 kind 匹配，并按…的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读节点 id、root、parent 与 kind，按 R03-R06 检查 id 唯一与格式、根节点存在、父子闭合、layer 与 kind 匹配，并按…的结构化结果
+  producers:
+  - rules.structure.identity
+  consumers:
+  - rules
+- id: rules.structure.report
+  name: 按 R01-R06、R23、R24、R38 顺序排列的结构校验条目，每条含级别、
+  version: 1.0.0
+  purpose: 按 R01-R06、R23、R24、R38 顺序排列的结构校验条目，每条含级别、规则号、节点或字段位置与完整消息
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 按 R01-R06、R23、R24、R38 顺序排列的结构校验条目，每条含级别、规则号、节点或字段位置与完整消息
+  producers:
+  - rules.structure
+  consumers:
+  - rules
+- id: rules.structure.schema.result
+  name: 读清单顶层键与节点必填字段表，按 R01/R02 比对允许键、类型与默认值，把缺
+  version: 1.0.0
+  purpose: 读清单顶层键与节点必填字段表，按 R01/R02 比对允许键、类型与默认值，把缺键、未知键和非法枚举转成带节点 id 的条目的结构化结果
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 读清单顶层键与节点必填字段表，按 R01/R02 比对允许键、类型与默认值，把缺键、未知键和非法枚举转成带节点 id 的条目的结构化结果
+  producers:
+  - rules.structure.schema
+  consumers:
+  - rules
+- id: tool.catalog
+  name: tools/list 返回的 26 个 tree_* 工具名、描述与 input
+  version: 1.0.0
+  purpose: tools/list 返回的 26 个 tree_* 工具名、描述与 inputSchema，AI 只按目录调用
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: tools/list 返回的 26 个 tree_* 工具名、描述与 inputSchema，AI 只按目录调用
+  producers:
+  - interface.mcp-server
+  consumers:
+  - interface
+- id: tool.result
+  name: 工具调用返回的 JSON 文本，含 ok、data 或 errors、kerne
+  version: 1.0.0
+  purpose: 工具调用返回的 JSON 文本，含 ok、data 或 errors、kernel 与 tree_version，AI 不接触文件
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 工具调用返回的 JSON 文本，含 ok、data 或 errors、kernel 与 tree_version，AI 不接触文件
+  producers:
+  - interface.mcp-server
+  consumers:
+  - interface
+- id: tree.candidate
+  name: 提案逐 op 应用后的候选清单/契约/标杆与校验结论，或 init 生成的脚手架
+  version: 1.0.0
+  purpose: 提案逐 op 应用后的候选清单/契约/标杆与校验结论，或 init 生成的脚手架文件清单
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 提案逐 op 应用后的候选清单/契约/标杆与校验结论，或 init 生成的脚手架文件清单
+  producers:
+  - kernel.scaffold
+  consumers:
+  - kernel.ops
+- id: tree.card
+  name: 单节点 9 行以内纯文本卡或 depth 关系图，带短介绍、契约、依赖与邻居
+  version: 1.0.0
+  purpose: 单节点 9 行以内纯文本卡或 depth 关系图，带短介绍、契约、依赖与邻居
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 单节点 9 行以内纯文本卡或 depth 关系图，带短介绍、契约、依赖与邻居
+  producers:
+  - kernel.reading
+  consumers:
+  - kernel.write
+- id: tree.diagnostics
+  name: 健康检查三类问题、跨树校验、verify 检查项、变更记录、适配扫描与性能样本
+  version: 1.0.0
+  purpose: 健康检查三类问题、跨树校验、verify 检查项、变更记录、适配扫描与性能样本
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 健康检查三类问题、跨树校验、verify 检查项、变更记录、适配扫描与性能样本
+  producers:
+  - kernel.ops
+  consumers:
+  - kernel.scaffold
+  - kernel.write
+- id: tree.loaded
+  name: 已解析的清单、契约、标杆、绑定、节点表与组归属，供所有内核工具只读访问
+  version: 1.0.0
+  purpose: 已解析的清单、契约、标杆、绑定、节点表与组归属，供所有内核工具只读访问
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 已解析的清单、契约、标杆、绑定、节点表与组归属，供所有内核工具只读访问
+  producers:
+  - kernel.store
+  consumers:
+  - interface.cli
+  - interface.mcp-compat
+  - interface.mcp-server
+  - interface.serve
+  - kernel.backup
+  - kernel.ops
+  - kernel.reading
+  - kernel.scaffold
+  - kernel.write
+  - rules
+  - rules.backup
+  - rules.backup.config
+  - rules.backup.ledger
+  - rules.backup.preset
+  - rules.docs
+  - rules.docs.intro
+  - rules.docs.spec
+  - rules.docs.standard
+  - rules.planning
+  - rules.planning.coverage
+  - rules.planning.cross-tree
+  - rules.planning.scan
+  - rules.relations
+  - rules.relations.contracts
+  - rules.relations.dependency
+  - rules.relations.links
+  - rules.state
+  - rules.state.completion
+  - rules.state.quality
+  - rules.state.responsibility
+  - rules.structure
+  - rules.structure.groups
+  - rules.structure.identity
+  - rules.structure.schema
+- id: tree.mutation
+  name: 一次节点/组/连接写操作的结果摘要、written_files、台账条目与新 t
+  version: 1.0.0
+  purpose: 一次节点/组/连接写操作的结果摘要、written_files、台账条目与新 tree_version
+  schema:
+    type: object
+    required:
+    - result
+    fields:
+      result:
+        type: object
+        desc: 一次节点/组/连接写操作的结果摘要、written_files、台账条目与新 tree_version
+  producers:
+  - kernel.write
+  consumers:
+  - kernel.ops
+  - kernel.reading

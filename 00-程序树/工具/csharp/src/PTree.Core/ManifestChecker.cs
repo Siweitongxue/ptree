@@ -244,7 +244,8 @@ public static class ManifestChecker
 
     private static void CheckPresets(PTreeRepository repository, List<TreeIssue> issues)
     {
-        if (repository.Manifest.Root != "ai-company")
+        // 预设节点是可选能力：清单里一个都没有时跳过，避免把内部项目名写进公开内核。
+        if (!PresetIds.Any(id => repository.NodeMap.ContainsKey(id)))
         {
             return;
         }

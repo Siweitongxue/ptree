@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：AddNode、UpdateNode、RetireNode、Relocate 和 Delete 共用 Commit 与契约成员同步逻辑。
+缺：delete 只删除节点自身说明，未级联清理短介绍和评价文件。

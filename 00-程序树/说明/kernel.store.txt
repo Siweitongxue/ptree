@@ -1,0 +1,1 @@
+树清单读写程序读取 00-程序树/program-tree.yaml、00-程序树/契约/contracts.yaml 与 00-程序树/树实例目录，先用 YamlLoader 和 RawYaml 把 YAML 解析成保留键顺序的原始值树，再映射成 Manifest、NodeModel、ContractModel 等模型，并按 id 建立节点表与组归属。程序还负责把模型序列化成统一 UTF-8 中文不转义 JSON，把可预期的用法与 IO 错误包成 PTreeException；它不解释节点业务语义，也不改写清单，校验规则由规则部负责。入口文件是 00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs 和 TreeStore.cs，输出 tree.loaded 供阅读、写入、脚手架、运维与备份共用。

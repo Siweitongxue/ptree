@@ -1,0 +1,4 @@
+判断：应该有
+位置：对
+做法：TcpListener 手写 HTTP，静态白名单加 API 转发 NodeTools
+缺：无鉴权、无并发上限、无 CORS 配置项，只适合本机单用户

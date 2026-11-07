@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：WriteAll 先跑 validate 再渲染四份文件，RenderView、RenderOrder、RenderBook、RenderBenchmark 各自纯文本输出。
+缺：生成物新鲜度只在 verify 中比对时间，缺少内容哈希级别的变更检测。

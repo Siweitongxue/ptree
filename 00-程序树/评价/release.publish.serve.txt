@@ -1,0 +1,4 @@
+判断：应该有
+位置：对
+做法：固定 AssemblyName 为 ptree-serve，引用 PTree.Core 后构建并用 --help 冒烟。
+缺：只监听回环地址，默认端口 7777，没有 TLS 与端口自动切换。

@@ -1,0 +1,1 @@
+校验 links 登记的 from/to/type/note 与重复

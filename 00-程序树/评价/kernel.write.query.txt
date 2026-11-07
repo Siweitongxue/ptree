@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：Find 过滤节点与组，Changes 读取 JSONL，Scan 复用 AdaptScanner，GitSync 按路径组提交。
+缺：git 提交只按目录分组，未按节点边界生成更细的提交说明。

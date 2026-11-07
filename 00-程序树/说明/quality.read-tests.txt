@@ -1,0 +1,5 @@
+阅读与卡片测试读示例树，跑四组用例：阅读阶梯工具、节点与树状态卡片、网格条目读写、网格覆盖统计。它不做画布渲染验证，也不生成网格导出数据，只断言命令行与工具层的可读性约定。
+
+文件在 00-程序树/工具/csharp/tests/PTree.Tests 下：ReadLadderTests.cs 验 guide 不超过十行且先指功能块、blocks 模式不列成员清单、read_group 的名称与简介两档；NodeCardsTests.cs 验九行卡、第二行短介绍、depth 图与 full 原 JSON 的键集；GridReadingsTests.cs 验网格条目收录与短介绍检查；GridWriteTests.cs 验 tree_update_node 的短介绍只写短介绍文件、不动清单。
+
+卡片与阶梯的断言以行数、字节与键集为主，属于可读性预算，不是审美判断；改输出格式先改这些预算并说明依据，别只把数字调大。

@@ -1,0 +1,1 @@
+提案与脚手架程序接收提案 YAML 或 init 参数与 tree.loaded，通过 00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs 逐 op 应用 add、modify、deprecate、prune、split、merge、intro、meta 和标杆操作，在内存生成候选清单并校验；GeneratedProducts 渲染程序书、总览、落地顺序和标杆看板，InitRunner 生成最小可校验脚手架。程序不直接接受 MCP 请求，也不维护已有节点日常字段；输出 tree.candidate 与可落盘文件清单。

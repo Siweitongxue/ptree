@@ -1,0 +1,1 @@
+产物发布的实现边界：读取 PTree.Cli 与 PTree.Serve 的 csproj 和 Release 构建输出，固定 AssemblyName 为

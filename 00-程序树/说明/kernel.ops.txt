@@ -1,0 +1,1 @@
+运维与校验程序接收 tree.loaded、写结果和备份点，通过 00-程序树/工具/csharp/src/PTree.Core/HealthCheck.cs 检查文件消失、登记目录缺失、已完成无实现三类问题，并静默记录 mtime 变更；VerifyRunner 汇总 validate、check、生成物新鲜度、说明覆盖和 MCP 冒烟，ManifestChecker 执行 T07 到 T12，AdaptScanner 扫描固定目录，Bench 做进程内性能样本。程序不改节点字段、不实现备份产物；输出 tree.diagnostics。

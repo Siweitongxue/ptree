@@ -1,0 +1,1 @@
+生成物渲染步骤读取树仓库与校验结果，在 00-程序树/工具/csharp/src/PTree.Core/GeneratedProducts.cs 中渲染程序树总览、落地顺序、程序书和标杆看板四份纯文本，统一带生成时间、禁改声明和计数，并写入 00-程序树/生成目录。它不改清单、不校验提案，也不生成 HTML；输出 kernel.scaffold.products 全文，供 CLI 的 view、order、book、benchmark 与合并后的程序书使用。

@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：用 00-程序树/工具/csharp/build-lock.sh 串行执行 dotnet build -c Release，产物落各项目 bin/Release/net10.0。
+缺：没有 CI 流水线，构建锁只覆盖单机并发。

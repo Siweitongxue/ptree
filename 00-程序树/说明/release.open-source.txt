@@ -1,0 +1,3 @@
+开源入口读 Release 产物事实、examples/demo 与 00-程序树/工具/csharp/README.md，组织公开仓库的用户入口、构建运行命令与 MIT 许可，输出 README.md、LICENSE 与 .gitignore。
+它声明公开仓库不含打包脚本与内部项目的树数据，只保留可复现的源码、示例与文档；它不做发布签名、商店打包与 CI 配置。
+改之前读 README.md、LICENSE 和 csharp/README.md；命令、目录或许可变更要三处同步。常见坑是把内部树数据写进示例、README 命令与 examples/demo 现状不一致。

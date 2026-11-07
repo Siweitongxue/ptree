@@ -1,0 +1,1 @@
+本地 HTTP 服务的实现边界：读 tree.loaded，用 BCL 在 127.0.0.1 提供 viewer 静态文件与读写 API，返回 JSON 

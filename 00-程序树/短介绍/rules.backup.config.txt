@@ -1,0 +1,1 @@
+校验备份配置 enabled/mode/retention/targets 取值

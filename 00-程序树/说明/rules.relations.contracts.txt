@@ -1,0 +1,1 @@
+契约引用检查集中在 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R09、R10、R21，先读 contracts.yaml 建立契约 id 到 producer/consumer 的索引，再逐节点比对 inputs/outputs；R09 报引用不存在的契约，R10 报 producers 或 consumers 与本节点声明不一致，R21 对契约版本异常给提示。处理时保留契约在文件中的顺序，消息同时写契约 id 和节点 id，便于从 validate 输出直接定位。产出是契约类条目；边界是只检查契约连接，不检查依赖闭包，也不自动修改 contracts.yaml。

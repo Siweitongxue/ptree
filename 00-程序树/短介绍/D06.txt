@@ -1,0 +1,1 @@
+备份子系统的实现边界：接收 tree.loaded 与备份配置/全局密钥→按 git-bundle、tag、copy 把 tree_version 映射为备

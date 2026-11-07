@@ -38,6 +38,29 @@ public sealed class PTreeRepository
     public IReadOnlyDictionary<string, NodeModel> NodeMap => _nodeMap;
     public IReadOnlyList<GroupModel> Groups => Manifest.Groups;
 
+    /// <summary>对外展示用的项目名：优先取根节点 name，其次仓库目录名，最后「项目」。</summary>
+    public string ProjectName
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(Manifest.Root) &&
+                _nodeMap.TryGetValue(Manifest.Root!, out var rootNode) &&
+                !string.IsNullOrWhiteSpace(rootNode.Name))
+            {
+                return rootNode.Name!;
+            }
+            return DirectoryName(Root);
+        }
+    }
+
+    /// <summary>从仓库根目录取展示名；空路径回退「项目」。</summary>
+    public static string DirectoryName(string? root)
+    {
+        var trimmed = (root ?? "").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var name = Path.GetFileName(trimmed);
+        return string.IsNullOrWhiteSpace(name) ? "项目" : name;
+    }
+
     private PTreeRepository(string root, Manifest manifest, RawMap manifestRaw, string contractsPath,
         object? contractsRaw, ContractsDocument contracts,
         BenchmarksDocument benchmarks, BindingsDocument bindings,

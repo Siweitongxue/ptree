@@ -1,0 +1,1 @@
+备份子系统程序接收 tree.loaded、项目层备份配置和全局密钥，通过 00-程序树/工具/csharp/src/PTree.Core/BackupService.cs 把 tree_version 映射到内层代码仓的 git-bundle、tag 或 copy 备份点，写台账并按 retention 裁剪旧点；BackupConfig 负责 00-程序树/运维/备份.yaml 与全局 home 的分层，BackupCrypto 用 AES-256-GCM 加解密凭据并只回显脱敏 token。程序不备份外部系统、不把 token 明文写日志；输出 backup.point。

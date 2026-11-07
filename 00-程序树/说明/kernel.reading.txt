@@ -1,0 +1,1 @@
+节点阅读与渲染程序接收 tree.loaded、节点 id 与 depth/format 参数，通过 00-程序树/工具/csharp/src/PTree.Core/NodeCards.cs 读取短介绍、进出契约、依赖、相关策划、美术、UI、连接与文件，按 800 字节和 9 行预算输出卡片；depth 大于等于二时输出节点表与边表，format=full 仍返回原 JSON。BriefRenderer 和 StatusValues 另外提供项目速览、阅读阶梯、功能块分区、组内成员与状态归一化。程序只读清单并渲染文本，不改字段、不跑校验；输出 tree.card 供写入和接口层使用。

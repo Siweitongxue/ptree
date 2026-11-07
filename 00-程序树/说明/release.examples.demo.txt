@@ -1,0 +1,3 @@
+demo 示例树读 examples/demo/00-程序树/program-tree.yaml、契约/contracts.yaml、标杆/benchmarks.yaml、标杆/绑定.yaml 与四份树实例，保持 demo、core、core.app 三个节点和 D01、M01、U01 的引用字段一致。
+它产出可被 validate 与 check 直接读取的示例骨架，不生成说明、短介绍与评价，也不改程序的真实代码目录。
+改之前读 demo 的程序树清单与四棵树实例；节点或契约变更要同时改对应实例。常见坑是只改清单导致 check 断链、标杆与绑定字段不合法。

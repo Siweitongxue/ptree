@@ -1,0 +1,1 @@
+输出与兼容层步骤接收已建好的模型，通过 00-程序树/工具/csharp/src/PTree.Core/JsonOutput.cs 统一 UTF-8、中文不转义、缩进两空格的 JSON 序列化，并用 Payloads.cs 定义 index/node 等对外载荷字段。PTreeException.cs 把找不到清单、YAML 解析失败、无法读取文件这类可预期问题包成统一异常，让 CLI 返回退出码 2、MCP 返回错误文本。该步骤只决定输出形状与异常边界，不决定字段业务含义，也不写文件；产出 kernel.store.json，供内核部各程序复用。

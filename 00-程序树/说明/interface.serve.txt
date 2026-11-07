@@ -1,0 +1,1 @@
+这个程序提供只监听 127.0.0.1 的本地 HTTP 服务，让人和画布不必直接读文件。它用 TcpListener 手写 HTTP/1.1 解析，GET / 与白名单后缀返回 viewer 静态文件，GET /api/health、/api/status、/api/check、/api/node/{id}、/api/find 读取树，POST /api/node、/api/link、/api/node/update、/api/node/retire 把 body 原样交给 NodeTools 的写工具。写请求不另造校验或回滚路径，必须复用同一套内核实现；服务不做鉴权、不做公网监听，也不承担备份与提交。代码在 00-程序树/工具/csharp/src/PTree.Serve/Program.cs；改路由时要同步 viewer 的调用与静态白名单。

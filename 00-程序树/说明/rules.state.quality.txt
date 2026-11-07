@@ -1,0 +1,1 @@
+标杆与评价检查读取 00-程序树/标杆/benchmarks.yaml、绑定.yaml、节点 evaluation 与健康检查结果，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R25-R29、R34 执行：检查标杆 schema、level 集合、绑定覆盖、差距时效、规模上限与评价四行格式，同时用 HealthCheck.cs 报告登记文件消失、目录缺失、已完成无实现三类问题。处理时保留标杆 id、节点 id 与缺失项，产出质量类条目；边界是不创建标杆、不修改评价，也不把健康提示升级成阻断错误。

@@ -1,0 +1,1 @@
+仓库与节点表步骤读取仓库根下的清单、契约、标杆、绑定和说明路径，通过 00-程序树/工具/csharp/src/PTree.Core/PTreeRepository.cs 构造 PTreeRepository，暴露 Root、Manifest、Contracts、NodeMap 与 Groups；同时用 TreeStore 解析程序树、策划树、美术树、UI 树实例，生成 TreeDocument、TreeEntry、TreeReference 与解析问题。它还支持 FromRaw 从候选提案构造仓库，供提案校验使用。输出 kernel.store.model 强类型模型与按 id 建好的节点表、组表；该步骤不做业务校验、不生成文本卡，也不写盘。

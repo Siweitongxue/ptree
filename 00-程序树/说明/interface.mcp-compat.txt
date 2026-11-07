@@ -1,0 +1,1 @@
+这个程序保留旧版 MCP 工具函数的实现，用于历史调用方与回归对照。McpTools 里仍然能找到 status、read、check、propose、apply 五个入口，以及提案写文件、dry-run 与 apply 的参数解析；但当前 McpServer 的 CallTool 已不再把它们注册进对外目录，propose 与 apply 在新的 26 工具清单里没有位置。它的边界是兼容函数本身，不复制 NodeTools 的节点读写，也不承担新写链路；新功能应落到内核写工具，而不是往这里加工具。代码位置是 00-程序树/工具/csharp/src/PTree.Mcp/McpTools.cs；清理或复用前要先确认没有旧客户端依赖这些函数名与 JSON 形状。

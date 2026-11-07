@@ -22,8 +22,8 @@ README.txt    本文件
 ?api 只接受 http:// 或 https:// 开头的地址；非法值自动回退只读。
 
 三 启动本地服务
-在项目根 D:\AI Company 执行：
-dotnet 00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.dll --root "D:\AI Company" --viewer "D:\AI Company\00-程序树\工具\viewer" --port 7788
+在项目根（含 00-程序树的目录）执行：
+dotnet 00-程序树/工具/csharp/src/PTree.Serve/bin/Release/net10.0/ptree-serve.dll --root <项目根> --viewer <仓库>/00-程序树/工具/viewer --port 7788
 然后打开 http://127.0.0.1:7788/ 。服务只监听 127.0.0.1，没有鉴权，不要暴露到公网。
 
 四 界面与操作
@@ -93,20 +93,20 @@ python/node 解析 data.js：JSON 可解析，nodes=96、links=598（497 旧 + 1
 index.html 内没有 http:// 或 https:// 外链；资源只有 style.css、data.js、viewer.js
 七张网格节点数（含视图根）：程序 96、策划 60、美术 11、UI 7、全文件 30；音效/特效各 1（仅预留根，无条目）
 Tabbit（Chromium）实测：file:// 打开无 JS 错误，画布 1942×1304 正常出图，状态栏显示“节点 96 · 关系 598 · 可见 96 · 功能块 1/11 · 策划条目 59”
-  悬停节点出短介绍（例：治理部 / governance.validator）、“包含（层级）AI Company → 信息部”等边提示正常
+  悬停节点出短介绍（例：核心部门 / core.app）、“包含（层级）demo → core”等边提示正常
   点组框标题条出组卡：名字、一行简介、5 个成员、路径 00-程序树/说明/group.tree-toolchain.txt 都在
   点 ▾ 折叠后组卡显示“已折叠”；勾“部门组”统计变 11/11；勾“对应策划”状态栏出现“画布策划 59”
   localStorage 写入 {"edges":{...},"groups":true,"autoGroups":true}，刷新后复选框状态保持
 截图：viewer-check.png（展开态）、viewer-collapsed.png（折叠态），在仓库根目录。
 
 十 实测记录（2026-11-06）
-1 file:// 只读：顶部“只读模式 · file://”；点“理解部”出本地详情；写操作区显示“只读模式”，无表单。
+1 file:// 只读：顶部“只读模式 · file://”；点“核心部门”出本地详情；写操作区显示“只读模式”，无表单。
 2 http 实时：顶部“实时模式 · 可写”，项目根为测试临时根；状态栏显示服务节点数与“树版本 1.2.6”；详情出现“节点说明（intro 全文）”和写操作表单。
 3 成功写入（临时根）：新增子节点成功，返回 tree_version 1.2.3 → 1.2.4、written_files 8 个、ledger chg-20261106-0005；状态栏节点数 73 → 74。
 4 成功写入：改状态与加联系均返回成功；加联系返回 1.2.5 → 1.2.6、ledger chg-20261106-0007。
 5 故意失败：说明只写“说明太短，会被 R31 拒绝。”，界面显示“失败：新增节点被拒绝”，errors 为“[R31] 说明去空白后只有 13 字，少于 200 字（写清定位、代码、连接、怎么改）”，表单内容保留。
 6 file:// + ?api：通过 bridge.html 连上本地服务，顶部变为“实时模式 · 可写”，详情与写操作表单正常出现。
-7 写入测试全部在临时项目根上完成，没有改动 D:\AI Company 的真实清单；本次新增文件只在 viewer 目录。
+7 写入测试全部在临时项目根上完成，没有改动项目根的真实清单；本次新增文件只在 viewer 目录。
 
 十一 已知不足
 1 data.js 是快照：实时写操作后画布只补入新增节点，不重拉全树；整图同步需重跑 grid_export 并刷新。

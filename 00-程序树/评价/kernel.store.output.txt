@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：JsonOutput 固定缩进和中文不转义，Payloads 用属性名声明字段，PTreeException 统一预期错误类型。
+缺：Payloads 新增字段时缺少一份与 index/node 快照的自动对账测试。

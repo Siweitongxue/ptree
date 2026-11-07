@@ -18,6 +18,8 @@ tree_version 快照——映射到对应内层代码仓的一个备份点，并�
    - last_run         上次备份时间（yyyy-MM-dd HH:mm:ss），由工具写。
    - last_tree_version 上次备份对应的 tree_version，由工具写。
    - note             可选备注。
+   - secret_scan      布尔，默认 true；false 表示关闭备份前密钥扫描，风险见第五节。
+   - secret_allowlist 列表，每项为 {path, fingerprint, reason}；只放行精确匹配项，见第五节。
    未出现在上面的字段视为未知字段（R43 给 W）。
 
 2. 全局层（不进 git）：%USERPROFILE%\.ptree\
@@ -78,10 +80,49 @@ CLI（同一实现）：
                          [--add-target <仓路径或节点id>] [--remove-target <...>]
   ptree-cs backup setup  --username <用户名> [--token <token>]
   ptree-cs backup now
+  ptree-cs backup scan   [--target <...>] [--json]
   ptree-cs backup list   [--target <...>] [--limit N] [--include-trimmed]
   ptree-cs backup verify [--target <...>] [--limit N]
 
-五、未配置时的行为
+五、备份前密钥扫描
+------------------
+
+1. 默认开启。项目层 secret_scan 缺省为 true；每次 tree_backup_now / ptree-cs backup now 在生成任何
+   bundle、tag 或 copy 之前先跑同一套扫描。独立命令为 ptree-cs backup scan [--target <...>] [--json]。
+2. 扫描范围是 targets 覆盖的文件集合：git 仓按 git ls-files --cached --others --exclude-standard 取清单，
+   copy 模式按将被复制的文件清单；只扫常规文件，不跟随符号链接。跳过二进制目录 bin、obj、.git，以及
+   后缀为 .enc 的加密凭据文件；同一路径重复时不重复扫描。
+3. 覆盖的密钥种类至少包括：
+   - PEM 私钥头：-----BEGIN RSA/EC/OPENSSH/PRIVATE KEY-----；
+   - AWS Access Key ID（AKIA 后接 16 位大写字母数字）及相邻的 aws_secret_access_key；
+   - GitHub token：ghp_、gho_、ghu_、ghs_、ghr_、github_pat_；
+   - GitLab token：glpat-；
+   - Slack token：xoxb-、xoxp-、xoxa-、xoxr-、xoxs-；
+   - OpenAI / Anthropic 风格：sk- 或 sk-ant- 后接至少 20 位密钥字符；
+   - Google API key：AIza 后接 35 位字符；
+   - Azure 存储连接串中的 AccountKey= 后接至少 40 位 base64；
+   - 通用赋值：password、passwd、secret、token、api_key、apikey 后接 = 或 :，值为长度至少 16、
+     字符集不少于 3 类且香农熵不低于 3.5 bit/char 的字符串；
+   - 三段式 JWT（eyJ 开头、含两个点、总长至少 40）。
+   扫描按正则加熵阈值判断，命中即按原文计算指纹，不在输出里保留原文。
+4. 命中后的行为：整次备份立即中止，不生成 bundle、tag 或 copy，不写成功备份台账，不推进 tree_version；
+   MCP 返回 ok=false、refused=true、findings 数组，CLI 打印 findings 并退出 1。每个 finding 含 target、
+   path（相对 target）、line、kind、masked；masked 只保留命中值前 4 位与后 2 位，长度不足 6 时整段显示
+   ****。findings、日志、台账、MCP 响应与异常消息都不得出现密钥原文。
+5. 放行方式只有两种，且都必须在项目层 00-程序树/运维/备份.yaml 显式写出：
+   - secret_scan: false：关闭整次扫描。风险是密钥会随备份进入 bundle 或复制目录，并可能已经存在于
+     git 历史；只有用户书面同意并确认已轮换相关密钥时才允许，项目维护者承担泄露责任。
+   - secret_allowlist：每项 {path, fingerprint, reason}，path 为仓库内相对路径或 glob，fingerprint 为
+     命中值 sha256 的前 16 位，reason 必填。只放行 path 与 fingerprint 同时匹配的误报；仍以 I 级记录
+     放行审计，不放宽其他命中项。不要把真实密钥写进 allowlist 或 reason。
+   两种放行都不能替代轮换；已经提交过的密钥应按对应平台流程作废并重发。R43 只校验这两个键的结构与
+   取值，不读取密钥内容，也不判断是否真的误报。
+6. 退出码约定：ptree-cs backup scan 无命中返回 0，有命中返回 1，用法、IO 或配置错误返回 2；
+   ptree-cs backup now 备份成功返回 0，命中密钥拒绝备份返回 1，配置缺失或 IO 错误返回 2。
+   MCP tree_backup_now 命中时 ok=false、refused=true，不产生备份点；tree_backup_scan 如提供，返回
+   findings、scanned_files、skipped_files，字段口径与 CLI --json 一致。
+
+六、未配置时的行为
 ------------------
 
 - 默认 enabled=false：不提醒、不拦截、不产出任何备份文件。
@@ -89,4 +130,5 @@ CLI（同一实现）：
   返回 need_setup=true，文案明确写「请先跑 tree_backup_setup 完成配置」。
 - enabled=true 但未配置时，tree_guard / health 追加一条 W（backup_unconfigured）。
 - tree_backup_now / backup now 在未启用时拒绝，并提示先 tree_backup_setup 再 tree_backup_config。
-- 校验规则 R43 只校验 00-程序树/运维/备份.yaml 的结构与取值（E/W），不读密钥、不读凭据。
+- 校验规则 R43 只校验 00-程序树/运维/备份.yaml 的结构与取值（E/W），不读密钥、不读凭据；
+  secret_scan 与 secret_allowlist 也只在结构层校验，扫描本身在备份前执行。

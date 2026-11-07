@@ -140,10 +140,10 @@ contracts:
         // 版本行每次写入都会递增，用占位符现读，避免升版本就要改测试
         yield return new object[] { "tree_version: <current>", "tree_version: 1.1", "R01" };
         yield return new object[] { "kind: root", "kind: badkind", "R02" };
-        yield return new object[] { "parent: info", "parent: ghost", "R05" };
+        yield return new object[] { "parent: core", "parent: ghost", "R05" };
         yield return new object[] { "layer: 1", "layer: 9", "R02" };
-        yield return new object[] { "id: info", "id: Info", "R02" };
-        yield return new object[] { "root: ai-company", "root: AI_Company", "R01" };
+        yield return new object[] { "kind: department", "kind: deptx", "R02" };
+        yield return new object[] { "root: demo", "root: Demo", "R01" };
     }
 
     [Fact]
@@ -1056,7 +1056,7 @@ contracts:
     }
 
     [Fact]
-    public void ProgramWalkerMatchesPythonIterProgramDirs()
+    public void ProgramWalkerFollowsDirectoryRules()
     {
         var root = CreateTempRoot(BaseManifest);
         var baseDir = Path.Combine(root, "10-程序");
@@ -1103,20 +1103,27 @@ contracts:
         }
         try
         {
-            var toolDirectory = Path.Combine(RepoLocator.Root, "00-程序树", "工具");
-            var pythonJson = RunPython("""
-import json, sys
-sys.path.insert(0, sys.argv[2])
-import ptree
-ctx = ptree.load_context(sys.argv[1])
-print(json.dumps([[rel, list(filenames)] for _, rel, filenames in ptree._iter_program_dirs(ctx)], ensure_ascii=False))
-""", root, toolDirectory);
-            var expected = JsonNode.Parse(pythonJson)!.AsArray();
-            var actual = ProgramWalker.Enumerate(root)
-                .Select(directory => new object[] { directory.Rel, directory.FileNames }).ToList();
-            var actualJson = JsonSerializer.Serialize(actual);
-            Assert.True(JsonNode.DeepEquals(expected, JsonNode.Parse(actualJson)),
-                "expected=" + expected.ToJsonString() + "\nactual=" + actualJson);
+            // 语义：目录遍历规则固定 —— 跳过隐藏目录、node_modules、__pycache__、venv、.venv 与符号链接，
+            // 根下的「共享」不递归，其余目录按码点序逐层记录，顺序与文件清单都要稳定。
+            var actual = ProgramWalker.Enumerate(root).ToList();
+            Assert.Equal(
+                new[] { "10-程序", "10-程序/a", "10-程序/a/sub", "10-程序/b", "10-程序/c" },
+                actual.Select(directory => directory.Rel).ToArray());
+            Assert.Equal(new[] { "README.md", "root.py" },
+                actual[0].FileNames.OrderBy(name => name, StringComparer.Ordinal).ToArray());
+            Assert.Equal(new[] { "program.yaml", "x.py" },
+                actual[1].FileNames.OrderBy(name => name, StringComparer.Ordinal).ToArray());
+            Assert.Equal(new[] { "y.js" }, actual[2].FileNames.ToArray());
+            Assert.Equal(new[] { "z.py" }, actual[3].FileNames.ToArray());
+            Assert.Equal(new[] { "program.yaml" }, actual[4].FileNames.ToArray());
+            Assert.DoesNotContain(actual, directory =>
+                directory.Rel.Contains(".hidden", StringComparison.Ordinal) ||
+                directory.Rel.Contains("node_modules", StringComparison.Ordinal) ||
+                directory.Rel.Contains("__pycache__", StringComparison.Ordinal) ||
+                directory.Rel.Contains("venv", StringComparison.Ordinal) ||
+                directory.Rel.Contains("共享", StringComparison.Ordinal) ||
+                directory.Rel.Contains(".git", StringComparison.Ordinal) ||
+                directory.Rel.EndsWith("link", StringComparison.Ordinal));
         }
         finally
         {

@@ -1,0 +1,1 @@
+旧工具兼容层的实现边界：读 tree.loaded，保留旧版五个兼容函数，返回 JSON 并撤下 propose/apply 注册

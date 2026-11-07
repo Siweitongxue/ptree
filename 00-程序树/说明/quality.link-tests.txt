@@ -1,0 +1,5 @@
+联系与预设测试读示例树与临时树，跑三组用例：显式联系的登记与清点、功能块的建组与成员校验、已验证状态的证据闭环，另含预设节点在读工具里的标记。它不校验契约字段形状，也不改预设声明。
+
+文件是 00-程序树/工具/csharp/tests/PTree.Tests 下的 LinkAndPresetTests.cs、LinkEvidenceTests.cs、GroupsTests.cs。LinkAndPresetTests 覆盖联系的四类错误与基址写法、预设节点在建卡、map、find 三处的记号；LinkEvidenceTests 验没有证据就标已验证必须被拦住并回滚；GroupsTests 验建组、并成员、组介绍缺失与成员不存在的报错。
+
+这些用例大量用临时目录造树，断言里只出现临时 id 或示例树 id；新增用例沿用同样做法，别把内部项目节点写进断言。

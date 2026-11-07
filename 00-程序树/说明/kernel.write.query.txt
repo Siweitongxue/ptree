@@ -1,0 +1,1 @@
+查询与提交步骤接收查询词、状态、时间窗或 written_files，在 00-程序树/工具/csharp/src/PTree.Core/NodeTools.cs 中按 id、名称、职责过滤节点，读取 HealthCheck 写入的文件变更 JSONL，扫描 adapt 目录，按路径前缀归组 git 提交并返回提交结果。它不新增节点，也不改组结构；输出 kernel.write.query 候选节点、短文本或提交结果，供 MCP 的 tree_find、tree_changes、tree_scan、tree_commit 复述。

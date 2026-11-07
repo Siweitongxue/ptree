@@ -354,12 +354,22 @@ public sealed class LinkAndPresetTests
     [Fact]
     public void PresetNodeCardShowsMarkerAndNoFilesLine()
     {
-        var card = NodeTools.ReadNode(RepoLocator.Root, Args(new { id = "governance.program-tree-plugin.board", depth = 1 }));
-        var lines = card.Split('\n');
-        Assert.StartsWith("governance.program-tree-plugin.board ", lines[0]);
-        Assert.Contains("[未完成·预设]", lines[0]);
-        Assert.DoesNotContain(lines, line => line.StartsWith("文件 ", StringComparison.Ordinal));
-        Assert.DoesNotContain(lines, line => line.Length == 0);
+        var root = TempRoot();
+        try
+        {
+            WriteManifest(root, NodeBlock("n000", "根", 0, "null", "[]") +
+                                NodeBlock("n000.stub", "占位", 1, "n000", "[]", "[]", true, "未完成"));
+            var card = NodeTools.ReadNode(root, Args(new { id = "n000.stub", depth = 1 }));
+            var lines = card.Split('\n');
+            Assert.StartsWith("n000.stub ", lines[0]);
+            Assert.Contains("[未完成·预设]", lines[0]);
+            Assert.DoesNotContain(lines, line => line.StartsWith("文件 ", StringComparison.Ordinal));
+            Assert.DoesNotContain(lines, line => line.Length == 0);
+        }
+        finally
+        {
+            TryDelete(root);
+        }
     }
 
     [Fact]
@@ -384,31 +394,54 @@ public sealed class LinkAndPresetTests
     [Fact]
     public void MapMarksPresetNodesInline()
     {
-        foreach (var mode in new[] { "names", "summary" })
+        var root = TempRoot();
+        try
         {
-            var text = NodeTools.Map(RepoLocator.Root, Args(new { mode }));
-            var line = text.Split('\n').Single(item => item.TrimStart().StartsWith("governance.program-tree-plugin.board ", StringComparison.Ordinal));
-            Assert.Contains("画板(预设)", line);
-            // 只加这一处记号，不额外加行：带记号的正好是预设节点数
-            var marked = text.Split('\n').Count(item => item.Contains("(预设)", StringComparison.Ordinal));
-            Assert.Equal(RepositoryPresetCount(), marked);
+            WriteManifest(root, NodeBlock("n000", "根", 0, "null", "[]") +
+                                NodeBlock("n000.stub1", "占位一", 1, "n000", "[]", "[]", true) +
+                                NodeBlock("n000.stub2", "占位二", 1, "n000", "[]", "[]", true) +
+                                NodeBlock("n000.plain", "普通", 1, "n000", "[]"));
+            foreach (var mode in new[] { "names", "summary" })
+            {
+                var text = NodeTools.Map(root, Args(new { mode }));
+                var line = text.Split('\n').Single(item => item.TrimStart().StartsWith("n000.stub1 ", StringComparison.Ordinal));
+                Assert.Contains("(预设)", line);
+                // 只加这一处记号，不额外加行：带记号的正好是预设节点数
+                var marked = text.Split('\n').Count(item => item.Contains("(预设)", StringComparison.Ordinal));
+                Assert.Equal(RepositoryPresetCount(root), marked);
+            }
+        }
+        finally
+        {
+            TryDelete(root);
         }
     }
 
     [Fact]
     public void FindReportsPresetFlag()
     {
-        var text = NodeTools.Find(RepoLocator.Root, Args(new { query = "governance.program-tree-plugin.board" }));
-        using var document = JsonDocument.Parse(text);
-        var node = document.RootElement.GetProperty("nodes")[0];
-        Assert.True(node.GetProperty("preset").GetBoolean());
-        var plain = NodeTools.Find(RepoLocator.Root, Args(new { query = "governance.validator" }));
-        using var plainDocument = JsonDocument.Parse(plain);
-        Assert.False(plainDocument.RootElement.GetProperty("nodes")[0].GetProperty("preset").GetBoolean());
+        var root = TempRoot();
+        try
+        {
+            WriteManifest(root, NodeBlock("n000", "根", 0, "null", "[]") +
+                                NodeBlock("n000.stub", "占位", 1, "n000", "[]", "[]", true) +
+                                NodeBlock("n000.plain", "普通", 1, "n000", "[]"));
+            var text = NodeTools.Find(root, Args(new { query = "n000.stub" }));
+            using var document = JsonDocument.Parse(text);
+            var node = document.RootElement.GetProperty("nodes")[0];
+            Assert.True(node.GetProperty("preset").GetBoolean());
+            var plain = NodeTools.Find(root, Args(new { query = "n000.plain" }));
+            using var plainDocument = JsonDocument.Parse(plain);
+            Assert.False(plainDocument.RootElement.GetProperty("nodes")[0].GetProperty("preset").GetBoolean());
+        }
+        finally
+        {
+            TryDelete(root);
+        }
     }
 
-    private static int RepositoryPresetCount()
-        => PTreeRepository.Load(RepoLocator.Root).Nodes.Count(node => node.Preset);
+    private static int RepositoryPresetCount(string root)
+        => PTreeRepository.Load(root).Nodes.Count(node => node.Preset);
 
     // ------------------------------------------------------------------
     // 基址联系 / R44 预设长期未转正 / R45 策划文档缺口 / R41 补法参数

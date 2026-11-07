@@ -1,0 +1,3 @@
+示例树脚手架读 00-程序树/工具/csharp 的 CLI 与 examples/demo 下的清单、契约、标杆、四棵树实例、说明、短介绍与评价，维护 demo、core、core.app 三个节点的最小示例树，并用 ptree-cs 跑 validate 与 check。
+它不写真实业务代码，也不把示例树当内部生产树；demo 的 2 条契约、空标杆与跨树 D01、M01、U01 只用于演示结构。
+改之前读 examples/demo/00-程序树/README.txt 与 program-tree.yaml；换示例节点要同步契约、四棵树实例与三类文本。常见坑是只改清单导致 check 断链、把 init 生成的文本留成占位。

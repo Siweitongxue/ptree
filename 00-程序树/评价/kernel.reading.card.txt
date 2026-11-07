@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：RenderNode 根据 depth 分派 RenderCard、RenderNeighborhood 和 RenderWhole，三种输出共用短介绍与邻居抽取。
+缺：全量图的边数超过 400 时只有节点截断提示，边被截断的数量没有单独暴露。

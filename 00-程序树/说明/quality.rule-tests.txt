@@ -1,0 +1,5 @@
+规则与提案测试读示例树与规则快照，跑四组用例：校验条目与顺序、清单扩展检查、提案引擎的新增与剪枝、YAML 与文本语义对照。它不做跨树对应检查，也不实现新增规则，规则判据仍以内核为准。
+
+文件是 00-程序树/工具/csharp/tests/PTree.Tests 下的 ValidationTests.cs、ManifestCheckerTests.cs、ProposalEngineTests.cs、PythonTextTests.cs、YamlOracleTests.cs。ValidationTests 把校验条目的错误码、节点、消息与顺序钉成快照；ManifestCheckerTests 验策划覆盖的通配词与断链报错；ProposalEngineTests 走 add 与 prune 两条提案路径；PythonTextTests 与 YamlOracleTests 只对照文本与解析语义，不判断规则口径。
+
+改规则或改快照时先跑过滤器确认失败面，再决定是改断言还是改实现；快照重基只允许在人工复核口径变化后做，且要复查 diff 里不含内部项目数据。

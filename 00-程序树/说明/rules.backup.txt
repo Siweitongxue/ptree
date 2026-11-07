@@ -1,0 +1,1 @@
+备份台账与预设规则读取 00-程序树/变更/台账.jsonl、00-程序树/运维/备份.yaml 与预设节点，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs、BackupService.cs、BackupConfig.cs 执行 R32/R35/R43/R44。R32 检查台账每行的 id、时间、目标、validation 计数与 result；R43 检查 enabled、mode、retention、targets、last_run 的类型和取值范围；R35 检查预设节点的状态与输出；R44 提示超过 30 天未转正的预设。产出是台账与备份条目；边界是不执行真实备份、不读取密钥内容。

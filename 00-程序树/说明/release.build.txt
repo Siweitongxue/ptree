@@ -1,0 +1,3 @@
+构建入口读 00-程序树/工具/csharp/PTree.sln 的 5 个项目与 00-程序树/工具/csharp/Directory.Build.props 的编译属性，经 00-程序树/工具/csharp/build-lock.sh 取仓库级互斥锁后执行 dotnet build -c Release，产出各项目 bin/Release/net10.0 下的程序集与可执行文件。
+它不修改 csproj 的 AssemblyName、目标框架与项目引用，也不决定校验规则或树数据；构建结束或中断时脚本删除 .build-lock。
+改之前读 csharp/README.md 的构建节与 build-lock.sh 全文；新增项目要同时登记进解决方案，否则 Release 产物不会生成。常见坑是并发构建踩 obj、锁目录残留导致下一次等待。

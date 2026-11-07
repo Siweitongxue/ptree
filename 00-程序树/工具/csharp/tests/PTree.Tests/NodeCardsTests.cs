@@ -198,7 +198,8 @@ public sealed class NodeCardsTests
     [Fact]
     public void FullFormatKeepsOriginalKeySet()
     {
-        var text = NodeTools.ReadNode(RepoLocator.Root, Args(new { id = "governance.validator", format = "full" }));
+        var nodeId = Repository.Value.Nodes.First(node => node.Kind == "program" && node.Id is { Length: > 0 }).Id!;
+        var text = NodeTools.ReadNode(RepoLocator.Root, Args(new { id = nodeId, format = "full" }));
         using var document = JsonDocument.Parse(text);
         var root = document.RootElement;
         Assert.Equal(new[] { "ok", "tree_version", "node", "intro", "groups", "neighbors" },
@@ -211,7 +212,9 @@ public sealed class NodeCardsTests
                 "related_plan", "related_art", "related_ui", "links_out", "links_in", "impact",
             },
             neighbors.EnumerateObject().Select(property => property.Name).ToArray());
-        Assert.True(Encoding.UTF8.GetByteCount(text) > 2000);
+        var card = NodeTools.ReadNode(RepoLocator.Root, Args(new { id = nodeId }));
+        Assert.True(Encoding.UTF8.GetByteCount(text) > Encoding.UTF8.GetByteCount(card),
+            "full 应比卡片信息更全：full=" + Encoding.UTF8.GetByteCount(text) + " card=" + Encoding.UTF8.GetByteCount(card));
     }
 
     [Fact]
@@ -231,7 +234,8 @@ public sealed class NodeCardsTests
     [Fact]
     public void FindIncludesShortIntro()
     {
-        var text = NodeTools.Find(RepoLocator.Root, Args(new { query = "governance.validator" }));
+        var nodeId = Repository.Value.Nodes.First(node => node.Kind == "program" && node.Id is { Length: > 0 }).Id!;
+        var text = NodeTools.Find(RepoLocator.Root, Args(new { query = nodeId }));
         using var document = JsonDocument.Parse(text);
         var node = document.RootElement.GetProperty("nodes")[0];
         Assert.True(node.TryGetProperty("short_intro", out _));
@@ -240,8 +244,14 @@ public sealed class NodeCardsTests
     [Fact]
     public void MapNamesListsEveryNodeWithRelations()
     {
-        var repository = Repository.Value;
-        var names = NodeTools.Map(RepoLocator.Root, Args(new { mode = "names" }));
+        var root = TempRoot();
+        try
+        {
+            WriteManifest(root, NodeBlock("n000", "根", 0, "null", "负责根", "[]", "[]") +
+                                NodeBlock("n000.a", "甲", 1, "n000", "负责甲", "[]", "[]") +
+                                NodeBlock("n000.b", "乙", 1, "n000", "负责乙", "[]", "[n000.a]"));
+            var repository = PTreeRepository.Load(root);
+            var names = NodeTools.Map(root, Args(new { mode = "names" }));
         Assert.StartsWith("程序树 " + repository.Manifest.TreeVersion, names);
         var lines = names.Split('\n');
         // 首行汇总 + 每个节点一行（有功能块时末尾再加一行「块 N 个」）
@@ -255,13 +265,20 @@ public sealed class NodeCardsTests
         // names 模式不给短介绍
         Assert.DoesNotContain("· 能", names);
         Assert.True(Encoding.UTF8.GetByteCount(names) <= 12000, "names 字节 " + Encoding.UTF8.GetByteCount(names));
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
     }
 
     [Fact]
     public void MapSummaryAddsShortIntro()
     {
+        var repository = Repository.Value;
+        var node = repository.Nodes.First(candidate => NodeCards.ReadShortIntro(repository, candidate.Id!) != "未写");
         var text = NodeTools.Map(RepoLocator.Root, Args(new { mode = "summary" }));
-        var intro = NodeCards.ReadShortIntro(Repository.Value, "governance.validator");
+        var intro = NodeCards.ReadShortIntro(repository, node.Id!);
         Assert.Contains(intro[..Math.Min(12, intro.Length)], text);
         Assert.True(Encoding.UTF8.GetByteCount(text) <= 17000, "summary 字节 " + Encoding.UTF8.GetByteCount(text));
         Assert.True(Encoding.UTF8.GetByteCount(text) > Encoding.UTF8.GetByteCount(NodeTools.Map(RepoLocator.Root, Args(new { mode = "names" }))),

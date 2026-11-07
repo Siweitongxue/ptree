@@ -1,0 +1,1 @@
+顶层与字段检查是结构规则的入口步骤，读取 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 里的 TopRequired、NodeRequired、NodeAllowed 常量，对清单顶层键、节点字段、kind 和 status 枚举逐项比对。它先确认 schema_version、tree_version、updated、root、phases、nodes 是否齐全，再检查节点必填字段是否缺项、是否出现白名单外的未知键，并把缺键名、非法值写进消息。产出是 R01/R02 条目，节点位置取被检查的节点 id；边界是只判断字段存在与取值，不判断父子关系是否闭合，也不推断业务语义。

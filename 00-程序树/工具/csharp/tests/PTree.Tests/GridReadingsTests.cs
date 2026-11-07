@@ -5,7 +5,7 @@ using Xunit;
 
 namespace PTree.Tests;
 
-/// <summary>网格阅读项：106 条网格条目的短介绍、R39 校验、读工具的行卡与 tree_map 覆盖统计。</summary>
+/// <summary>网格阅读项：示例树网格条目的短介绍、R39 校验、读工具的行卡与 tree_map 覆盖统计。</summary>
 public sealed class GridReadingsTests
 {
     private static JsonElement Args(object value) => JsonSerializer.SerializeToElement(value);
@@ -27,17 +27,23 @@ public sealed class GridReadingsTests
     }
 
     [Fact]
-    public void GridEntriesAreOneHundredAndSix()
+    public void GridEntriesCoverEveryInstanceDocument()
     {
         var store = TreeStore.Load(RepoLocator.Root);
         var items = GridReadings.Items(store, RepoLocator.Root);
-        Assert.Equal(106, items.Count);
-        // 组行也在阅读项里：解析器按字段数跳过它们，R39 与读工具不能跟着漏
-        Assert.Contains(items, item => item.Id == "MA0" && item.Kind == "美术树" && item.IsGroupRow);
-        Assert.Contains(items, item => item.Id == "U0" && item.Kind == "UI树" && item.IsGroupRow);
+        Assert.NotEmpty(items);
+        Assert.Equal(items.Count, items.Select(item => (item.Kind, item.Id)).Distinct().Count());
+        // 每份非程序树实例里的每个条目都要被阅读项收进来
+        foreach (var document in store.Documents.Where(document => document.Kind != GridReadings.ProgramKind))
+        {
+            foreach (var entry in document.Entries)
+            {
+                Assert.Contains(items, item => item.Kind == document.Kind && item.Id == entry.Id);
+            }
+        }
         // 程序树网格不重复收录：它的条目就是节点，短介绍由 R37 管
         Assert.DoesNotContain(items, item => item.Kind == GridReadings.ProgramKind);
-        Assert.DoesNotContain(items, item => item.Id == "ai-company");
+        Assert.All(items, item => Assert.False(string.IsNullOrWhiteSpace(item.Id)));
     }
 
     [Theory]
@@ -96,10 +102,8 @@ public sealed class GridReadingsTests
     }
 
     [Theory]
-    [InlineData("F01", "全文件树")]
-    [InlineData("D01", "策划树")]
-    [InlineData("MA0", "美术树")]
-    public void ReadNodeGivesGridEntryCard(string id, string kind)
+    [MemberData(nameof(GridEntryIds))]
+    public void ReadNodeGivesGridEntryCard(string kind, string id)
     {
         var text = NodeTools.ReadNode(RepoLocator.Root, Args(new { id }));
         var lines = text.Split('\n');
@@ -116,13 +120,19 @@ public sealed class GridReadingsTests
     [Fact]
     public void TreeMapReportsGridCoverageAfterBlocks()
     {
+        var store = TreeStore.Load(RepoLocator.Root);
+        var items = GridReadings.Items(store, RepoLocator.Root);
+        var covered = items.Count(item => File.Exists(GridReadings.ShortPath(RepoLocator.Root, item.Id)));
         var map = NodeTools.Map(RepoLocator.Root, Args(new { mode = "summary" }));
         var lines = map.Split('\n');
-        Assert.Contains("网格条目 106 条，短介绍 106/106", map);
+        Assert.Contains("网格条目 " + items.Count + " 条，短介绍 " + covered + "/" + items.Count, map);
         var gridIndex = Array.FindIndex(lines, line => line.StartsWith("网格条目 ", StringComparison.Ordinal));
-        var blockIndex = Array.FindIndex(lines, line => line.StartsWith("块 ", StringComparison.Ordinal));
-        Assert.True(gridIndex >= 0);
-        Assert.True(blockIndex >= 0);
-        Assert.True(gridIndex > blockIndex, "网格覆盖行应在「块 N 个」之后");
+        Assert.True(gridIndex >= 0, "summary 里必须有网格覆盖行");
+        foreach (var section in lines.Select((value, index) => (value, index))
+                     .Where(item => item.value.StartsWith("块 ", StringComparison.Ordinal) ||
+                                    item.value.StartsWith("部 ", StringComparison.Ordinal)))
+        {
+            Assert.True(section.index < gridIndex, "网格覆盖行应在功能块与部门分区之后：" + section.value);
+        }
     }
 }

@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：ProposalEngine 做候选校验与写入，GeneratedProducts 统一渲染四份文本，InitRunner 负责最小工程骨架。
+缺：提案与 init 写盘都在进程内完成，尚未接入备份子系统的自动备份点。

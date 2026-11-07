@@ -1,0 +1,1 @@
+完成度与证据检查读取节点 status、acceptance、evidence、files 与父子状态，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R13/R14/R16/R46 执行：R13 查状态与产物是否一致，R14 查验收条件与 evidence 是否齐全，R16 查父节点完成时子节点是否拖后腿，R46 要求已验证节点必须带 result=pass 的记录。处理时把每个缺失项落到节点 id，消息写清缺的是验收、证据还是实现文件。产出由 ValidationPayload 承载；边界是不修改状态，也不把未完成节点自动标成已完成。

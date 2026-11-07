@@ -1,9 +1,9 @@
 程序树规范
 版本 2，日期 2026-11-06
-适用：AI Company 全部程序；任何功能落地前的架构定位；与 规范/核心 的四值状态、网结构、C# 内核口径一致
+适用：本项目全部程序；任何功能落地前的架构定位；与 规范/核心 的四值状态、网结构、C# 内核口径一致
 
 一 定位
-1 程序树是 AI Company 全部程序的架构宪法；任何功能落地前，必须先在这棵树上找到位置。
+1 程序树是本项目全部程序的架构宪法；任何功能落地前，必须先在这棵树上找到位置。
 2 程序树是项目级管理插件里的一棵树；并列的策划树、美术树、UI 树共用同一套身份、四值状态与台账。
 3 程序树是 AI 进入项目的第一入口；需求文档与源码都不是入口。
 4 树只回答程序是什么、在哪、连着谁、改到哪一步；不回答代码怎么写。
@@ -12,10 +12,10 @@
 
 二 树的结构
 1 分层为四层，从根到末端枝干；结构本质是网，父子只是联系的一种，同一枝干可被多条路径到达，树只是沿用的说法。
-  L0 root：ai-company 根节点。
-  L1 department：info 部门。
-  L2 program：info.understanding 程序。
-  L3 step：info.understanding.merger 步骤。
+  L0 root：demo 根节点。
+  L1 department：core 部门。
+  L2 program：core.app 程序。
+  L3 step：core.app.step 步骤。
 2 部门是组织节点，不做数据交换，inputs 与 outputs 必须为空，职责写该部门整体负责什么。
 3 程序是落地单位：一个 home 目录、一份 SPEC.md、一套契约、一组验收。
 4 步骤是程序内部拆分，不单独占 home 目录，文件必须在父程序目录内。
@@ -25,7 +25,7 @@
 7 父节点验收通过前，子节点不许全部完成，判据见 校验规则 R16。
 8 组以清单 groups 段为唯一真相，字段为 id、name、description、parent、members；组最多两层。
 9 组 id 以 group. 开头，只含小写字母、数字、点与连字符；实例里的组列必须写清单组 id，不得另造编号。
-  1 过渡映射：实例的 G0 到 group.all，G01 到 group.dept-governance，G02 到 group.dept-info，G03 到 group.dept-innovation 与 group.dept-solution，G04 到 group.dept-orchestration 与 group.dept-memory，G05 到 group.dept-delivery 与 group.dept-runtime，G06 到 group.dept-assets。
+  1 过渡映射：实例的 G0 到 group.all，其余部门组按 group.dept-<部门 id> 与清单 groups 段一一对应，例如 group.dept-core。
   2 实例不在本文件的管理范围；改实例时以清单为准，改完跑 ptree-cs check 验 T07。
 
 三 物理布局
@@ -34,9 +34,9 @@
   2 program.yaml，与清单一致的节点副本。
   3 src/，只放本程序实现。
   4 tests/，契约测试与验收。
-2 home 必须与节点 id 推导一致，例如 info.understanding 对应 10-程序/info/understanding。
+2 home 必须与节点 id 推导一致，例如 core.app 对应 10-程序/core/app。
 3 10-程序/ 下出现未登记目录或散落代码，校验器 R19 报错。
-4 旧代码不搬家：旧实现登记在 assets.legacy，只归档、不供在新链路；要复活必须先按程序书加节点。
+4 旧代码不搬家：旧实现登记在归档节点（示例 legacy.assets），只归档、不供在新链路；要复活必须先按程序书加节点。
 5 R17 到 R20 的完整判据见 校验规则_v1.txt 第六节。
 
 四 节点字段
@@ -64,10 +64,10 @@
   P0 治理骨架：树、契约、校验器、程序书机制成立。
   P1 运行时底座：DSH profile、preset、模型、密钥、远程访问可复现。
   P2 核心环竖切：规划者到工人到报告到态势板到观察者真跑一次。
-  P3 信息部：结构化场景、检索过滤、索引、规则。
-  P4 创新部：七棒流水线完整跑一个真实命题。
-  P5 统筹部：五 AI、任务表、人力部、验收回写。
-  P6 优解部：A1 到 A4 按契约接入主流程。
+  P3 业务部门一：结构化场景、检索过滤、索引、规则。
+  P4 业务部门二：完整流水线跑一个真实命题。
+  P5 协同部门：多 AI 协作、任务表与验收回写。
+  P6 方案部门：按契约接入主流程。
   P7 记忆与交付：经验真正影响下一次任务，交付物可见可打开。
 3 阶段不是排期，是依赖关系；没有 P0 的树，后面每个程序都会重新变成散件。
 

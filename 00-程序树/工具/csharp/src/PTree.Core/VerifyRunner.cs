@@ -498,7 +498,7 @@ public static class VerifyRunner
     {
         var lines = new List<string>
         {
-            "AI Company 一键验证报告",
+            PTreeRepository.DirectoryName(result.Root) + " 一键验证报告",
             "",
             "由 ptree-cs verify 生成，禁止手改",
             "生成时间：" + result.GeneratedAt,

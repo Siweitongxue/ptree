@@ -55,7 +55,7 @@
 9 T08 节点 created_at 与 updated_at 必须是 YYYY-MM-DD，且 updated_at 不早于 created_at。
 10 T09 策划全覆盖：每个 program 节点必须逐节点被策划条目引用或写 planning_exemption；T10 附件必须同时有 path 与 kind，路径为仓库内相对路径且真实存在。
 11 T01 程序树策划列改为可选提示，覆盖判定只归 T09。
-12 T11 策划条目必须有文档形态，取值整合稿或转述稿；T12 确认状态必须是已确认或未确认，体验插件预设节点仅 ai-company 项目检查。
+12 T11 策划条目必须有文档形态，取值整合稿或转述稿；T12 确认状态必须是已确认或未确认，体验预设节点仅在声明启用体验插件预设的项目检查。
 13 实现位置：00-程序树/工具/csharp/src/PTree.Core 下 TreeStore.cs 的 TreeChecker 管 T01 至 T06，ManifestChecker.cs 管 T07 至 T12。
 14 判据归属：T07 至 T12 已写进 校验规则_v1.txt 第十三节；T01 至 T06 目前只有实现，判据以本文与内核为准，规则层尚未收录。
 

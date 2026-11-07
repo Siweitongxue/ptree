@@ -1,0 +1,1 @@
+新项目脚手架步骤接收目标根、项目名和 force 参数，在 00-程序树/工具/csharp/src/PTree.Core/InitRunner.cs 中生成清单、契约、标杆、绑定、四棵树实例、根、部门、程序说明与 README 的最小可校验集合，创建变更、生成、运维目录，写入后自跑 validate 和 check 并汇总 E、W 计数。它不迁移已有项目，不覆盖已有清单除非显式 force；输出 kernel.scaffold.init 文件清单与自检结果。

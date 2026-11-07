@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：全量 JSON 逐键比对，对象键序无关、数组顺序敏感，只忽略 generated_at 与 tree_version
+缺：只覆盖 index 与 node，guide、map、status 的输出没有快照

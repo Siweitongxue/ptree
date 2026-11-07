@@ -1,0 +1,1 @@
+跨树校验与验证步骤读取树仓库、四棵树实例与生成物，在 00-程序树/工具/csharp/src/PTree.Core/VerifyRunner.cs 中依次跑 validate、check、实例解析、生成物新鲜度、说明覆盖、策划映射和 MCP 冒烟，并把 PASS、FAIL、命令、耗时与指标写进验证报告；ManifestChecker.cs 负责组、时间戳、附件、策划覆盖、文档形态和预设检查。它不修复问题、不改清单；输出 kernel.ops.verify。

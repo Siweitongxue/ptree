@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：用 PTreeRepository.Load 分别加载清单、契约、标杆、绑定，用 TreeStore.Load 解析四棵树实例，再统一从 tree.loaded 暴露只读模型。
+缺：TreeStore 只解析固定四棵树，trees 配置新增的网格尚未纳入模型级测试。

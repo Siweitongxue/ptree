@@ -253,6 +253,24 @@ public sealed class BackupTests
         Assert.NotNull(status.GetProperty("last_run").GetString());
     }
 
+    [Fact]
+    public void BackupNowRefusesWhenSecretDetected()
+    {
+        using var sandbox = new Sandbox();
+        var home = BackupHome.Resolve(sandbox.Home);
+        Enable(sandbox);
+        File.WriteAllText(Path.Combine(sandbox.Repo, "secret.txt"),
+            "api_key = \"0123456789abcdef\"\n", new UTF8Encoding(false));
+
+        var now = Parse(BackupService.Now(sandbox.Project, null, home));
+        Assert.False(now.GetProperty("ok").GetBoolean(), now.GetRawText());
+        Assert.True(now.GetProperty("findings").GetArrayLength() > 0);
+        Assert.Contains("secret_scan", now.GetProperty("hint").GetString());
+        Assert.Contains("拒绝生成备份", now.GetProperty("error").GetString());
+        Assert.Equal(0, sandbox.BundleFileCount());
+        Assert.Equal(0, CountJournal(sandbox, "bundle"));
+    }
+
     // ------------------------------------------------------------------
     // 4. retention：造 12 个备份点，留 10，删 2，jsonl 有 trimmed 记录
     // ------------------------------------------------------------------

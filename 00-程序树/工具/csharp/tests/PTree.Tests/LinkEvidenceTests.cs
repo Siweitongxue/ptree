@@ -10,6 +10,29 @@ public sealed class LinkEvidenceTests
 {
     private static JsonElement Args(object value) => JsonSerializer.SerializeToElement(value);
 
+    private static string TempRoot()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "ptree-links-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(root, "00-程序树"));
+        return root;
+    }
+
+    private static void WriteManifest(string root, string nodes, string links)
+    {
+        var builder = new StringBuilder();
+        builder.Append("schema_version: 1\ntree_version: 9.9.9\nupdated: '2026-11-07'\nroot: n000\nphases: []\nnodes:\n");
+        builder.Append(nodes);
+        builder.Append(links);
+        File.WriteAllText(Path.Combine(root, "00-程序树", "program-tree.yaml"), builder.ToString(), new UTF8Encoding(false));
+    }
+
+    private static string NodeBlock(string id, string name, int layer, string parent) =>
+        "  - id: " + id + "\n    name: " + name + "\n    kind: " + (layer == 0 ? "root" : "program") +
+        "\n    layer: " + layer + "\n    parent: " + parent +
+        "\n    phase: P0\n    status: 未完成\n    responsibility: 负责演示职责\n" +
+        "    not_responsible: []\n    inputs: []\n    outputs: []\n    depends_on: []\n" +
+        "    files: []\n    acceptance: [测试：无]\n    spec: x\n";
+
     [Fact]
     public void VerifiedStatusRequiresPassingEvidence()
     {
@@ -49,13 +72,24 @@ public sealed class LinkEvidenceTests
     [Fact]
     public void LinksCommandListsExplicitLinksWithNotes()
     {
-        var all = NodeTools.Links(RepoLocator.Root, null);
-        Assert.Contains("联系 ", all);
-        Assert.Contains(" -[引用]-> ", all);
-        Assert.DoesNotContain("没写依据", all);
-        var filtered = NodeTools.Links(RepoLocator.Root, Args(new { node = "governance.validator" }));
-        Assert.Contains("governance.validator", filtered);
-        Assert.Contains("（过滤：governance.validator）", filtered);
-        Assert.True(filtered.Split('\n').Length <= all.Split('\n').Length);
+        var root = TempRoot();
+        try
+        {
+            WriteManifest(root, NodeBlock("n000", "根", 0, "null") + NodeBlock("n000.app", "程序", 1, "n000"),
+                "links:\n  - {from: n000, to: n000.app, type: 引用, note: 入口关系}\n  - {from: n000.app, to: n000, type: 数据, note: 回传结果}\n");
+            var all = NodeTools.Links(root, null);
+            Assert.Contains("联系 2 条", all);
+            Assert.Contains(" -[引用]-> ", all);
+            Assert.Contains(" -[数据]-> ", all);
+            Assert.DoesNotContain("没写依据", all);
+            var filtered = NodeTools.Links(root, Args(new { node = "n000.app" }));
+            Assert.Contains("n000.app", filtered);
+            Assert.Contains("（过滤：n000.app）", filtered);
+            Assert.True(filtered.Split('\n').Length <= all.Split('\n').Length);
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
     }
 }

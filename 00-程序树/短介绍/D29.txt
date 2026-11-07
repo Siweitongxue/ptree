@@ -1,0 +1,1 @@
+开源入口的实现边界：读取 Release 产物事实、examples/demo 与 csharp 使用说明，组织公开仓库的用户入口、构建运行命令与 MIT 

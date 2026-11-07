@@ -1,0 +1,3 @@
+ptree-serve 发布读 00-程序树/工具/csharp/src/PTree.Serve/PTree.Serve.csproj 的 OutputType、TargetFramework、AssemblyName 与 PTree.Core 引用，生成 ptree-serve.exe 及其 runtimeconfig.json、deps.json。
+它支持 --root、--port、--viewer 与 --help，启动后监听本地 HTTP 端口；它不实现 HTTP 路由与写操作，也不改 PTree.Core 引用关系。
+改之前读 csproj、csharp/README.md 的 serve 用法和 00-程序树/工具/csharp/src/PTree.Serve/Program.cs；改端口默认值要同步 README 与视图调用。常见坑是端口被占用仍按成功处理、把视图目录写死。

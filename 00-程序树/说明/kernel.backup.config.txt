@@ -1,0 +1,1 @@
+备份配置与凭据步骤读取项目层 00-程序树/运维/备份.yaml 和全局 home，在 00-程序树/工具/csharp/src/PTree.Core/BackupConfig.cs 中解析 enabled、mode、retention、targets、last_run，校验 mode 属于 git-bundle、tag、copy，retention 在 1 到 1000，缺全局密钥或 credentials.enc 时拒绝启用；BackupCrypto.cs 校验 32 字节密钥，用随机 nonce 与 tag 解密密文，并把 token 显示为前四后二。它不执行备份、不裁剪台账；输出 kernel.backup.config。

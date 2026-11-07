@@ -42,7 +42,7 @@ public static class GeneratedProducts
     public static string RenderView(PTreeRepository repository, ValidationPayload issues)
     {
         var stats = ComputeStats(repository);
-        var lines = Header(repository, issues, "AI Company 程序树总览");
+        var lines = Header(repository, issues, repository.ProjectName + " 程序树总览");
         lines.Add("节点统计：共 " + stats.Total + " 个（" + KindSummary(stats) + "）");
         lines.Add("");
         lines.Add("一、树结构");
@@ -144,7 +144,7 @@ public static class GeneratedProducts
     public static string RenderBook(PTreeRepository repository, ValidationPayload issues)
     {
         var stats = ComputeStats(repository);
-        var lines = Header(repository, issues, "AI Company 程序书");
+        var lines = Header(repository, issues, repository.ProjectName + " 程序书");
         lines.Add("节点统计：共 " + stats.Total + " 个（" + KindSummary(stats) + "）");
         lines.Add("");
         lines.Add("程序书怎么用");
@@ -253,7 +253,7 @@ public static class GeneratedProducts
 
     public static string RenderBenchmark(PTreeRepository repository, ValidationPayload issues)
     {
-        var lines = Header(repository, issues, "AI Company 标杆看板");
+        var lines = Header(repository, issues, repository.ProjectName + " 标杆看板");
         var bindings = repository.Bindings.Bindings;
         var benchmarkMap = repository.Benchmarks.ById;
         var required = RequiredNodes(repository);

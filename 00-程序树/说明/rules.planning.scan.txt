@@ -1,0 +1,1 @@
+未登记代码与缺口扫描读取清单 conventions.program_root 指定的程序根目录、已登记文件与策划文档列，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R19/R20/R45 执行：R19 找含代码但没有 program.yaml 或未登记的目录，R20 扫跨节点 import/using 并提示依赖，R45 列有对应程序但缺策划文档的条目。处理时跳过隐藏目录、node_modules 与共享目录，保留目录或条目 id。产出是扫描类 E/I 条目；边界是不移动文件、不创建 program.yaml，也不改策划文档。

@@ -1,0 +1,1 @@
+这个步骤是 MCP 目录里的校验与备份工具组，负责回答树现在能不能信。它覆盖 tree_check、tree_guard、tree_scan 与六个 tree_backup_*：check 跑 R01-R46 和跨树 T01-T12 并返回 E/W/I，guard 做操作前常检，scan 扫描固定目录里未登记的适配，backup_setup 配置凭据，backup_config 开关，backup_now 立即备份，backup_list 与 backup_verify 查备份点和可读性。它不实现规则、不生成密钥，只调用内核；备份默认关闭，未 setup 时必须拒绝启用。实现挂在 00-程序树/工具/csharp/src/PTree.Mcp/McpServer.cs 的分发与 BackupService 调用上；改备份前置条件时要同步说明与验收。

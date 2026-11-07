@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：BriefRenderer 实时统计网格和状态并守住行数预算，NodeCards 提供 blocks、names、summary 三种粗读层级。
+缺：速览里的部门程序数按 id 前缀统计，不按 parent 关系统计，特殊命名时可能偏差。

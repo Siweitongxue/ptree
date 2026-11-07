@@ -1,0 +1,1 @@
+备份配置检查读取 00-程序树/运维/备份.yaml，由 00-程序树/工具/csharp/src/PTree.Core/Validator.cs 的 R43 执行：先确认顶层是映射，再检查 enabled 是否为布尔值、mode 是否为 git-bundle/tag/copy、retention 是否在 1 到上限之间、targets 是否为非空字符串列表，最后检查 last_run 与 last_tree_version 的类型并提示未知字段。处理时把错误落到配置键，启用但 targets 为空时给警告。产出是备份配置条目；边界是只校验形状与取值，不接触密钥、不执行备份。

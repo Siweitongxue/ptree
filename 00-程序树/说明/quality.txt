@@ -1,0 +1,5 @@
+质量部读 tests/PTree.Tests 下的二十一个测试类与一个定位帮助类，另读 examples/demo 里的示例树，把内核与各外壳的行为跑成通过或失败的结论。它不实现产品功能，也不替代人工复核快照与性能数字，只负责让改动有没有弄坏东西这件事有可执行的证据。
+
+落盘位置固定在 00-程序树/工具/csharp/tests/PTree.Tests，命令一律 dotnet test 走 PTree.sln。示例树只有根、一个部门与一个程序三节点，清单在 examples/demo/00-程序树/program-tree.yaml，快照基线写在该示例树的 Snapshots 目录下，测试根靠 RepoLocator 从 PTREE_TEST_ROOT、examples/demo、仓库根三段回退找到。
+
+产出分三类：各组用例的通过数与失败用例全名、快照差异键与超预算项。改这一片之前先读 tests 目录的 README.txt 与 RepoLocator.cs，再按组跑过滤器确认失败面；新增用例要按真实行为断言，不许放宽成永远为真。

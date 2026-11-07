@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：CoreTests 走清单、索引与载荷，TreeStoreConfigTests 验树实例开关，KernelCompletionTests 验内核完成度，ContractSyncTests 验契约同步，全部从 RepoLocator.Root 派生
+缺：只在三节点示例树上跑，九部门规模下的索引与载荷没有回归样本

@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：以 examples/demo 为最小树，validate 与 check 都要求 E=0。
+缺：demo 的 validate 有 R32 台账 W=1，示例没有真实业务代码。

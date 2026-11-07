@@ -1,0 +1,1 @@
+备份点与保留步骤接收 tree_version、targets 与保留数，在 00-程序树/工具/csharp/src/PTree.Core/BackupService.cs 中按模式创建 git bundle、tag 或目录副本，写 00-程序树/运维/备份.jsonl 台账，按 retention 删除最旧备份点并统计磁盘占用，同时更新 last_run 与 last_tree_version。它不生成密钥、不修改项目配置；输出 kernel.backup.run 备份点状态与最近运行记录，供 HealthCheck 在启用但未配置时给出提醒。

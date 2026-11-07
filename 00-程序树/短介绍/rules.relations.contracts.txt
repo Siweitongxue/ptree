@@ -1,0 +1,1 @@
+校验契约引用与 producers/consumers 双向一致

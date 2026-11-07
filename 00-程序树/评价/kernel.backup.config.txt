@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：BackupSettings 读写项目 yaml，BackupGlobal 读全局配置，BackupCrypto 做 AES-GCM 与 token 掩码。
+缺：全局配置损坏时静默回退默认值，只留状态提示，没有单独告警。

@@ -1,0 +1,1 @@
+提案评估与落盘步骤读取提案 YAML，在 00-程序树/工具/csharp/src/PTree.Core/ProposalEngine.cs 中解析 ops，逐项修改候选清单、契约、标杆与绑定，记录新增、删除、退役、裁剪候选与说明覆盖，然后对候选仓库跑 validate，失败不写盘。成功时一次性写清单、契约、标杆、说明和台账并重新生成文档。它不生成四份生成物，也不初始化新项目；输出 kernel.scaffold.proposal 摘要、错误与是否写盘。

@@ -52,7 +52,8 @@ public sealed class PerformanceTests
     public void ReadNodeStaysWithinBudget()
     {
         var repository = Repository.Value;
-        var elapsed = BestOfThree(() => NodeCards.RenderNode(repository, "governance.validator", 1));
+        var nodeId = repository.Nodes.First(node => node.Kind == "program" && node.Id is { Length: > 0 }).Id!;
+        var elapsed = BestOfThree(() => NodeCards.RenderNode(repository, nodeId, 1));
         Assert.True(elapsed <= ReadNodeBudgetMs,
             "read-node 实测 " + elapsed.ToString("0.0") + " ms，超过预算 " + ReadNodeBudgetMs + " ms（约实测 3 倍）");
     }

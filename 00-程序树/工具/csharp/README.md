@@ -12,9 +12,9 @@
 
     dotnet build 00-程序树/工具/csharp/PTree.sln
     dotnet test  00-程序树/工具/csharp/tests/PTree.Tests
-    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- index --root "D:\AI Company"
-    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- node info.understanding --root "D:\AI Company"
-    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- validate --json --root "D:\AI Company"
+    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- index --root "examples/demo"
+    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- node core.app --root "examples/demo"
+    dotnet run --project 00-程序树/工具/csharp/src/PTree.Cli -- validate --json --root "examples/demo"
 
 `validate --json` 输出键固定为 `ok/errors/warnings/notes`，每个条目恰好 `code/node/message`；未迁移规则在 C# 侧为空。
 
@@ -27,7 +27,7 @@
 迁移期规则对比脚本（历史基线：R01-R19、R21-R24 的条目与 2026-11-06 冻结的 Python 参考逐条相同；现役 R01-R46 以 C# 为准）：
 
     dotnet build 00-程序树/工具/csharp/PTree.sln -v q
-    dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Debug/net10.0/ptree-cs.dll validate --json --root "D:\AI Company" > 00-程序树/工具/csharp/out/validate-candidate.json
+    dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Debug/net10.0/ptree-cs.dll validate --json --root "examples/demo" > 00-程序树/工具/csharp/out/validate-candidate.json
     python 00-程序树/工具/csharp/parity/compare-validate.py --golden 00-程序树/工具/parity/golden/validate.json --candidate 00-程序树/工具/csharp/out/validate-candidate.json
 
 或直接：
@@ -108,7 +108,7 @@ R20 采用受限自写 Python import 扫描器，不引入 native 依赖。相�
 | --- | ---: | ---: | ---: | ---: |
 | `version`（冷启动地板） | 111.8 | 123.5 | 113.8 | 121.5 |
 | `check` | 216.3 | 226.8 | 208.5 | 227.0 |
-| `read-node governance.validator` | 282.0 | 301.0 | 297.1 | 313.1 |
+| `read-node core.app` | 282.0 | 301.0 | 297.1 | 313.1 |
 | `map --mode names` | 323.3 | 332.6 | 308.4 | 340.7 |
 | `validate` | 463.8 | 496.2 | 444.1 | 476.4 |
 | `status` | 524.4 | 541.9 | 513.7 | 534.7 |
@@ -132,10 +132,10 @@ R20 采用受限自写 Python import 扫描器，不引入 native 依赖。相�
 
     # 进程内：min / median / p95 / 首次 + 冷启动自测（不开子进程、不起后台进程）
     dotnet build 00-程序树/工具/csharp/PTree.sln -c Release -v q
-    dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll bench --repeat 9 --json --root "D:\AI Company"
+    dotnet 00-程序树/工具/csharp/src/PTree.Cli/bin/Release/net10.0/ptree-cs.dll bench --repeat 9 --json --root "examples/demo"
 
     # 整条命令：外面量 5–9 次取 min/median
-    Measure-Command { & .\ptree-cs.exe validate --root "D:\AI Company" }
+    Measure-Command { & .\ptree-cs.exe validate --root "examples/demo" }
 
 ### 四、性能护栏
 

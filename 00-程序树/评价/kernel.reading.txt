@@ -1,0 +1,4 @@
+判断：必须有
+位置：对
+做法：NodeCards 负责 card 与 depth 图，BriefRenderer 负责速览，StatusValues 在读入时把旧状态归一成四值。
+缺：卡片对超长契约行仍是整体截断，未按条目边界给出被省略的数量提示。

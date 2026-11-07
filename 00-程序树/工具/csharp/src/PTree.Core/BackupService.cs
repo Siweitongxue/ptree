@@ -53,6 +53,7 @@ public static class BackupService
             ["enabled"] = settings.Enabled,
             ["mode"] = settings.Mode,
             ["retention"] = settings.Retention,
+            ["secret_scan"] = settings.SecretScan,
             ["targets"] = new Dictionary<string, object?>
             {
                 ["count"] = settings.Targets.Count,
@@ -98,12 +99,14 @@ public static class BackupService
         var targetsArg = ListArg(args, "targets");
         var addArg = ListArg(args, "add_targets");
         var removeArg = ListArg(args, "remove_targets");
+        var secretScanArg = BoolArg(args, "secret_scan");
 
         if (enabledArg is null && modeArg is null && retentionArg is null && targetsArg is null &&
-            addArg is null && removeArg is null)
+            addArg is null && removeArg is null && secretScanArg is null)
         {
-            return Failure("没有要改的项：至少给 enabled / mode / retention / targets / add_targets / remove_targets 之一");
+            return Failure("没有要改的项：至少给 enabled / mode / retention / secret_scan / targets / add_targets / remove_targets 之一");
         }
+        if (secretScanArg is not null) settings.SecretScan = secretScanArg.Value;
 
         if (modeArg is not null)
         {
@@ -195,6 +198,7 @@ public static class BackupService
             ["enabled"] = settings.Enabled,
             ["mode"] = settings.Mode,
             ["retention"] = settings.Retention,
+            ["secret_scan"] = settings.SecretScan,
             ["targets"] = settings.Targets,
             ["config_file"] = settings.Path,
             ["warnings"] = warnings,
@@ -281,6 +285,43 @@ public static class BackupService
         return JsonOutput.Serialize(outcome);
     }
 
+    /// <summary>只读扫描 targets，列出疑似密钥；命中即返回 ok=false，供 CLI / MCP 在备份前检查。</summary>
+    public static string Scan(string? root, JsonElement? args, BackupHome? home = null)
+    {
+        var repository = PTreeRepository.Load(root);
+        var settings = ApplyGlobalDefaults(repository.Root, home);
+        var targetFilter = StringArg(args, "target");
+        var targets = settings.Targets
+            .Where(target => string.IsNullOrWhiteSpace(targetFilter) || string.Equals(target, targetFilter, StringComparison.Ordinal))
+            .ToList();
+        var findings = new List<SecretFinding>();
+        var errors = new List<string>();
+        foreach (var target in targets)
+        {
+            var resolved = ResolveTarget(repository, target);
+            if (!resolved.Ok)
+            {
+                errors.Add(target + "：" + resolved.Error);
+                continue;
+            }
+            findings.AddRange(SecretScanner.ScanDirectory(repository.Root, resolved.Directory!));
+        }
+        var payload = new Dictionary<string, object?>
+        {
+            ["ok"] = findings.Count == 0 && errors.Count == 0,
+            ["tree_version"] = repository.Manifest.TreeVersion,
+            ["secret_scan"] = settings.SecretScan,
+            ["targets"] = targets,
+            ["findings"] = findings,
+            ["errors"] = errors,
+            ["hint"] = findings.Count == 0 ? null : "确认不是密钥后，可在 00-程序树/运维/备份.yaml 设 secret_scan: false，或 tree_backup_config secret_scan=false 后重试",
+        };
+        if (targets.Count == 0) payload["error"] = "没有配置任何 target：先 tree_backup_config add_targets=[...]";
+        else if (errors.Count > 0) payload["error"] = "有 target 无法解析：" + errors.Count + " 个";
+        else if (findings.Count > 0) payload["error"] = "发现 " + findings.Count + " 处疑似密钥，拒绝生成备份";
+        return JsonOutput.Serialize(payload);
+    }
+
     /// <summary>树写操作成功后的自动备份钩子：未启用返回 null，绝不把异常抛给写操作。</summary>
     public static Dictionary<string, object?>? AfterTreeChange(PTreeRepository repository, string? treeVersion)
     {
@@ -308,6 +349,8 @@ public static class BackupService
                 ["points"] = outcome["points"],
                 ["results"] = outcome["results"],
                 ["elapsed_ms"] = outcome["elapsed_ms"],
+                ["findings"] = outcome.TryGetValue("findings", out var findings) ? findings : null,
+                ["hint"] = outcome.TryGetValue("hint", out var hint) ? hint : null,
                 ["error"] = outcome.TryGetValue("error", out var error) ? error : null,
             };
         }
@@ -472,6 +515,45 @@ public static class BackupService
         var warnings = new List<string>();
         var usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var okCount = 0;
+        if (settings.SecretScan)
+        {
+            var findings = new List<SecretFinding>();
+            var scannedTargets = new List<Dictionary<string, object?>>();
+            foreach (var target in settings.Targets)
+            {
+                var resolved = ResolveTarget(repository, target);
+                if (!resolved.Ok) continue;
+                var targetFindings = SecretScanner.ScanDirectory(repository.Root, resolved.Directory!);
+                findings.AddRange(targetFindings);
+                scannedTargets.Add(new Dictionary<string, object?>
+                {
+                    ["target"] = target,
+                    ["path"] = resolved.Directory,
+                    ["findings"] = targetFindings.Count,
+                });
+            }
+            if (findings.Count > 0)
+            {
+                elapsed.Stop();
+                return new Dictionary<string, object?>
+                {
+                    ["ok"] = false,
+                    ["enabled"] = true,
+                    ["tree_version"] = version,
+                    ["mode"] = settings.Mode,
+                    ["retention"] = settings.Retention,
+                    ["secret_scan"] = true,
+                    ["started_at"] = started,
+                    ["elapsed_ms"] = elapsed.ElapsedMilliseconds,
+                    ["points"] = 0,
+                    ["results"] = scannedTargets,
+                    ["findings"] = findings,
+                    ["warnings"] = new List<string>(),
+                    ["error"] = "发现 " + findings.Count + " 处疑似密钥，已拒绝生成备份（未写 bundle，未写备份台账）",
+                    ["hint"] = "确认不是密钥后，可在 00-程序树/运维/备份.yaml 设 secret_scan: false，或 tree_backup_config secret_scan=false 后重试",
+                };
+            }
+        }
         foreach (var target in settings.Targets)
         {
             var item = new Dictionary<string, object?>

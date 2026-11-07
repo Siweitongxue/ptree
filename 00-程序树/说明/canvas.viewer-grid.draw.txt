@@ -1,0 +1,1 @@
+画布绘制独占 00-程序树/工具/viewer/viewer.js 里的 canvas 绘制代码。render 先清屏再按组框、边、节点的顺序画，保证节点压在组框上层；drawBlocks 画半透明组框与标题条，drawEdges 按类型画包含、依赖、契约流、对应策划四类线并加箭头，drawNodes 画节点卡片、状态点与层级标签，drawLayerLabels 标左侧层名，fitText 做文字截断。hitTest 与 drawEdges 共用边几何做点选命中，fitView 与 setZoom 处理双击适配与滚轮缩放。边界是不决定谁可见、不刷新详情面板。已知代价是组框折叠后成员原位置留白，不做布局避让。

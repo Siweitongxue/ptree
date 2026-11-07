@@ -1,0 +1,5 @@
+内核行为测试读示例树与内核 API，跑四组用例：清单加载与索引、树实例的严格开关、内核完成度检查、契约同步。它只断言内核输出的结构与语义，不校验规则条目本身，也不改内核源码。
+
+具体落在 00-程序树/工具/csharp/tests/PTree.Tests/CoreTests.cs、TreeStoreConfigTests.cs、KernelCompletionTests.cs、ContractSyncTests.cs 四个文件。CoreTests 走 manifest、index、root 与 node 载荷；TreeStoreConfigTests 用临时目录验证 trees 段的 strict 开关；KernelCompletionTests 用内联最小清单验内核完成度检查；ContractSyncTests 验预设转正时契约生产者被正确替换。
+
+这些用例的节点与字段全部从 RepoLocator.Root 派生，不写死内部项目的数据，所以换一棵树也能跑。改断言前先读对应测试文件里的最小清单常量，确认它描述的是内核契约还是某棵树的具体数据。

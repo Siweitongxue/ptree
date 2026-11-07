@@ -1,0 +1,1 @@
+构建入口的实现边界：读取 PTree.sln 的 5 个项目与 Directory.Build.props 的编译属性，经 build-lock.sh 取仓
