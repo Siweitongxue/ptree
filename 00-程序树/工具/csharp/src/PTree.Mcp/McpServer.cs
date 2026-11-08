@@ -282,9 +282,10 @@ public static class McpServer
             ["depth"] = Property("integer", "关系展开层数：1 = 一圈（默认）；N = 从该节点往外 N 层；0 = 全部，直到关联合并完，上限 200 节点 / 400 边；上限 8 层"),
             ["format"] = Property("string", "输出格式：card（默认，纯文本卡/图）；full（原来的完整 JSON，键集合不变）", new[] { "card", "full" }),
         }, new[] { "id" }),
-        Tool("tree_update_node", "只修改传入的字段，其余保持不变；返回 diff 摘要。未传的字段不会被清空。改说明正文用 intro：intro 传说明正文全文，会整篇替换；改一行功能摘要用 short_intro：写 00-程序树/短介绍/<id>.txt，去空白后不超过 80 字、不含占位词。网格条目（编号如 D01、M01、F01）只支持 short_intro，写 00-程序树/短介绍/<编号>.txt。", new Dictionary<string, object?>
+        Tool("tree_update_node", "只修改传入的字段，其余保持不变；返回 diff 摘要。未传的字段不会被清空。改说明正文用 intro：intro 传说明正文全文，会整篇替换；改一行功能摘要用 short_intro：写 00-程序树/短介绍/<id>.txt，去空白后不超过 80 字、不含占位词。网格条目（编号如 D01、M01、F01）只支持 short_intro，写 00-程序树/短介绍/<编号>.txt。写盘前会过协作守门：目标文件被别的智能体占用时拒绝并列出占用者，先用 tree_coord_claim 登记。", new Dictionary<string, object?>
         {
             ["id"] = Property("string", "节点 id"),
+            ["agent"] = Property("string", "调用者身份；写了就必须先持有该文件占用（tree_coord_claim），否则被 require_claim 拦下"),
             ["name"] = Property("string", "新名称"),
             ["responsibility"] = Property("string", "新的一句话职责"),
             ["not_responsible"] = ArrayProperty("新的不负责清单"),

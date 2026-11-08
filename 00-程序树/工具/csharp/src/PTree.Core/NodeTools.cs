@@ -722,6 +722,12 @@ public static class NodeTools
         Action<RawMap>? contractsMutation = contractsChanged
             ? contracts => SyncContractMembership(contracts, id!, oldInputs, oldOutputs, newInputs, newOutputs)
             : null;
+        var guardPaths = new List<string> { "00-程序树/program-tree.yaml" };
+        if (intro is not null) guardPaths.Add("00-程序树/说明/" + id + ".txt");
+        if (shortIntro is not null) guardPaths.Add("00-程序树/短介绍/" + id + ".txt");
+        var guardMessage = Coord.Guard(repository.Root, guardPaths, Coord.AgentOf(args));
+        if (guardMessage is not null) return Fail(new[] { "写盘被协作守门拦下：" + guardMessage }, repository);
+
         var outcome = Commit(repository, "mcp:tree_update_node", "MCP 更新节点 " + id,
             manifest =>
             {
@@ -807,6 +813,9 @@ public static class NodeTools
         var shortIntro = NormalizeShortIntro(StringArg(args, "short_intro"), out var shortIntroError);
         if (shortIntroError is not null) return Fail(new[] { shortIntroError }, repository);
         if (shortIntro is null) return Fail(new[] { "没有传入任何可更新字段：网格条目只支持 short_intro" }, repository);
+
+        var gridGuard = Coord.Guard(repository.Root, new[] { GridReadings.ShortRel(id) }, Coord.AgentOf(args));
+        if (gridGuard is not null) return Fail(new[] { "写盘被协作守门拦下：" + gridGuard }, repository);
 
         var oldText = NodeCards.ReadShortIntro(repository, id);
         var path = GridReadings.ShortPath(repository.Root, id);

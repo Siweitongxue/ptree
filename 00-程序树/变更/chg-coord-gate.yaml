@@ -1,0 +1,8 @@
+proposal: chg-coord-gate
+author: lead
+reason: 写盘守门落地：写树前校验占用，被占用就拒绝
+ops:
+- op: modify
+  node: kernel.coord
+  changes:
+    notes: 写树前经 Coord.Guard 校验占用：目标被别的智能体占用时拒绝并列出占用者；require_claim 打开后还要求先 claim。开关在 00-程序树/协作策略.yaml，PTREE_COORD=off 可旁路。

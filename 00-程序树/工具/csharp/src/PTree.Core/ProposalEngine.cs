@@ -168,6 +168,17 @@ public static class ProposalEngine
         {
             return result;
         }
+        var applyAgent = evalList[0].Actor;
+        var guardPaths = new List<string> { "00-程序树/program-tree.yaml" };
+        var guardMessage = Coord.Guard(repository.Root, guardPaths, applyAgent);
+        if (guardMessage is not null)
+        {
+            result.Ok = false;
+            result.Error = guardMessage;
+            result.Errors.Add(new ProposalIssue("E", "R02", null, "写盘被协作守门拦下：" + guardMessage));
+            return result;
+        }
+
         try
         {
             WriteEvaluations(repository, evalList, result, regenerate);

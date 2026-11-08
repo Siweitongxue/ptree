@@ -345,6 +345,74 @@ public static class Coord
         return Error("协作目录被其他进程占用，请稍后重试");
     }
 
+
+    /// <summary>写盘前的守门检查：返回 null 表示可以写，否则返回一句人能看懂的原因。</summary>
+    public static string? Guard(string root, IEnumerable<string> relPaths, string agent)
+    {
+        if (string.Equals(Environment.GetEnvironmentVariable("PTREE_COORD"), "off", StringComparison.OrdinalIgnoreCase)) return null;
+        var policy = LoadPolicy(root);
+        if (!policy.Enforce) return null;
+
+        var now = DateTimeOffset.Now;
+        var locks = LoadLocks(root, now);
+        var blocked = new List<string>();
+        var unclaimed = new List<string>();
+        foreach (var raw in relPaths.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.Ordinal))
+        {
+            var path = Normalize(raw);
+            if (path.Length == 0) continue;
+            var entry = locks.FirstOrDefault(x => x.Path == path);
+            if (entry is not null && entry.ExpiresAt > now)
+            {
+                // 自己持有就是正常路径：改完记得 release
+                if (agent.Length > 0 && string.Equals(entry.By, agent, StringComparison.OrdinalIgnoreCase)) continue;
+                blocked.Add(path + " 正被 " + entry.By + " 占用（到 " + entry.ExpiresAt.ToString("yyyy-MM-dd HH:mm") + "）" +
+                            (agent.Length > 0 ? "，先跟 " + entry.By + " 协调或等它释放" : "，请带上 --by 说明身份"));
+                continue;
+            }
+            if (policy.RequireClaim && agent.Length > 0) unclaimed.Add(path);
+        }
+
+        if (blocked.Count == 0 && unclaimed.Count == 0) return null;
+        var parts = new List<string>(blocked);
+        parts.AddRange(unclaimed.Select(p => p + " 未登记占用，先执行 coord claim " + p + " --by " + agent));
+        return string.Join("；", parts);
+    }
+
+    /// <summary>从工具参数里取调用者身份：agent 字段优先，其次环境变量 PTREE_AGENT。</summary>
+    public static string AgentOf(JsonElement? args)
+    {
+        var agent = StringOf(args, "agent").Trim();
+        if (agent.Length > 0) return agent;
+        return (Environment.GetEnvironmentVariable("PTREE_AGENT") ?? "").Trim();
+    }
+
+    private sealed class Policy
+    {
+        public bool Enforce { get; set; } = true;
+        public bool RequireClaim { get; set; }
+    }
+
+    private static Policy LoadPolicy(string root)
+    {
+        var policy = new Policy();
+        var file = System.IO.Path.Combine(root, "00-程序树", "协作策略.yaml");
+        if (!File.Exists(file)) return policy;
+        foreach (var raw in File.ReadAllLines(file))
+        {
+            var line = raw.Trim();
+            if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal)) continue;
+            var colon = line.IndexOf(':');
+            if (colon <= 0) continue;
+            var key = line[..colon].Trim();
+            var value = line[(colon + 1)..].Trim().ToLowerInvariant();
+            var flag = value is "true" or "yes" or "on" or "1";
+            if (key == "enforce") policy.Enforce = flag;
+            else if (key == "require_claim") policy.RequireClaim = flag;
+        }
+        return policy;
+    }
+
     private static string StringOf(JsonElement? args, string name)
     {
         if (args is null || args.Value.ValueKind != JsonValueKind.Object) return "";

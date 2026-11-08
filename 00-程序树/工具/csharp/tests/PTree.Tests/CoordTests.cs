@@ -5,6 +5,7 @@ using Xunit;
 namespace PTree.Tests;
 
 /// <summary>协作占用与留言：锁冲突、续期、过期失效、强拆、信箱已读。</summary>
+[Collection("coord-serial")]
 public sealed class CoordTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), "ptree-coord-" + Guid.NewGuid().ToString("N"));

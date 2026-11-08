@@ -1,7 +1,7 @@
 程序树 程序书
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-08 08:11:12
+生成时间：2026-11-08 08:18:17
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=2）
 
@@ -2241,6 +2241,7 @@ ptree [已完成 P0] 程序树
   落地文件：00-程序树/工具/csharp/src/PTree.Core/Coord.cs、00-程序树/工具/csharp/src/PTree.Cli/Program.cs
   验收：命令：ptree-cs coord claim <路径> --by <智能体> 成功后 coord list 能看到该占用；命令：ptree-cs coord release <路径> 后 coord list 里没有该占用；测试：两个进程同时 claim 同一路径，只有一个成功，另一个拿到占用者与过期时间；命令：ptree-cs coord say <收件人> <一句话> 后 coord inbox <收件人> 能读到且标记已读
   SPEC：00-程序树/规范/核心/04_权限与动文件.txt
+  备注：守门冒烟
 
   职责：用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车
   不负责：不做版本控制，也不替代代码审查

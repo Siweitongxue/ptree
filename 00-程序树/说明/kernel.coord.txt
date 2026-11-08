@@ -4,3 +4,4 @@
 实现入口是 00-程序树/工具/csharp/src/PTree.Core/Coord.cs，命令行在 ptree-cs 的 coord 子命令下提供 claim / release / list / sweep / say / inbox，MCP 侧对应 tree_coord_claim、tree_coord_release、tree_coord_list、tree_coord_say、tree_coord_inbox 五个工具，同一条实现，不另起一套口径。
 并发安全靠协作目录里的守门文件：所有写操作先拿独占文件句柄，拿不到就重试，避免两个进程同时改 locks.json 把占用表写坏。
 边界是不做版本控制、不做代码审查，也管不住绕过工具直接写文件的进程；它只把『我要改这里』和『我改完了』变成可查询的状态。规范依据是 00-程序树/规范/核心/04_权限与动文件.txt 里关于动文件前先登记的要求。
+守门是这套东西的关键一半：tree_update_node 与提案 apply 在写盘前都会调用 Coord.Guard，先看目标文件有没有被别人占用——被占用就拒绝并列出占用者与到期时间，占用者自己则放行；把 00-程序树/协作策略.yaml 里的 require_claim 打开后，调用方一旦带了身份（agent 或环境变量 PTREE_AGENT）就必须先 claim 再写，否则直接拒绝。策略默认 enforce 为 true、require_claim 为 false，单元测试与 CI 可用环境变量 PTREE_COORD=off 旁路，避免流水线被锁表卡住。
