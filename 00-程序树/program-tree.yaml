@@ -1773,7 +1773,7 @@ nodes:
       - '命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern ''def parse_rows('',''def read_short('',''def build_row_graph('',''def graph_for_program('' 命中 4 行'
       - 人工清单：重跑导出后 meta.generated_at 更新，nodes 与 links 与 grids 计数和清单一致
     spec: 00-程序树/规范/核心/01_程序树核心.txt
-    notes: data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；README 提到的 bridge.html 实际缺失
+    notes: data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；生成的快照需手动重跑
     created_at: '2026-11-07'
     updated_at: '2026-11-07'
   - id: canvas.grid-export.rows

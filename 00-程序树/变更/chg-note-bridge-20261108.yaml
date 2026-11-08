@@ -1,0 +1,10 @@
+proposal: chg-note-bridge-20261108
+author: lead
+date: 2026-11-08
+reason: 补齐 viewer 的 bridge.html 后，canvas.grid-export 备注里“bridge.html 实际缺失”已过期
+contracts: []
+ops:
+  - op: modify
+    node: canvas.grid-export
+    changes:
+      notes: data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；生成的快照需手动重跑

@@ -1,7 +1,7 @@
 程序树 程序书
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-08 08:18:17
+生成时间：2026-11-08 09:32:43
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=2）
 
@@ -1619,7 +1619,7 @@ ptree [已完成 P0] 程序树
   输出契约：canvas.grid-data
   验收：命令：python 00-程序树/工具/适配/grid_export.py --root . 退出码 0 且 data.js 的 meta.tree_version 与清单一致；命令：Select-String -Path 00-程序树/工具/适配/grid_export.py -SimpleMatch -Pattern 'def parse_rows(','def read_short(','def build_row_graph(','def graph_for_program(' 命中 4 行；人工清单：重跑导出后 meta.generated_at 更新，nodes 与 links 与 grids 计数和清单一致
   SPEC：00-程序树/规范/核心/01_程序树核心.txt
-  备注：data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；README 提到的 bridge.html 实际缺失
+  备注：data.js 由 00-程序树/工具/适配/grid_export.py 导出，非实时；生成的快照需手动重跑
 
   职责：读清单与四份树实例，解析网格行并拼出父子、依赖、契约流、策划与组联系，写出 data.js 快照
   不负责：不渲染画布；不修改清单与树实例
@@ -1629,7 +1629,7 @@ ptree [已完成 P0] 程序树
     下游：canvas.grid-data → canvas.viewer-grid、canvas.viewer-grid.layout
 
   说明（00-程序树/说明/canvas.grid-export.txt）：
-    网格导出器是快照的唯一生成者，代码在 00-程序树/工具/适配/grid_export.py。它用 yaml 读 00-程序树/program-tree.yaml，按清单的 trees 段把程序、策划、美术、UI 与预留网格逐张解析；parse_rows 从 树实例 的每行字段顺序取列，read_short 读 00-程序树/短介绍 把短介绍压成一行；graph_for_program 与 build_row_graph 把节点按 parent 建树并补合成的视图根；联系分五类：包含边来自 parent，依赖边来自节点依赖，契约流按 outputs 与 inputs 连产出方到消费方，策划边把策划条目连到对应程序，功能块边把 groups 成员连进画布；最后序列化成 window.GRID_DATA 写入 00-程序树/工具/viewer/data.js。边界是不渲染、不改清单与树实例。已知缺口是产物为快照，实时写操作后不自动重导，另外 README 提到的 bridge.html 实际不存在。
+    网格导出器是快照的唯一生成者，代码在 00-程序树/工具/适配/grid_export.py。它用 yaml 读 00-程序树/program-tree.yaml，按清单的 trees 段与内置四棵树默认值把程序、策划、美术、UI 与预留网格逐张解析；parse_rows 从 树实例 的每行字段顺序取列，read_short 读 00-程序树/短介绍 把短介绍压成一行；graph_for_program 与 build_row_graph 把节点按 parent 建树并补合成的视图根；联系分五类：包含边来自 parent，依赖边来自节点依赖，契约流按 outputs 与 inputs 连产出方到消费方，策划边把策划条目连到对应程序，功能块边把 groups 成员连进画布；最后序列化成 window.GRID_DATA 写入 00-程序树/工具/viewer/data.js。边界是不渲染、不改清单与树实例。已知缺口是产物为快照，实时写操作后不自动重导；bridge.html 已于 2026-11-08 补上，file:// 加 ?api= 的连接方式可用。
     
 
 
@@ -2257,6 +2257,7 @@ ptree [已完成 P0] 程序树
     实现入口是 00-程序树/工具/csharp/src/PTree.Core/Coord.cs，命令行在 ptree-cs 的 coord 子命令下提供 claim / release / list / sweep / say / inbox，MCP 侧对应 tree_coord_claim、tree_coord_release、tree_coord_list、tree_coord_say、tree_coord_inbox 五个工具，同一条实现，不另起一套口径。
     并发安全靠协作目录里的守门文件：所有写操作先拿独占文件句柄，拿不到就重试，避免两个进程同时改 locks.json 把占用表写坏。
     边界是不做版本控制、不做代码审查，也管不住绕过工具直接写文件的进程；它只把『我要改这里』和『我改完了』变成可查询的状态。规范依据是 00-程序树/规范/核心/04_权限与动文件.txt 里关于动文件前先登记的要求。
+    守门只管 AI，不挡人：tree_update_node 与提案 apply 在写盘前会调用 Coord.Guard，但只有调用方带了身份（agent 字段或环境变量 PTREE_AGENT）才检查占用——目标文件被别的智能体占用就拒绝并列出占用者与到期时间，占用者自己则放行；不带身份的人工调用、脚本和单智能体一律放行，不会因为锁表卡住日常干活。把 00-程序树/协作策略.yaml 里的 require_claim 打开后，带身份的调用方还必须先 claim 再写。策略默认 enforce 为 true、require_claim 为 false，单元测试与 CI 可用环境变量 PTREE_COORD=off 旁路。
     
 
 
@@ -2305,7 +2306,7 @@ ptree [已完成 P0] 程序树
   剪枝候选：00-程序树/变更/剪枝候选.yaml
   写入口：ptree-cs apply --file <提案>（默认 dry-run，--write 落地）
 
-待处理提案：chg-book-llm.yaml（chg-book-llm）；chg-coord-impl.yaml（chg-coord-impl）；chg-coord-lock.yaml（chg-coord-lock）；chg_truth.yaml（chg-baseline-truth）
+待处理提案：chg-book-llm.yaml（chg-book-llm）；chg-coord-gate.yaml（chg-coord-gate）；chg-coord-impl.yaml（chg-coord-impl）；chg-coord-lock.yaml（chg-coord-lock）；chg-intro-export-20261108.yaml（chg-intro-export-20261108）；chg-note-bridge-20261108.yaml（chg-note-bridge-20261108）；chg_smoke.yaml（chg-smoke）；chg_truth.yaml（chg-baseline-truth）
 
 已修剪节点（来自变更历史）
 

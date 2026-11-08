@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>ptree-serve 桥接</title>
+</head>
+<body>
+<script>
+// viewer 用 ?api= 从 file:// 打开时，跨域请求会失败；本页由 ptree-serve 同源提供，
+// 只做一件事：收父页面 postMessage，转发成同源 fetch，再把状态码与正文回传。
+window.addEventListener("message", function (event) {
+  var data = event.data;
+  if (!data || data.__ptreeBridge !== 1) return;
+  var init = { method: data.method || "GET", headers: { "Content-Type": "application/json" } };
+  if (data.body != null && init.method !== "GET") {
+    init.body = typeof data.body === "string" ? data.body : JSON.stringify(data.body);
+  }
+  fetch(data.path, init).then(function (response) {
+    return response.text().then(function (text) {
+      parent.postMessage({ __ptreeBridgeReply: 1, id: data.id, status: response.status, text: text }, "*");
+    });
+  }).catch(function (error) {
+    parent.postMessage({ __ptreeBridgeReply: 1, id: data.id, error: String((error && error.message) || error) }, "*");
+  });
+});
+</script>
+</body>
+</html>

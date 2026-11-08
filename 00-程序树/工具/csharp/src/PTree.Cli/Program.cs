@@ -14,6 +14,7 @@ internal static class Program
         {
             var (root, rest) = ExtractRoot(args);
             if (rest.Count == 0) { PrintUsage(); return 2; }
+            if (rest[0] is "--help" or "-h" or "help") { PrintUsage(toStdout: true); return 0; }
             var command = rest[0];
             var options = ParseOptions(rest.Skip(1).ToList());
             if (command == "mcp") return McpServer.Run(root);
@@ -819,5 +820,21 @@ internal static class Program
         return 0;
     }
 
-    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book [--llm] [--node <id>] [--out <path>]|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|coord claim|release|list|sweep|say|inbox|apply|check-plan|verify|init|version|mcp> [--json]");
+    private const string UsageText =
+        "用法：ptree-cs [--root <仓库根>] <命令> [参数] [--json]\n" +
+        "  阅读  index | node <id> | read-node <id> [--depth N] [--format card|full] | status\n" +
+        "        map [--mode blocks|names|summary] | guide | links [--node <id>] | group <组id> | brief\n" +
+        "  校验  validate | check | verify | health | changes | stats | orphans | log\n" +
+        "  生成  view | order | book [--llm] [--node <id>] [--out <路径>] | benchmark\n" +
+        "  写盘  apply --file <提案> [--write] | check-plan --node <节点片段.yaml> | relocate <id> --files ...\n" +
+        "        delete <id> --reason ... | adapt | git-sync | init [--force]\n" +
+        "  备份  backup status | backup config | backup setup | backup now | backup list | backup verify | backup scan\n" +
+        "  协作  coord claim | coord release | coord list | coord sweep | coord say | coord inbox\n" +
+        "  其它  tree | version | mcp | bench [--repeat N] | --help";
+
+    private static void PrintUsage(bool toStdout = false)
+    {
+        if (toStdout) Console.Out.WriteLine(UsageText);
+        else Console.Error.WriteLine(UsageText);
+    }
 }

@@ -1,0 +1,94 @@
+程序树 一键验证报告
+
+由 ptree-cs verify 生成，禁止手改
+生成时间：2026-11-08 09:20:47
+仓库根：D:\程序树
+报告路径：00-程序树/运维/验证报告.txt
+
+一、检查项
+
+[PASS] validate（阻断）
+  命令：ptree-cs validate（进程内调用 Validator.Validate）
+  退出码：0
+  问题：清单校验 R01-R46
+  关键数字：errors=0；warnings=2；notes=65
+  耗时：240.7 ms
+
+[PASS] check（阻断）
+  命令：ptree-cs check（进程内调用 TreeChecker + ManifestChecker）
+  退出码：0
+  问题：跨树检查 T01-T12（树实例或校验器可能正在被改，红是如实记录）
+  关键数字：errors=0；warnings=0；notes=0
+  耗时：20.0 ms
+
+[PASS] tree-instances（阻断）
+  命令：读取 00-程序树/树实例/ 清单 trees 声明的树（进程内 TreeStore.Load）
+  退出码：0
+  问题：已加载 4 棵树：程序树、策划树、美术树、UI树
+  关键数字：documents=4；entries=125；parse_errors=0
+  耗时：0.6 ms
+
+[PASS] generated-freshness（阻断）
+  命令：比较 program-tree.yaml 与 生成/*.txt 的修改时间
+  退出码：0
+  问题：四份生成物均不早于清单
+  关键数字：missing=0；stale=0；manifest_mtime=2026-11-08 00:18:17
+  耗时：0.6 ms
+  明细：程序树总览.txt = 2026-11-08 01:20:45
+  明细：落地顺序.txt = 2026-11-08 01:20:46
+  明细：程序书.txt = 2026-11-08 00:18:17
+  明细：标杆看板.txt = 2026-11-08 00:18:17
+
+[PASS] brief-freshness（阻断）
+  命令：比较 program-tree.yaml 与 生成/项目速览.txt（不懂项目先读它）
+  退出码：0
+  问题：速览存在且不早于清单
+  关键数字：exists=1；stale=0；lines=52；bytes=3905
+  耗时：0.5 ms
+  明细：速览路径：00-程序树/生成/项目速览.txt
+  明细：上限：120 行 / 6144 字节；实测 52 行 / 3905 字节
+
+[PASS] intro-coverage（阻断）
+  命令：统计 00-程序树/说明/<id>.txt 对 program/department 节点的覆盖
+  退出码：0
+  问题：说明覆盖完整
+  关键数字：expected=36；present=36；missing=0
+  耗时：0.5 ms
+
+[PASS] planning-coverage（阻断）
+  命令：统计策划树 对应程序 字段对 program 节点的覆盖（含豁免；通配词不算覆盖）
+  退出码：0
+  问题：program 节点均有策划条目或豁免
+  关键数字：unmapped=0
+  耗时：0.6 ms
+
+[PASS] mcp（阻断）
+  命令：ptree-cs mcp（管道发 initialize + tools/list）
+  退出码：0
+  问题：MCP initialize 成功；tools/list 返回 32 个工具
+  关键数字：frames=2；tools=32
+  耗时：130.1 ms
+  明细：stderr: [ptree-mcp] ptree-mcp 退出：stdin 已关闭
+
+[WARN] plugin-smoke（不阻断）
+  命令：node 10-程序/governance/program-tree-plugin/tests/smoke.mjs（失败只记 WARN，不阻断）
+  退出码：2
+  问题：插件冒烟脚本不存在：D:\程序树\10-程序\governance\program-tree-plugin\tests\smoke.mjs
+  耗时：1.0 ms
+
+二、诚实指标
+
+  已验证节点数：0
+  证据条数：0
+  有 home 节点数：0
+  缺说明节点数：0
+  策划未映射节点数：0
+
+三、汇总
+
+  通过：8；失败：0；警告（不阻断）：1
+  结论：PASS
+  建议退出码：0
+
+说明：插件 smoke 失败只记 WARN，不改变 PASS/FAIL；check 依赖树实例与校验器，其他智能体改树期间可能如实报红。
+

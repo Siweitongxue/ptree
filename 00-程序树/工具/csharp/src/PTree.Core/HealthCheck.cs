@@ -64,7 +64,9 @@ public static class HealthCheck
             var files = node.Files.Where(path => !string.IsNullOrWhiteSpace(path)).ToList();
             if (files.Count == 0)
             {
-                if (status is StatusValues.Done or StatusValues.Verified)
+                // 根与部门是聚合节点，本来就没有落地文件；R13 只要求 files 里列出的路径存在，空表不算违规。
+                var aggregate = node.Kind is "root" or "department";
+                if (!aggregate && (status is StatusValues.Done or StatusValues.Verified))
                 {
                     report.Issues.Add(new HealthIssue
                     {

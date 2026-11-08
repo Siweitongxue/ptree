@@ -128,16 +128,19 @@ public static class NodeCards
         catch (Exception) { return "未写"; }
     }
 
-    /// <summary>阅读阶梯：一句话版，给 AI 一次调用就知道先粗后细怎么走。</summary>
-    public static string RenderGuide()
+    /// <summary>阅读阶梯：一句话版，给 AI 一次调用就知道先粗后细怎么走；规模数字按当前树算，不写死。</summary>
+    public static string RenderGuide(PTreeRepository repository)
     {
+        var count = repository.Nodes.Count;
+        var namesKb = Kb(Encoding.UTF8.GetByteCount(RenderMap(repository, "names")));
+        var summaryKb = Kb(Encoding.UTF8.GetByteCount(RenderMap(repository, "summary")));
         return string.Join("\n", new[]
         {
             "程序树阅读阶梯（先粗后细，能用上层解决就别往下走）",
             "0 常检 tree_guard：只报 文件消失 / 登记目录不存在 / 已完成却没有实现 三类",
             "1 块   tree_map mode=blocks：项目分成哪几块、每块几个成员、一行简介（默认）",
-            "2 名称 tree_map mode=names：全树名称 + 子数 + 依赖，96 节点约 6.5KB",
-            "3 简介 tree_map mode=summary：名称 + 一行短介绍，约 12.6KB",
+            "2 名称 tree_map mode=names：全树名称 + 子数 + 依赖，" + count + " 节点约 " + namesKb + "KB",
+            "3 简介 tree_map mode=summary：名称 + 一行短介绍，约 " + summaryKb + "KB",
             "4 组内 tree_read_group id=<组> mode=names|summary：某块里有什么，summary 带用法",
             "5 单点 tree_read_node id=<节点>：9 行以内卡；不够再 format=full 或 depth=0",
             "6 条目 策划 D01 / 美术 M01 / UI U01 / 全文件 F01 用同一个 tree_read_node",
@@ -471,6 +474,8 @@ public static class NodeCards
     }
 
     private static string ToSystem(string relative) => relative.Replace('/', Path.DirectorySeparatorChar);
+
+    private static string Kb(int bytes) => (bytes / 1024.0).ToString("0.0", CultureInfo.InvariantCulture);
 
     private static string Cap(string text, int maxChars)
     {

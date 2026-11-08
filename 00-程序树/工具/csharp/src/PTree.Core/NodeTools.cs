@@ -56,8 +56,8 @@ public static class NodeTools
     /// <summary>阅读阶梯一句话版：给 AI 一次调用就知道先粗后细怎么走。</summary>
     public static string Guide(string? root)
     {
-        PTreeRepository.Load(root);
-        return NodeCards.RenderGuide();
+        var repository = PTreeRepository.Load(root);
+        return NodeCards.RenderGuide(repository);
     }
 
     /// <summary>组内视图：某功能块/部门组里有哪些节点；summary 档带一行简介与用法。</summary>

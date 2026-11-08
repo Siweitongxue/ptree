@@ -1,0 +1,52 @@
+程序树 项目速览
+生成时间：2026-11-08 09:31:29；tree_version：1.0.0；内核：ptree-cs
+一句话：用程序树管全公司的程序、契约、说明、标杆，另有若干张实例网格；AI 先看网格定位再动手。
+
+一、网格（主网格在前，预留网格在后）
+程序树：管程序的位置、职责、连接、状态；实例 92 条（机器真相 program-tree.yaml）
+策划树：管要做什么、做到什么算够、还缺什么；实例 30 条（对应程序与确认状态）
+美术树：管资产分类、启用退役、风格与用处；实例 1 条（界面与美术资源的登记）
+UI树：管场景、时刻、父子集、字体与状态；实例 2 条（界面元素的登记）
+
+二、节点与状态
+节点总数 92：未完成 4、已完成 88、已验证 0、退役 0
+
+三、部门（名称：一句话职责；程序数）
+画布部（canvas）：把树数据导出成快照并渲染成可缩放、可筛选、可下钻的只读网格视图；程序 3
+接口部（interface）：把内核能力封装成 MCP 工具、CLI 子命令与本地 HTTP 接口，确保 AI…；程序 4
+内核部（kernel）：接收仓库根与树清单路径→加载并维护清单/契约/树实例，提供阅读、写入、提案、运维…；程序 7
+质量部（quality）：把内核与各外壳的产出跑成测试结论，输出六组用例通过清单与基线差异；程序 6
+发布部（release）：读取 PTree.sln、两侧 csproj、build-lock.sh 与 e…；程序 4
+规则部（rules）：读入 program-tree.yaml、契约与四棵实例文档，按 R01-R46…；程序 6
+
+四、关键连接（按契约，主干 10 条内）
+tree.loaded（已解析的清单、契约、标杆、绑定、节点表与组归属，供所有内核工具只读访问）：kernel.store → interface.cli 等 34 家
+quality.tests.root（测试树根的绝对路径与 parity golden、Snapshots 目录位置，）：quality.baseline → quality.baseline.perf 等 7 家
+canvas.grid-data（window.GRID_DATA 快照，含 meta、七张网格、nodes、gr）：canvas.grid-export → canvas.viewer-grid 等 2 家
+release.binary（ptree-cs 与 ptree-serve 的 exe、runtimeconf）：release.publish → release.examples 等 2 家
+tree.diagnostics（健康检查三类问题、跨树校验、verify 检查项、变更记录、适配扫描与性能样本）：kernel.ops → kernel.scaffold 等 2 家
+tree.mutation（一次节点/组/连接写操作的结果摘要、written_files、台账条目与新 t）：kernel.write → kernel.ops 等 2 家
+backup.point（按 tree_version 对应到内层代码仓的备份点、保留策略状态与脱敏后的凭）：kernel.backup → kernel.ops
+canvas.draw-frame（画布帧与命中几何，含节点矩形、四类边的线段与组框标题条位置）：canvas.viewer-grid.draw → canvas.viewer-grid.interaction
+canvas.grid-graph（待序列化的图数据，含每张网格的节点与 parent、四类联系与功能块成员）：canvas.grid-export.graph → canvas.grid-export
+canvas.layout-plan（节点坐标、分行带、可见集合与组框包围盒，供绘制与命中测试使用）：canvas.viewer-grid.layout → canvas.viewer-grid.draw
+
+五、当前缺口
+未验证节点：92（已验证 0）
+未确认策划：30 条
+未实现预设：0 个
+有 home 节点：0 个
+
+六、从哪深入
+完整程序书：00-程序树/生成/程序书.txt（全文与节点说明）
+树视图：00-程序树/生成/树视图.html
+单节点：ptree-cs node <id> --root <仓库根>
+节点级工具：tree_add_node / tree_read_node / tree_update_node / tree_retire_node / tree_add_link（MCP 与 HTTP 同源）
+
+七、五条常用命令
+ptree-cs validate：清单校验 R01-R46
+ptree-cs check：跨树检查 T01-T12
+ptree-cs brief：重生成本速览
+ptree-cs book：重生成完整程序书
+ptree-cs verify：一键验证并写运维报告
+

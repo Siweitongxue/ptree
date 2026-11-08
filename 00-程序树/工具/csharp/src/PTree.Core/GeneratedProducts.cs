@@ -17,15 +17,13 @@ public static class GeneratedProducts
     public const string BenchmarkFile = "标杆看板.txt";
 
     private static readonly string[] KindOrder = { "root", "department", "program", "step", "external" };
-    private static readonly string[] StatusOrder = { "planned", "in_progress", "built", "verified", "legacy", "deprecated" };
+    private static readonly string[] StatusOrder = { "未完成", "已完成", "已验证", "退役" };
     private static readonly Dictionary<string, string> StatusLegend = new(StringComparer.Ordinal)
     {
-        ["planned"] = "已规划，尚未开工（files/evidence 必须为空）",
-        ["in_progress"] = "进行中（acceptance 必须已写）",
-        ["built"] = "已落地（files 必须都存在）",
-        ["verified"] = "已验证（built + evidence 全 pass）",
-        ["legacy"] = "历史资产，保留但由 authority 指向新实现",
-        ["deprecated"] = "已废弃，replaced_by 指向替代节点",
+        ["未完成"] = "还没开工或还在写（files 为空或部分存在，spec 必须存在）",
+        ["已完成"] = "有产物、能编译能跑（files 必须都存在）",
+        ["已验证"] = "已完成 + 证据全 pass，只有用户确认后才能标",
+        ["退役"] = "历史资产，保留不删（写 authority 与 replaced_by）",
     };
     private static readonly string[] SpecHeadings = { "职责", "不负责", "输入", "输出", "依赖", "边界与失败模式", "验收", "落地阶段" };
 
