@@ -1,7 +1,7 @@
 程序树 程序书
 
 由 ptree-cs 生成，禁止手改
-生成时间：2026-11-08 09:32:43
+生成时间：2026-11-08 09:41:13
 tree_version：1.0.0
 校验状态：通过校验（E=0，W=2）
 
@@ -107,11 +107,19 @@ ptree [已完成 P0] 程序树
     │   └── release.examples.texts [已完成 P3] 示例文本
     └── release.open-source [已完成 P3] 开源入口
 
+当前落地阶段
+
+  P0 内核与规则：节点 50；已完成 50；未完成 0
+  P1 接口层：节点 9；已完成 9；未完成 0
+  P2 画布：节点 12；已完成 10；未完成 2  ← 当前
+  P3 质量与发布：节点 21；已完成 19；未完成 2
+
 节点页
 
 节点：ptree · 程序树
 
   类型/层级：root / 0；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：（无）
   依赖：无
   输入契约：无
@@ -142,6 +150,7 @@ ptree [已完成 P0] 程序树
 节点：kernel · 内核部
 
   类型/层级：department / 1；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：无
@@ -165,6 +174,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.store · 树清单读写
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel
   输入契约：kernel.store.json
@@ -189,6 +199,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.store.yaml · YAML 与值树解析
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.store
   依赖：kernel.store
   输入契约：无
@@ -213,6 +224,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.store.repository · 仓库与节点表
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.store
   依赖：kernel.store、kernel.store.yaml
   输入契约：kernel.store.raw
@@ -237,6 +249,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.store.output · 输出与兼容层
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.store
   依赖：kernel.store、kernel.store.repository
   输入契约：kernel.store.model
@@ -261,6 +274,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.reading · 节点阅读与渲染
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel、kernel.store
   输入契约：tree.loaded、tree.mutation、kernel.reading.card、kernel.reading.brief
@@ -285,6 +299,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.reading.card · 卡片与关系图
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.reading
   依赖：kernel.reading
   输入契约：无
@@ -309,6 +324,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.reading.brief · 速览与粗读
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.reading
   依赖：kernel.reading
   输入契约：无
@@ -333,6 +349,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.write · 节点写工具
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel、kernel.store、kernel.reading
   输入契约：tree.loaded、tree.card、tree.diagnostics、kernel.write.node、kernel.write.group、kernel.write.query
@@ -357,6 +374,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.write.node · 节点增改退删
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.write
   依赖：kernel.write
   输入契约：无
@@ -381,6 +399,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.write.group · 功能块维护
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.write
   依赖：kernel.write
   输入契约：无
@@ -405,6 +424,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.write.query · 查询与提交
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.write
   依赖：kernel.write
   输入契约：无
@@ -429,6 +449,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.scaffold · 提案与脚手架
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel、kernel.store、kernel.ops
   输入契约：tree.loaded、tree.diagnostics、kernel.scaffold.proposal、kernel.scaffold.products、kernel.scaffold.init
@@ -453,6 +474,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.scaffold.proposal · 提案评估与落盘
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.scaffold
   依赖：kernel.scaffold
   输入契约：无
@@ -477,6 +499,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.scaffold.products · 生成物渲染
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.scaffold
   依赖：kernel.scaffold
   输入契约：无
@@ -501,6 +524,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.scaffold.init · 新项目脚手架
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.scaffold
   依赖：kernel.scaffold
   输入契约：无
@@ -525,6 +549,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.ops · 运维与校验
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel、kernel.store、kernel.backup
   输入契约：tree.loaded、tree.mutation、tree.candidate、backup.point、kernel.ops.health、kernel.ops.verify、kernel.ops.adapt
@@ -549,6 +574,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.ops.health · 健康与变更记录
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.ops
   依赖：kernel.ops
   输入契约：无
@@ -573,6 +599,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.ops.verify · 跨树校验与验证
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.ops
   依赖：kernel.ops
   输入契约：无
@@ -597,6 +624,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.ops.adapt · 目录适配与基准
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.ops
   依赖：kernel.ops
   输入契约：无
@@ -621,6 +649,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.backup · 备份子系统
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel、kernel.store
   输入契约：tree.loaded、kernel.backup.config、kernel.backup.run、kernel.backup.secret-scan
@@ -645,6 +674,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.backup.config · 备份配置与凭据
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.backup
   依赖：kernel.backup
   输入契约：无
@@ -669,6 +699,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.backup.run · 备份点与保留
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.backup
   依赖：kernel.backup
   输入契约：无
@@ -693,6 +724,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.backup.secret-scan · 备份密钥扫描
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.backup
   依赖：kernel.backup
   输入契约：无
@@ -717,6 +749,7 @@ ptree [已完成 P0] 程序树
 节点：interface · 接口部
 
   类型/层级：department / 1；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：tool.catalog、tool.result、compat.result、cli.output、http.response、mcp.read.result、mcp.write.result、mcp.verify.result
@@ -739,6 +772,7 @@ ptree [已完成 P0] 程序树
 节点：interface.mcp-server · MCP 协议服务
 
   类型/层级：program / 2；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface
   依赖：interface
   输入契约：tree.loaded
@@ -762,6 +796,7 @@ ptree [已完成 P0] 程序树
 节点：interface.mcp-compat · 旧工具兼容层
 
   类型/层级：program / 2；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface
   依赖：interface
   输入契约：tree.loaded
@@ -785,6 +820,7 @@ ptree [已完成 P0] 程序树
 节点：interface.cli · 命令行接口
 
   类型/层级：program / 2；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface
   依赖：interface
   输入契约：tree.loaded
@@ -808,6 +844,7 @@ ptree [已完成 P0] 程序树
 节点：interface.serve · 本地 HTTP 服务
 
   类型/层级：program / 2；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface
   依赖：interface
   输入契约：tree.loaded
@@ -831,6 +868,7 @@ ptree [已完成 P0] 程序树
 节点：interface.mcp-server.read · 只读工具组
 
   类型/层级：step / 3；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface.mcp-server
   依赖：interface.mcp-server
   输入契约：无
@@ -854,6 +892,7 @@ ptree [已完成 P0] 程序树
 节点：interface.mcp-server.write · 写工具组
 
   类型/层级：step / 3；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface.mcp-server
   依赖：interface.mcp-server
   输入契约：无
@@ -877,6 +916,7 @@ ptree [已完成 P0] 程序树
 节点：interface.mcp-server.verify · 校验与备份工具组
 
   类型/层级：step / 3；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：interface.mcp-server
   依赖：interface.mcp-server
   输入契约：无
@@ -900,6 +940,7 @@ ptree [已完成 P0] 程序树
 节点：rules · 规则部
 
   类型/层级：department / 1；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：tree.loaded、rules.structure.report、rules.relations.report、rules.state.report、rules.docs.report、rules.backup.report、rules.planning.report、rules.structure.schema.result、rules.structure.identity.result、rules.structure.groups.result、rules.relations.contracts.result、rules.relations.dependency.result、rules.relations.links.result、rules.state.responsibility.result、rules.state.completion.result、rules.state.quality.result、rules.docs.spec.result、rules.docs.intro.result、rules.docs.standard.result、rules.backup.ledger.result、rules.backup.config.result、rules.backup.preset.result、rules.planning.cross-tree.result、rules.planning.coverage.result、rules.planning.scan.result
@@ -923,6 +964,7 @@ ptree [已完成 P0] 程序树
 节点：rules.structure · 结构与规模规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules
   输入契约：tree.loaded
@@ -946,6 +988,7 @@ ptree [已完成 P0] 程序树
 节点：rules.structure.schema · 顶层与字段检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.structure
   依赖：rules.structure
   输入契约：tree.loaded
@@ -969,6 +1012,7 @@ ptree [已完成 P0] 程序树
 节点：rules.structure.identity · 身份与层级检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.structure
   依赖：rules.structure
   输入契约：tree.loaded
@@ -992,6 +1036,7 @@ ptree [已完成 P0] 程序树
 节点：rules.structure.groups · 规模豁免与组检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.structure
   依赖：rules.structure
   输入契约：tree.loaded
@@ -1015,6 +1060,7 @@ ptree [已完成 P0] 程序树
 节点：rules.relations · 联系与契约规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules、rules.structure
   输入契约：tree.loaded
@@ -1038,6 +1084,7 @@ ptree [已完成 P0] 程序树
 节点：rules.relations.contracts · 契约引用检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.relations
   依赖：rules.relations
   输入契约：tree.loaded
@@ -1061,6 +1108,7 @@ ptree [已完成 P0] 程序树
 节点：rules.relations.dependency · 依赖与阶段检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.relations
   依赖：rules.relations
   输入契约：tree.loaded
@@ -1084,6 +1132,7 @@ ptree [已完成 P0] 程序树
 节点：rules.relations.links · 联系登记与引用扫描
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.relations
   依赖：rules.relations
   输入契约：tree.loaded
@@ -1107,6 +1156,7 @@ ptree [已完成 P0] 程序树
 节点：rules.state · 状态质量与验收规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules、rules.structure、rules.relations
   输入契约：tree.loaded
@@ -1130,6 +1180,7 @@ ptree [已完成 P0] 程序树
 节点：rules.state.responsibility · 职责声明与重复检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.state
   依赖：rules.state
   输入契约：tree.loaded
@@ -1153,6 +1204,7 @@ ptree [已完成 P0] 程序树
 节点：rules.state.completion · 完成度与证据检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.state
   依赖：rules.state
   输入契约：tree.loaded
@@ -1176,6 +1228,7 @@ ptree [已完成 P0] 程序树
 节点：rules.state.quality · 标杆与评价检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.state
   依赖：rules.state
   输入契约：tree.loaded
@@ -1199,6 +1252,7 @@ ptree [已完成 P0] 程序树
 节点：rules.docs · 文档与阅读项规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules、rules.structure
   输入契约：tree.loaded
@@ -1222,6 +1276,7 @@ ptree [已完成 P0] 程序树
 节点：rules.docs.spec · spec 与物理目录检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.docs
   依赖：rules.docs
   输入契约：tree.loaded
@@ -1245,6 +1300,7 @@ ptree [已完成 P0] 程序树
 节点：rules.docs.intro · 说明与阅读项检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.docs
   依赖：rules.docs
   输入契约：tree.loaded
@@ -1268,6 +1324,7 @@ ptree [已完成 P0] 程序树
 节点：rules.docs.standard · 规范目录核对
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.docs
   依赖：rules.docs
   输入契约：tree.loaded
@@ -1291,6 +1348,7 @@ ptree [已完成 P0] 程序树
 节点：rules.backup · 备份台账与预设规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules
   输入契约：tree.loaded
@@ -1314,6 +1372,7 @@ ptree [已完成 P0] 程序树
 节点：rules.backup.ledger · 变更台账检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.backup
   依赖：rules.backup
   输入契约：tree.loaded
@@ -1337,6 +1396,7 @@ ptree [已完成 P0] 程序树
 节点：rules.backup.config · 备份配置检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.backup
   依赖：rules.backup
   输入契约：tree.loaded
@@ -1360,6 +1420,7 @@ ptree [已完成 P0] 程序树
 节点：rules.backup.preset · 预设节点检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.backup
   依赖：rules.backup
   输入契约：tree.loaded
@@ -1383,6 +1444,7 @@ ptree [已完成 P0] 程序树
 节点：rules.planning · 跨树与策划对账规则
 
   类型/层级：program / 2；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules
   依赖：rules、rules.relations、rules.docs
   输入契约：tree.loaded
@@ -1406,6 +1468,7 @@ ptree [已完成 P0] 程序树
 节点：rules.planning.cross-tree · 跨树引用与字段检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.planning
   依赖：rules.planning
   输入契约：tree.loaded
@@ -1429,6 +1492,7 @@ ptree [已完成 P0] 程序树
 节点：rules.planning.coverage · 策划覆盖与文档形态检查
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.planning
   依赖：rules.planning
   输入契约：tree.loaded
@@ -1452,6 +1516,7 @@ ptree [已完成 P0] 程序树
 节点：rules.planning.scan · 未登记代码与缺口扫描
 
   类型/层级：step / 3；阶段：P0；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：rules.planning
   依赖：rules.planning
   输入契约：tree.loaded
@@ -1475,6 +1540,7 @@ ptree [已完成 P0] 程序树
 节点：canvas · 画布部
 
   类型/层级：department / 1；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：无
@@ -1498,6 +1564,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.viewer-shell · 视图外壳
 
   类型/层级：program / 2；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas
   依赖：canvas
   输入契约：canvas.page-status
@@ -1521,6 +1588,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.viewer-grid · 网格渲染引擎
 
   类型/层级：program / 2；阶段：P2；状态：未完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas
   依赖：canvas.viewer-shell、canvas.grid-export
   输入契约：canvas.page-shell、canvas.grid-data、canvas.view-state
@@ -1544,6 +1612,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.viewer-grid.layout · 布局与可见性
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas.viewer-grid
   依赖：canvas.viewer-grid
   输入契约：canvas.grid-data
@@ -1567,6 +1636,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.viewer-grid.draw · 画布绘制
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas.viewer-grid
   依赖：canvas.viewer-grid
   输入契约：canvas.layout-plan
@@ -1590,6 +1660,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.viewer-grid.interaction · 交互与详情
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas.viewer-grid
   依赖：canvas.viewer-grid
   输入契约：canvas.draw-frame
@@ -1613,6 +1684,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.grid-export · 网格导出器
 
   类型/层级：program / 2；阶段：P2；状态：未完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas
   依赖：canvas
   输入契约：canvas.grid-graph
@@ -1636,6 +1708,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.grid-export.rows · 行解析
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas.grid-export
   依赖：canvas.grid-export
   输入契约：无
@@ -1659,6 +1732,7 @@ ptree [已完成 P0] 程序树
 节点：canvas.grid-export.graph · 联系拼装
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：canvas.grid-export
   依赖：canvas.grid-export
   输入契约：canvas.tree-rows
@@ -1682,6 +1756,7 @@ ptree [已完成 P0] 程序树
 节点：quality · 质量部
 
   类型/层级：department / 1；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：quality.kernel.report、quality.rule.report、quality.read.report、quality.link.report、quality.health.report、quality.perf.budget
@@ -1708,6 +1783,7 @@ ptree [已完成 P0] 程序树
 节点：quality.kernel-tests · 内核行为测试
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：quality.tests.root
@@ -1735,6 +1811,7 @@ ptree [已完成 P0] 程序树
 节点：quality.rule-tests · 规则与提案测试
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：quality.tests.root、quality.snapshot.entries
@@ -1762,6 +1839,7 @@ ptree [已完成 P0] 程序树
 节点：quality.read-tests · 阅读阶梯与卡片测试
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：quality.tests.root
@@ -1789,6 +1867,7 @@ ptree [已完成 P0] 程序树
 节点：quality.link-tests · 联系与预设测试
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：quality.tests.root
@@ -1816,6 +1895,7 @@ ptree [已完成 P0] 程序树
 节点：quality.health-tests · 健康与备份测试
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：quality.tests.root
@@ -1843,6 +1923,7 @@ ptree [已完成 P0] 程序树
 节点：quality.baseline · 快照与性能基线
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality
   依赖：quality
   输入契约：无
@@ -1870,6 +1951,7 @@ ptree [已完成 P0] 程序树
 节点：quality.baseline.snapshot · 校验与索引快照
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality.baseline
   依赖：quality.baseline
   输入契约：quality.tests.root
@@ -1897,6 +1979,7 @@ ptree [已完成 P0] 程序树
 节点：quality.baseline.perf · 性能护栏
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality.baseline
   依赖：quality.baseline
   输入契约：quality.tests.root
@@ -1926,6 +2009,7 @@ ptree [已完成 P0] 程序树
 节点：release · 发布部
 
   类型/层级：department / 1；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：ptree
   依赖：ptree
   输入契约：release.build.lock.result、release.publish.cli.result、release.publish.serve.result、release.examples.demo.result、release.examples.texts.result、release.open-source.result
@@ -1951,6 +2035,7 @@ ptree [已完成 P0] 程序树
 节点：release.build · 构建入口
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release
   依赖：release
   输入契约：无
@@ -1977,6 +2062,7 @@ ptree [已完成 P0] 程序树
 节点：release.build.lock · 构建互斥锁
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release.build
   依赖：release.build
   输入契约：无
@@ -2003,6 +2089,7 @@ ptree [已完成 P0] 程序树
 节点：release.publish · 产物发布
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release
   依赖：release.build
   输入契约：release.build.result
@@ -2029,6 +2116,7 @@ ptree [已完成 P0] 程序树
 节点：release.publish.cli · ptree-cs 发布
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release.publish
   依赖：release.publish
   输入契约：无
@@ -2055,6 +2143,7 @@ ptree [已完成 P0] 程序树
 节点：release.publish.serve · ptree-serve 发布
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release.publish
   依赖：release.publish
   输入契约：无
@@ -2081,6 +2170,7 @@ ptree [已完成 P0] 程序树
 节点：release.examples · 示例树脚手架
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release
   依赖：release.publish
   输入契约：release.binary
@@ -2105,6 +2195,7 @@ ptree [已完成 P0] 程序树
 节点：release.examples.demo · demo 示例树
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release.examples
   依赖：release.examples
   输入契约：无
@@ -2129,6 +2220,7 @@ ptree [已完成 P0] 程序树
 节点：release.examples.texts · 示例文本
 
   类型/层级：step / 3；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release.examples
   依赖：release.examples
   输入契约：无
@@ -2153,6 +2245,7 @@ ptree [已完成 P0] 程序树
 节点：release.open-source · 开源入口
 
   类型/层级：program / 2；阶段：P3；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：release
   依赖：release.publish、release.examples
   输入契约：release.binary、release.demo.tree
@@ -2179,6 +2272,7 @@ ptree [已完成 P0] 程序树
 节点：quality.smoke-e2e · 端到端冒烟
 
   类型/层级：step / 3；阶段：P3；状态：未完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality.baseline
   依赖：quality.baseline
   输入契约：无
@@ -2197,6 +2291,7 @@ ptree [已完成 P0] 程序树
 节点：quality.snapshot-hygiene · 快照治理
 
   类型/层级：step / 3；阶段：P3；状态：未完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：quality.baseline
   依赖：quality.baseline
   输入契约：无
@@ -2215,6 +2310,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.scaffold.book-llm · 程序书 DeepSeek 生成
 
   类型/层级：step / 3；阶段：P1；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.scaffold
   依赖：kernel.scaffold.products
   输入契约：无
@@ -2234,6 +2330,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.coord · 协作占用与留言
 
   类型/层级：program / 2；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel
   依赖：kernel
   输入契约：无
@@ -2241,7 +2338,7 @@ ptree [已完成 P0] 程序树
   落地文件：00-程序树/工具/csharp/src/PTree.Core/Coord.cs、00-程序树/工具/csharp/src/PTree.Cli/Program.cs
   验收：命令：ptree-cs coord claim <路径> --by <智能体> 成功后 coord list 能看到该占用；命令：ptree-cs coord release <路径> 后 coord list 里没有该占用；测试：两个进程同时 claim 同一路径，只有一个成功，另一个拿到占用者与过期时间；命令：ptree-cs coord say <收件人> <一句话> 后 coord inbox <收件人> 能读到且标记已读
   SPEC：00-程序树/规范/核心/04_权限与动文件.txt
-  备注：守门冒烟
+  备注：写树前经 Coord.Guard 校验占用：目标被别的智能体占用时拒绝并列出占用者；require_claim 打开后还要求先 claim。开关在 00-程序树/协作策略.yaml，PTREE_COORD=off 可旁路。
 
   职责：用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车
   不负责：不做版本控制，也不替代代码审查
@@ -2264,6 +2361,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.coord.lock · 文件占用锁
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.coord
   依赖：kernel.coord
   输入契约：无
@@ -2283,6 +2381,7 @@ ptree [已完成 P0] 程序树
 节点：kernel.coord.mailbox · 留言信箱
 
   类型/层级：step / 3；阶段：P2；状态：已完成
+  时间：创建 2026-11-07；更新 2026-11-07
   父节点：kernel.coord
   依赖：kernel.coord
   输入契约：无
@@ -2306,7 +2405,7 @@ ptree [已完成 P0] 程序树
   剪枝候选：00-程序树/变更/剪枝候选.yaml
   写入口：ptree-cs apply --file <提案>（默认 dry-run，--write 落地）
 
-待处理提案：chg-book-llm.yaml（chg-book-llm）；chg-coord-gate.yaml（chg-coord-gate）；chg-coord-impl.yaml（chg-coord-impl）；chg-coord-lock.yaml（chg-coord-lock）；chg-intro-export-20261108.yaml（chg-intro-export-20261108）；chg-note-bridge-20261108.yaml（chg-note-bridge-20261108）；chg_smoke.yaml（chg-smoke）；chg_truth.yaml（chg-baseline-truth）
+待处理提案：无
 
 已修剪节点（来自变更历史）
 

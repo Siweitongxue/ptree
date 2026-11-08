@@ -2496,7 +2496,7 @@ nodes:
     created_at: '2026-11-07'
     updated_at: '2026-11-07'
     attachments: []
-    notes: 守门冒烟
+    notes: 写树前经 Coord.Guard 校验占用：目标被别的智能体占用时拒绝并列出占用者；require_claim 打开后还要求先 claim。开关在 00-程序树/协作策略.yaml，PTREE_COORD=off 可旁路。
   - id: kernel.coord.lock
     name: 文件占用锁
     kind: step

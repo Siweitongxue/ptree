@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace PTree.Core;
@@ -155,6 +156,23 @@ public static class GeneratedProducts
         var tree = BuildAsciiTree(repository);
         lines.AddRange(tree.Count > 0 ? tree : new List<string> { "（无节点）" });
         lines.Add("");
+        lines.Add("当前落地阶段");
+        lines.Add("");
+        var phaseNodes = repository.Nodes.Where(node => !string.IsNullOrEmpty(node.Phase))
+            .GroupBy(node => node.Phase!, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
+        var currentPhaseId = PhaseIds(repository).FirstOrDefault(phaseId =>
+            (phaseNodes.TryGetValue(phaseId, out var list) ? list : new List<NodeModel>())
+            .Any(node => node.Status is "未完成" or "planned" or "in_progress"));
+        foreach (var phase in repository.Manifest.Phases)
+        {
+            if (string.IsNullOrEmpty(phase.Id)) continue;
+            var list = phaseNodes.TryGetValue(phase.Id, out var members) ? members : new List<NodeModel>();
+            var done = list.Count(node => node.Status is "已完成" or "已验证" or "built" or "verified");
+            lines.Add("  " + phase.Id + " " + (phase.Name ?? "") + "：节点 " + list.Count + "；已完成 " + done + "；未完成 " + (list.Count - done) + (phase.Id == currentPhaseId ? "  ← 当前" : ""));
+        }
+        if (currentPhaseId is null) lines.Add("  全部阶段无未完成节点");
+        lines.Add("");
         lines.Add("节点页");
         lines.Add("");
         foreach (var node in repository.Nodes)
@@ -163,6 +181,8 @@ public static class GeneratedProducts
             lines.Add("节点：" + node.Id + " · " + node.Name);
             lines.Add("");
             lines.Add("  类型/层级：" + node.Kind + " / " + node.Layer + "；阶段：" + node.Phase + "；状态：" + node.Status);
+            if (!string.IsNullOrWhiteSpace(node.CreatedAt) || !string.IsNullOrWhiteSpace(node.UpdatedAt))
+                lines.Add("  时间：创建 " + (node.CreatedAt ?? "?") + "；更新 " + (node.UpdatedAt ?? "?"));
             lines.Add("  父节点：" + (string.IsNullOrEmpty(node.Parent) ? "（无）" : node.Parent));
             lines.Add("  依赖：" + JoinOr(node.DependsOn));
             lines.Add("  输入契约：" + JoinOr(node.Inputs));
@@ -666,8 +686,11 @@ public static class GeneratedProducts
         var result = new List<string>();
         var directory = Path.Combine(repository.Root, "00-程序树", "变更");
         if (!Directory.Exists(directory)) return result;
+        var applied = AppliedProposalPaths(repository);
         foreach (var path in Directory.GetFiles(directory).Where(path => path.EndsWith(".yaml", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".yml", StringComparison.OrdinalIgnoreCase)).OrderBy(path => path, StringComparer.Ordinal))
         {
+            var relative = Path.GetRelativePath(repository.Root, path).Replace('\\', '/');
+            if (applied.Contains(relative)) continue;
             var title = "";
             try
             {
@@ -680,6 +703,28 @@ public static class GeneratedProducts
             result.Add(Path.GetFileName(path) + (string.IsNullOrEmpty(title) ? "" : "（" + title + "）"));
         }
         return result;
+    }
+
+    /// <summary>台账里出现过的提案即已落地；程序书的“待处理提案”只列没落地的。</summary>
+    private static HashSet<string> AppliedProposalPaths(PTreeRepository repository)
+    {
+        var applied = new HashSet<string>(StringComparer.Ordinal);
+        var ledger = Path.Combine(repository.Root, "00-程序树", "变更", "台账.jsonl");
+        if (!File.Exists(ledger)) return applied;
+        foreach (var line in File.ReadLines(ledger))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            try
+            {
+                using var document = JsonDocument.Parse(line);
+                if (document.RootElement.TryGetProperty("proposal", out var proposal) && proposal.ValueKind == JsonValueKind.String)
+                {
+                    applied.Add((proposal.GetString() ?? "").Replace('\\', '/'));
+                }
+            }
+            catch (JsonException) { }
+        }
+        return applied;
     }
 
     private static string? SpecForNode(PTreeRepository repository, NodeModel node)
