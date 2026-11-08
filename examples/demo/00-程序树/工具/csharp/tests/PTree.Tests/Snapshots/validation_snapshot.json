@@ -18395,5 +18395,493 @@
       "Message": "单部门节点数 22 > 20，可能粒度太细或该拆部门"
     }
   ],
-  "GoldenR01ToR06EntriesMatch|real-tree": []
+  "GoldenR01ToR06EntriesMatch|real-tree": [],
+  "MutatedTreeR13EntriesMatchInOrder|b5b19381f8400405b0b8126e": [
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "节点 id 格式不合法：'c'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "节点 id 格式不合法：'d'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "节点 id 格式不合法：'e'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R09",
+      "Node": null,
+      "Message": "contracts.yaml 不存在或未加载，无法校验契约引用：<ROOT>\\00-程序树\\契约\\contracts.yaml"
+    },
+    {
+      "Code": "R13",
+      "Node": "c",
+      "Message": "files 路径不存在：<REPO>/no-such-ptree-file.txt"
+    },
+    {
+      "Code": "R15",
+      "Node": "a",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "b",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "c",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "d",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "e",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R17",
+      "Node": "c",
+      "Message": "status=已完成 时 home 目录必须存在：10-程序/c"
+    },
+    {
+      "Code": "R19",
+      "Node": null,
+      "Message": "10-程序 目录不存在，但存在已登记 home 的 program 节点"
+    },
+    {
+      "Code": "R25",
+      "Node": null,
+      "Message": "标杆定义文件不存在：00-程序树/标杆/benchmarks.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R26",
+      "Node": null,
+      "Message": "标杆绑定文件不存在：00-程序树/标杆/绑定.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R31",
+      "Node": "c",
+      "Message": "缺少节点说明：00-程序树/说明/c.txt（status=已完成 的程序必须有说明）"
+    },
+    {
+      "Code": "R16",
+      "Node": "c",
+      "Message": "父节点 built 但存在未完成子节点：['d', 'e']"
+    },
+    {
+      "Code": "R31",
+      "Node": "b",
+      "Message": "缺少节点说明：00-程序树/说明/b.txt（部门建议写说明，说明整体职责与边界）"
+    },
+    {
+      "Code": "R32",
+      "Node": null,
+      "Message": "台账不存在：00-程序树/变更/台账.jsonl（尚未有提案通过 apply --write 落地；首次落地会自动生成并追加一条记录，此告警随之消失）"
+    },
+    {
+      "Code": "R34",
+      "Node": "a",
+      "Message": "评价缺失：评价/a.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "b",
+      "Message": "评价缺失：评价/b.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "c",
+      "Message": "评价缺失：评价/c.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "d",
+      "Message": "评价缺失：评价/d.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "e",
+      "Message": "评价缺失：评价/e.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 b.<末段>，实际 'c'"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'd'"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'e'"
+    }
+  ],
+  "MutatedTreeR13EntriesMatchInOrder|188552ba0537d89968148ff4": [
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "节点 id 格式不合法：'c'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "节点 id 格式不合法：'d'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "节点 id 格式不合法：'e'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R09",
+      "Node": null,
+      "Message": "contracts.yaml 不存在或未加载，无法校验契约引用：<ROOT>\\00-程序树\\契约\\contracts.yaml"
+    },
+    {
+      "Code": "R15",
+      "Node": "a",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "b",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "c",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "d",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "e",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R17",
+      "Node": "c",
+      "Message": "status=已完成 时 home 目录必须存在：10-程序/c"
+    },
+    {
+      "Code": "R19",
+      "Node": null,
+      "Message": "10-程序 目录不存在，但存在已登记 home 的 program 节点"
+    },
+    {
+      "Code": "R25",
+      "Node": null,
+      "Message": "标杆定义文件不存在：00-程序树/标杆/benchmarks.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R26",
+      "Node": null,
+      "Message": "标杆绑定文件不存在：00-程序树/标杆/绑定.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R31",
+      "Node": "c",
+      "Message": "缺少节点说明：00-程序树/说明/c.txt（status=已完成 的程序必须有说明）"
+    },
+    {
+      "Code": "R16",
+      "Node": "c",
+      "Message": "父节点 built 但存在未完成子节点：['d', 'e']"
+    },
+    {
+      "Code": "R31",
+      "Node": "b",
+      "Message": "缺少节点说明：00-程序树/说明/b.txt（部门建议写说明，说明整体职责与边界）"
+    },
+    {
+      "Code": "R32",
+      "Node": null,
+      "Message": "台账不存在：00-程序树/变更/台账.jsonl（尚未有提案通过 apply --write 落地；首次落地会自动生成并追加一条记录，此告警随之消失）"
+    },
+    {
+      "Code": "R34",
+      "Node": "a",
+      "Message": "评价缺失：评价/a.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "b",
+      "Message": "评价缺失：评价/b.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "c",
+      "Message": "评价缺失：评价/c.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "d",
+      "Message": "评价缺失：评价/d.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "e",
+      "Message": "评价缺失：评价/e.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 b.<末段>，实际 'c'"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'd'"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'e'"
+    }
+  ],
+  "MutatedTreeR15EntriesMatchInOrder|2fad71073515dacb0fa7a638": [
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "节点 id 格式不合法：'c'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "节点 id 格式不合法：'d'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "节点 id 格式不合法：'e'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R09",
+      "Node": null,
+      "Message": "contracts.yaml 不存在或未加载，无法校验契约引用：<ROOT>\\00-程序树\\契约\\contracts.yaml"
+    },
+    {
+      "Code": "R15",
+      "Node": "a",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "b",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "d",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "e",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R19",
+      "Node": null,
+      "Message": "10-程序 目录不存在，但存在已登记 home 的 program 节点"
+    },
+    {
+      "Code": "R25",
+      "Node": null,
+      "Message": "标杆定义文件不存在：00-程序树/标杆/benchmarks.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R26",
+      "Node": null,
+      "Message": "标杆绑定文件不存在：00-程序树/标杆/绑定.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R31",
+      "Node": "c",
+      "Message": "缺少节点说明：00-程序树/说明/c.txt（status=未完成 的程序必须有说明）"
+    },
+    {
+      "Code": "R31",
+      "Node": "b",
+      "Message": "缺少节点说明：00-程序树/说明/b.txt（部门建议写说明，说明整体职责与边界）"
+    },
+    {
+      "Code": "R32",
+      "Node": null,
+      "Message": "台账不存在：00-程序树/变更/台账.jsonl（尚未有提案通过 apply --write 落地；首次落地会自动生成并追加一条记录，此告警随之消失）"
+    },
+    {
+      "Code": "R34",
+      "Node": "a",
+      "Message": "评价缺失：评价/a.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "b",
+      "Message": "评价缺失：评价/b.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "c",
+      "Message": "评价缺失：评价/c.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "d",
+      "Message": "评价缺失：评价/d.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "e",
+      "Message": "评价缺失：评价/e.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 b.<末段>，实际 'c'"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'd'"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'e'"
+    }
+  ],
+  "MutatedTreeR15EntriesMatchInOrder|06fa285a53cfb0bbd8283f3b": [
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "节点 id 格式不合法：'c'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "节点 id 格式不合法：'d'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "节点 id 格式不合法：'e'（期望 parent 前缀 + 点 + 末段）"
+    },
+    {
+      "Code": "R09",
+      "Node": null,
+      "Message": "contracts.yaml 不存在或未加载，无法校验契约引用：<ROOT>\\00-程序树\\契约\\contracts.yaml"
+    },
+    {
+      "Code": "R15",
+      "Node": "a",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "b",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "c",
+      "Message": "spec 路径不存在（相对仓库根）：<REPO>/no-such-spec.md"
+    },
+    {
+      "Code": "R15",
+      "Node": "d",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R15",
+      "Node": "e",
+      "Message": "spec 路径不存在（相对仓库根）：x"
+    },
+    {
+      "Code": "R19",
+      "Node": null,
+      "Message": "10-程序 目录不存在，但存在已登记 home 的 program 节点"
+    },
+    {
+      "Code": "R25",
+      "Node": null,
+      "Message": "标杆定义文件不存在：00-程序树/标杆/benchmarks.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R26",
+      "Node": null,
+      "Message": "标杆绑定文件不存在：00-程序树/标杆/绑定.yaml（v1 起必须有）"
+    },
+    {
+      "Code": "R31",
+      "Node": "c",
+      "Message": "缺少节点说明：00-程序树/说明/c.txt（status=未完成 的程序必须有说明）"
+    },
+    {
+      "Code": "R31",
+      "Node": "b",
+      "Message": "缺少节点说明：00-程序树/说明/b.txt（部门建议写说明，说明整体职责与边界）"
+    },
+    {
+      "Code": "R32",
+      "Node": null,
+      "Message": "台账不存在：00-程序树/变更/台账.jsonl（尚未有提案通过 apply --write 落地；首次落地会自动生成并追加一条记录，此告警随之消失）"
+    },
+    {
+      "Code": "R34",
+      "Node": "a",
+      "Message": "评价缺失：评价/a.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "b",
+      "Message": "评价缺失：评价/b.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "c",
+      "Message": "评价缺失：评价/c.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "d",
+      "Message": "评价缺失：评价/d.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R34",
+      "Node": "e",
+      "Message": "评价缺失：评价/e.txt 与 yaml evaluation 都没有，编码前先写四行（判断 位置 做法 缺）"
+    },
+    {
+      "Code": "R02",
+      "Node": "c",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 b.<末段>，实际 'c'"
+    },
+    {
+      "Code": "R02",
+      "Node": "d",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'd'"
+    },
+    {
+      "Code": "R02",
+      "Node": "e",
+      "Message": "命名建议：节点 id 以 parent 前缀开头更清晰，期望 c.<末段>，实际 'e'"
+    }
+  ]
 }

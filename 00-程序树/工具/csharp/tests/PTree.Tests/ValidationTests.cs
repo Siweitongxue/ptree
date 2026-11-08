@@ -1483,6 +1483,11 @@ exemptions:
         var bytes = File.ReadAllBytes(path);
         if (!path.EndsWith("program-tree.yaml", StringComparison.OrdinalIgnoreCase)) return bytes;
         var text = Encoding.UTF8.GetString(bytes);
+        // 快照与仓库位置无关：把仓库根绝对路径抹成占位符（RepoPath 用 '/'，故两种分隔符都要处理）
+        var repo = RepoLocator.Root;
+        text = text.Replace(repo, "<REPO>", StringComparison.Ordinal);
+        text = text.Replace(repo.Replace('\\', '/'), "<REPO>", StringComparison.Ordinal);
+        text = text.Replace(repo.Replace('/', '\\'), "<REPO>", StringComparison.Ordinal);
         // 只把「合法的当前值」抹成占位：像 1.1 这种故意写坏的版本必须保留，否则反例键会撞车
         text = System.Text.RegularExpressions.Regex.Replace(text, "(?m)^tree_version: (\\S+)", match =>
             System.Text.RegularExpressions.Regex.IsMatch(match.Groups[1].Value, @"^\d+\.\d+\.\d+$")
@@ -1499,6 +1504,8 @@ exemptions:
         text = System.Text.RegularExpressions.Regex.Replace(text,
             @"[A-Za-z]:\\[^""'\r\n]*ptree-validate-[0-9a-f]+", "<TEMP>");
         text = text.Replace(RepoLocator.Root, "<REPO>", StringComparison.Ordinal);
+        text = text.Replace(RepoLocator.Root.Replace('\\', '/'), "<REPO>", StringComparison.Ordinal);
+        text = text.Replace(RepoLocator.Root.Replace('/', '\\'), "<REPO>", StringComparison.Ordinal);
         return text;
     }
 
