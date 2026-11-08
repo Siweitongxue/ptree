@@ -42,11 +42,11 @@ public sealed class CoordGuardTests : IDisposable
     }
 
     [Fact]
-    public void AnonymousCallerIsBlockedByHolder()
+    public void AnonymousCallerPassesEvenWhenHeldByOther()
     {
+        // 只管 AI：没带身份的调用（人 / 脚本 / 单智能体）不挡
         Coord.Claim(_root, Args(new { path = "00-程序树/program-tree.yaml", agent = "alpha" }));
-        var blocked = Coord.Guard(_root, new[] { "00-程序树/program-tree.yaml" }, "");
-        Assert.NotNull(blocked);
+        Assert.Null(Coord.Guard(_root, new[] { "00-程序树/program-tree.yaml" }, ""));
     }
 
     [Fact]

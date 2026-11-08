@@ -1,5 +1,5 @@
-# 多智能体写盘守门策略
-# enforce: 打开后，写树前会检查目标文件是否被别的智能体占用，被占用就拒绝。
-# require_claim: 打开后，调用方带了身份（agent / PTREE_AGENT）就必须先 claim 再写，没登记直接拒绝。
+# 多智能体写盘守门策略（只管 AI，不挡人）
+# enforce: 调用方带了身份（agent / PTREE_AGENT）时，目标文件被别的智能体占用就拒绝；没带身份一律放行。
+# require_claim: 默认关。打开后，带身份的调用方必须先 claim 再写；不带身份仍然放行。
 enforce: true
 require_claim: false

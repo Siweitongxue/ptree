@@ -350,6 +350,8 @@ public static class Coord
     public static string? Guard(string root, IEnumerable<string> relPaths, string agent)
     {
         if (string.Equals(Environment.GetEnvironmentVariable("PTREE_COORD"), "off", StringComparison.OrdinalIgnoreCase)) return null;
+        // 只管 AI：没带身份的调用（人、脚本、单智能体）一律放行，不挡正常干活
+        if (string.IsNullOrWhiteSpace(agent)) return null;
         var policy = LoadPolicy(root);
         if (!policy.Enforce) return null;
 
@@ -366,8 +368,7 @@ public static class Coord
             {
                 // 自己持有就是正常路径：改完记得 release
                 if (agent.Length > 0 && string.Equals(entry.By, agent, StringComparison.OrdinalIgnoreCase)) continue;
-                blocked.Add(path + " 正被 " + entry.By + " 占用（到 " + entry.ExpiresAt.ToString("yyyy-MM-dd HH:mm") + "）" +
-                            (agent.Length > 0 ? "，先跟 " + entry.By + " 协调或等它释放" : "，请带上 --by 说明身份"));
+                blocked.Add(path + " 正被 " + entry.By + " 占用（到 " + entry.ExpiresAt.ToString("yyyy-MM-dd HH:mm") + "），先跟它协调或等它释放");
                 continue;
             }
             if (policy.RequireClaim && agent.Length > 0) unclaimed.Add(path);
