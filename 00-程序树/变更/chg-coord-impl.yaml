@@ -1,0 +1,25 @@
+proposal: chg-coord-impl
+author: lead
+reason: 实现协作占用与留言：Coord.cs + CLI coord 子命令 + 5 个 MCP 工具，301 测试全绿
+ops:
+- op: modify
+  node: kernel.coord
+  changes:
+    status: 已完成
+    files:
+    - 00-程序树/工具/csharp/src/PTree.Core/Coord.cs
+    - 00-程序树/工具/csharp/src/PTree.Cli/Program.cs
+- op: modify
+  node: kernel.coord.lock
+  changes:
+    status: 已完成
+    files:
+    - 00-程序树/工具/csharp/src/PTree.Core/Coord.cs
+    - 00-程序树/工具/csharp/tests/PTree.Tests/CoordTests.cs
+- op: modify
+  node: kernel.coord.mailbox
+  changes:
+    status: 已完成
+    files:
+    - 00-程序树/工具/csharp/src/PTree.Core/Coord.cs
+    - 00-程序树/工具/csharp/tests/PTree.Tests/CoordTests.cs

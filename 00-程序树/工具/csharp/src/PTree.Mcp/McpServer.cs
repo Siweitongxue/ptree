@@ -192,6 +192,11 @@ public static class McpServer
                 "tree_backup_list" => BackupService.List(root, arguments),
                 "tree_backup_verify" => BackupService.Verify(root, arguments),
                 "tree_backup_scan" => BackupService.Scan(root, arguments),
+                "tree_coord_claim" => Coord.Claim(root, arguments),
+                "tree_coord_release" => Coord.Release(root, arguments),
+                "tree_coord_list" => Coord.List(root),
+                "tree_coord_say" => Coord.Say(root, arguments),
+                "tree_coord_inbox" => Coord.Inbox(root, arguments),
                 _ => null,
             };
             if (text is null)
@@ -401,6 +406,31 @@ public static class McpServer
         {
             ["target"] = Property("string", "可选：只扫描这个 target"),
         }),
+        Tool("tree_coord_claim", "改文件前先登记占用：同一路径只允许一个占用者，过期自动失效；同一占用者再次 claim 视为续期。返回占用者、开始与到期时间；被占用时返回 holder（by/at/expires_at/remaining_seconds/note）。", new Dictionary<string, object?>
+        {
+            ["path"] = Property("string", "要改的文件路径（相对仓库根，允许反斜杠）"),
+            ["agent"] = Property("string", "占用者名字，例如 lead 或某个智能体名"),
+            ["ttl_minutes"] = Property("integer", "占用有效期（分钟），默认 30，范围 1-1440；过期自动失效"),
+            ["note"] = Property("string", "可选：一句话说明这次要改什么"),
+        }, new[] { "path", "agent" }),
+        Tool("tree_coord_release", "改完立刻释放占用。占用者不匹配时需要 force=true 才能强拆。", new Dictionary<string, object?>
+        {
+            ["path"] = Property("string", "要释放的文件路径"),
+            ["agent"] = Property("string", "占用者名字；不传时按强拆处理"),
+            ["force"] = Property("boolean", "true 时忽略占用者直接释放"),
+        }, new[] { "path" }),
+        Tool("tree_coord_list", "列出当前占用表：path/by/at/expires_at/expired/remaining_seconds，过期项会标记 expired。", new Dictionary<string, object?>()),
+        Tool("tree_coord_say", "给指定智能体留一句话：写入本地协作目录，收件人下次 inbox 读取，不进程序书与台账。", new Dictionary<string, object?>
+        {
+            ["to"] = Property("string", "收件人名字"),
+            ["from"] = Property("string", "发件人名字"),
+            ["text"] = Property("string", "一句话，最长 500 字"),
+        }, new[] { "to", "text" }),
+        Tool("tree_coord_inbox", "读指定智能体的留言：默认读后标记已读，keep=true 只读不标记。", new Dictionary<string, object?>
+        {
+            ["agent"] = Property("string", "收件人名字"),
+            ["keep"] = Property("boolean", "true 表示只读不标记已读"),
+        }, new[] { "agent" }),
         Tool("tree_backup_list", "列备份点：按 tree_version 倒序，可按 target 过滤、限制条数；trimmed 记录默认不列（include_trimmed=true 才列）。", new Dictionary<string, object?>
         {
             ["target"] = Property("string", "只看这个 target 的备份点"),

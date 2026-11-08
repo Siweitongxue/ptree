@@ -140,6 +140,7 @@ internal static class Program
                     return payload.TryGetValue("ok", out var ok) && ok is true ? 0 : 1;
                 }
                 case "backup": return Backup(repository, options);
+                case "coord": return CoordCommand(repository, options);
                 case "git-sync":
                 {
                     var files = options.Files.Count > 0 ? options.Files : options.Positionals;
@@ -182,6 +183,10 @@ internal static class Program
         public string? Token { get; set; }
         public string? Target { get; set; }
         public bool? SecretScanFlag { get; set; }
+        public string? By { get; set; }
+        public string? From { get; set; }
+        public int? Ttl { get; set; }
+        public bool Keep { get; set; }
         public bool Llm { get; set; }
         public string? Out { get; set; }
         public int? Repeat { get; set; }
@@ -208,6 +213,10 @@ internal static class Program
                 case "--days": if (index + 1 < tokens.Count && int.TryParse(tokens[++index], out var days)) options.Days = days; break;
                 case "--format": if (index + 1 < tokens.Count) options.Format = tokens[++index]; break;
                 case "--mode": if (index + 1 < tokens.Count) options.Mode = tokens[++index]; break;
+                case "--by": if (index + 1 < tokens.Count) options.By = tokens[++index]; break;
+                case "--from": if (index + 1 < tokens.Count) options.From = tokens[++index]; break;
+                case "--ttl": if (index + 1 < tokens.Count && int.TryParse(tokens[++index], out var ttlValue)) options.Ttl = ttlValue; break;
+                case "--keep": options.Keep = true; break;
                 case "--write": options.Write = true; break;
                 case "--force": options.Force = true; break;
                 case "--enable": options.EnabledFlag = true; break;
@@ -678,6 +687,62 @@ internal static class Program
     }
 
     /// <summary>backup 子命令：status / config / setup / now / list / verify（与 MCP 的 tree_backup_* 同一实现）。</summary>
+    /// <summary>coord：多智能体协作——文件占用锁与留言信箱。</summary>
+    private static int CoordCommand(PTreeRepository repository, Options options)
+    {
+        var sub = options.Positionals.Count > 0 ? options.Positionals[0].ToLowerInvariant() : "list";
+        var rest = options.Positionals.Skip(1).ToList();
+        var agent = options.By ?? options.From;
+        Dictionary<string, object?> args = new();
+        if (sub == "claim")
+        {
+            if (rest.Count == 0) { Console.Error.WriteLine("ptree-cs: coord claim 需要 <文件路径>"); return 2; }
+            args["path"] = rest[0];
+            args["agent"] = agent;
+            if (options.Ttl is not null) args["ttl_minutes"] = options.Ttl.Value;
+            if (options.Message is not null) args["note"] = options.Message;
+        }
+        else if (sub == "release")
+        {
+            if (rest.Count == 0) { Console.Error.WriteLine("ptree-cs: coord release 需要 <文件路径>"); return 2; }
+            args["path"] = rest[0];
+            args["agent"] = agent;
+            if (options.Force) args["force"] = true;
+        }
+        else if (sub == "say")
+        {
+            if (rest.Count < 2) { Console.Error.WriteLine("ptree-cs: coord say 需要 <收件人> <一句话>"); return 2; }
+            args["to"] = rest[0];
+            args["from"] = agent;
+            args["text"] = string.Join(' ', rest.Skip(1));
+        }
+        else if (sub == "inbox")
+        {
+            if (rest.Count == 0) { Console.Error.WriteLine("ptree-cs: coord inbox 需要 <收件人>"); return 2; }
+            args["agent"] = rest[0];
+            if (options.Keep) args["keep"] = true;
+        }
+
+        var payload = args.Count == 0 ? (JsonElement?)null : JsonSerializer.SerializeToElement(args);
+        string? text = sub switch
+        {
+            "claim" => Coord.Claim(repository.Root, payload),
+            "release" => Coord.Release(repository.Root, payload),
+            "list" => Coord.List(repository.Root),
+            "sweep" => Coord.Sweep(repository.Root),
+            "say" => Coord.Say(repository.Root, payload),
+            "inbox" => Coord.Inbox(repository.Root, payload),
+            _ => null,
+        };
+        if (text is null)
+        {
+            Console.Error.WriteLine("ptree-cs: coord 子命令只能是 claim / release / list / sweep / say / inbox");
+            return 2;
+        }
+        WriteText(text);
+        return OkOf(text) ? 0 : 1;
+    }
+
     private static int Backup(PTreeRepository repository, Options options)
     {
         var sub = options.Positionals.Count > 0 ? options.Positionals[0].ToLowerInvariant() : "status";
@@ -754,5 +819,5 @@ internal static class Program
         return 0;
     }
 
-    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book [--llm] [--node <id>] [--out <path>]|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|apply|check-plan|verify|init|version|mcp> [--json]");
+    private static void PrintUsage() => Console.Error.WriteLine("用法：ptree-cs [--root <仓库根>] <index|node <id>|read-node <id>|status|map [--mode blocks|names|summary]|guide|links [--node <id>]|group <组id> [--mode names|summary]|bench [--repeat N] [--node <id>]|health|changes|validate|check|stats|orphans|view|order|book [--llm] [--node <id>] [--out <path>]|brief|benchmark|log|tree|relocate <id> --files ...|delete <id> --reason ...|adapt|git-sync|backup status|config|setup|now|list|verify|scan|coord claim|release|list|sweep|say|inbox|apply|check-plan|verify|init|version|mcp> [--json]");
 }

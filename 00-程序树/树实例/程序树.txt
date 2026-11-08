@@ -93,6 +93,6 @@ release.open-source ｜ 开源入口 ｜ 读取 Release 产物事实、examples/
 quality.smoke-e2e ｜ 端到端冒烟 ｜ 起一次真实 MCP 会话与 CLI 调用，验证工具目录、读写与校验链路连通 ｜ 未完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
 quality.snapshot-hygiene ｜ 快照治理 ｜ 清掉快照里的时间戳噪声，修正误导性测试名与 README 里的测试数量 ｜ 未完成 ｜ 无 ｜ group.dept-quality ｜ 2026-11-07 ｜ 见策划树
 kernel.scaffold.book-llm ｜ 程序书 DeepSeek 生成 ｜ 用 DeepSeek 把树事实改写成程序书正文，未配置或失败时回退离线模板 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
-kernel.coord ｜ 协作占用与留言 ｜ 用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车 ｜ 未完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
-kernel.coord.lock ｜ 文件占用锁 ｜ 登记文件占用者与过期时间，改完立刻释放，别人要改先看占用 ｜ 未完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
-kernel.coord.mailbox ｜ 留言信箱 ｜ 给指定智能体留一条带时间戳的消息，下次读取时消费并标记已读 ｜ 未完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.coord ｜ 协作占用与留言 ｜ 用一个守门工具管理多智能体对同一仓库的写操作与相互留言，防止正面撞车 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.coord.lock ｜ 文件占用锁 ｜ 登记文件占用者与过期时间，改完立刻释放，别人要改先看占用 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
+kernel.coord.mailbox ｜ 留言信箱 ｜ 给指定智能体留一条带时间戳的消息，下次读取时消费并标记已读 ｜ 已完成 ｜ 无 ｜ group.dept-kernel ｜ 2026-11-07 ｜ 见策划树
