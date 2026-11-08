@@ -1,0 +1,8 @@
+proposal: chg-smoke
+author: beta
+reason: 验证协作守门
+ops:
+- op: modify
+  node: kernel.coord
+  changes:
+    notes: 守门冒烟
