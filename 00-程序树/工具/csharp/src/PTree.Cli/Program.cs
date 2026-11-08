@@ -33,6 +33,8 @@ internal static class Program
             }
             // bench 必须先于仓库加载：它自己要把「进程启动 → 首次命令」算进冷启动，不能被提前的加载预热
             if (command == "bench") return Bench(root, options);
+            // --root 缺省时用 TreeRoot 从当前目录逐级向上找（再退到程序目录），不再靠相对路径猜
+            root = TreeRoot.Resolve(root);
             var repository = PTreeRepository.Load(root);
             switch (command)
             {

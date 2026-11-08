@@ -17,12 +17,33 @@ public static class McpServer
         WriteIndented = false,
     };
 
+    /// <summary>进程内的当前树根：整个服务只有这一份可变状态，切树走 tree_use。</summary>
+    private static string? _currentRoot;
+
+    /// <summary>读当前根；启动时没解析出来就现找一次（找不到会抛，绝不静默用当前目录当根）。</summary>
+    private static string CurrentRoot
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_currentRoot)) _currentRoot = TreeRoot.Resolve(null);
+            return _currentRoot;
+        }
+    }
+
     public static int Run(string? root)
     {
         Console.InputEncoding = new UTF8Encoding(false);
         using var stdin = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));
         using var stdout = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true, NewLine = "\n" };
-        Log("ptree-mcp 启动：JSON-RPC 2.0 / 换行分隔帧 / 内核 " + KernelInfo.Version + (root is null ? "" : "（root=" + root + "）"));
+        try
+        {
+            _currentRoot = TreeRoot.Resolve(root);
+            Log("ptree-mcp 启动：JSON-RPC 2.0 / 换行分隔帧 / 内核 " + KernelInfo.Version + " / 当前根 " + _currentRoot);
+        }
+        catch (Exception exception)
+        {
+            Log("ptree-mcp 启动：初始根没解析出来（" + exception.Message + "）；服务先起，用 tree_use {path} 指定树根");
+        }
         while (true)
         {
             string? line;
@@ -39,7 +60,7 @@ public static class McpServer
             if (string.IsNullOrWhiteSpace(line)) continue;
             try
             {
-                HandleLine(line, root, stdout);
+                HandleLine(line, stdout);
             }
             catch (Exception exception)
             {
@@ -50,7 +71,7 @@ public static class McpServer
         return 0;
     }
 
-    private static void HandleLine(string line, string? root, StreamWriter stdout)
+    private static void HandleLine(string line, StreamWriter stdout)
     {
         JsonDocument document;
         try
@@ -70,18 +91,18 @@ public static class McpServer
                 var responses = new List<object?>();
                 foreach (var item in element.EnumerateArray())
                 {
-                    var response = HandleMessage(item, root);
+                    var response = HandleMessage(item);
                     if (response is not null) responses.Add(response);
                 }
                 WriteMessage(stdout, responses);
                 return;
             }
-            var single = HandleMessage(element, root);
+            var single = HandleMessage(element);
             if (single is not null) WriteMessage(stdout, single);
         }
     }
 
-    private static object? HandleMessage(JsonElement message, string? root)
+    private static object? HandleMessage(JsonElement message)
     {
         if (message.ValueKind != JsonValueKind.Object)
         {
@@ -137,13 +158,13 @@ public static class McpServer
             case "tools/list":
                 return SuccessResponse(id, new Dictionary<string, object?> { ["tools"] = ToolDefinitions() });
             case "tools/call":
-                return CallTool(id, parameters, root);
+                return CallTool(id, parameters);
             default:
                 return ErrorResponse(id, -32601, "Method not found：" + method);
         }
     }
 
-    private static object CallTool(JsonElement? id, JsonElement? parameters, string? root)
+    private static object CallTool(JsonElement? id, JsonElement? parameters)
     {
         if (parameters is not { ValueKind: JsonValueKind.Object } value)
         {
@@ -157,6 +178,8 @@ public static class McpServer
         JsonElement? arguments = value.TryGetProperty("arguments", out var argsElement) && argsElement.ValueKind == JsonValueKind.Object
             ? argsElement
             : null;
+        // 所有工具都读进程内的当前根；tree_use 负责切它
+        var root = CurrentRoot;
         if (toolName is "program_tree_propose" or "program_tree_apply" or "propose" or "apply")
         {
             return ErrorResponse(id, -32601, "Method not found：工具 " + toolName + " 已撤销；节点级写入请用 tree_add_node / tree_add_link / tree_update_node / tree_retire_node");
@@ -165,6 +188,7 @@ public static class McpServer
         {
             var text = toolName switch
             {
+                "tree_use" => UseTree(arguments),
                 "tree_status" => NodeTools.Status(root, arguments),
                 "tree_map" => NodeTools.Map(root, arguments),
                 "tree_guide" => NodeTools.Guide(root),
@@ -223,6 +247,67 @@ public static class McpServer
         }
     }
 
+    /// <summary>tree_use：切当前根。成功才改 _currentRoot，失败只回报错误、原根不动。</summary>
+    private static string UseTree(JsonElement? arguments)
+    {
+        var path = arguments is { ValueKind: JsonValueKind.Object } args
+                   && args.TryGetProperty("path", out var pathElement)
+                   && pathElement.ValueKind == JsonValueKind.String
+            ? pathElement.GetString()
+            : null;
+        var previous = _currentRoot;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return JsonSerializer.Serialize(new Dictionary<string, object?>
+            {
+                ["ok"] = true,
+                ["root"] = CurrentRoot,
+                ["tree_version"] = TreeVersionOf(CurrentRoot),
+                ["hint"] = "当前树根可用；要切树就带 path 再调一次，例如 tree_use {\"path\": \"D:/AI Company\"}；path 必须是含 00-程序树/program-tree.yaml 的目录。",
+            }, FrameOptions);
+        }
+
+        string resolved;
+        string? version;
+        try
+        {
+            resolved = TreeRoot.Resolve(path);
+            version = TreeVersionOf(resolved);
+        }
+        catch (Exception exception)
+        {
+            return JsonSerializer.Serialize(new Dictionary<string, object?>
+            {
+                ["ok"] = false,
+                ["error"] = exception.Message,
+                ["root"] = previous ?? string.Empty,
+                ["previous_root"] = previous ?? string.Empty,
+            }, FrameOptions);
+        }
+
+        _currentRoot = resolved;
+        Log("切树：" + (previous ?? "（未设置）") + " → " + resolved);
+        return JsonSerializer.Serialize(new Dictionary<string, object?>
+        {
+            ["ok"] = true,
+            ["root"] = resolved,
+            ["tree_version"] = version,
+            ["previous_root"] = previous ?? string.Empty,
+        }, FrameOptions);
+    }
+
+    private static string? TreeVersionOf(string root)
+    {
+        try
+        {
+            return PTreeRepository.Load(root).Manifest.TreeVersion;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     private static object ToolContent(string text, bool isError) => new Dictionary<string, object?>
     {
         ["content"] = new[] { new Dictionary<string, object?> { ["type"] = "text", ["text"] = text } },
@@ -249,6 +334,10 @@ public static class McpServer
 
     private static List<object?> ToolDefinitions() => new()
     {
+        Tool("tree_use", "切树：进程内只有一棵当前树，所有 tree_* 工具都读它。带 path 时把 path 解析成树根并切过去（path 下必须有 00-程序树/program-tree.yaml），返回 ok、root、tree_version 与 previous_root；path 不是树根时返回 ok=false 与原因，当前根保持不变。不带 path 时只回报当前根、树版本与切法提示。", new Dictionary<string, object?>
+        {
+            ["path"] = Property("string", "目标树根目录（含 00-程序树/program-tree.yaml）；不传则只查询当前根"),
+        }),
         Tool("tree_add_node", "在指定 parent 下新增一个节点（一次一个）。自动生成 id（parent 前缀 + 英文短名）、layer、created_at；写入说明正文，落盘后立即全量校验，失败自动回滚并返回 errors。AI 不需要接触任何文件。", new Dictionary<string, object?>
         {
             ["parent"] = Property("string", "父节点 id；新节点挂在它下面"),
