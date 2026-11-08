@@ -84,6 +84,48 @@ ops:
     }
 
     [Fact]
+    public void BaselineErrorDoesNotBlockUnrelatedProposal()
+    {
+        // 基线里已有 E 时，与它无关的提案也必须判通过。
+        // 回归：去重键一边用 "\u0000" 拼、一边用空串拼，导致基线 E 被当成新问题重复计入。
+        var temp = Path.Combine(Path.GetTempPath(), "ptree-baseline-" + Guid.NewGuid().ToString("N"));
+        CopyTree(RepoLocator.Root, temp);
+        try
+        {
+            var spec = Path.Combine(temp, "00-程序树", "README.txt");
+            if (File.Exists(spec)) File.Delete(spec);
+            File.WriteAllText(Path.Combine(temp, "00-程序树", "test-spec.txt"), "临时说明", new System.Text.UTF8Encoding(false));
+            var repository = PTreeRepository.Load(temp);
+            Assert.NotEmpty(Validator.Validate(repository).Errors);
+
+            var yaml = AddTemplate.Replace("__PARENT__", "core.app", StringComparison.Ordinal)
+                                   .Replace("__ID__", "core.app.baseline-test", StringComparison.Ordinal)
+                                   .Replace("spec: 00-程序树/README.txt", "spec: 00-程序树/test-spec.txt", StringComparison.Ordinal);
+            var result = ProposalEngine.Evaluate(repository, yaml, "add.yaml");
+            Assert.True(result.Ok, string.Join("；", result.Errors.Select(issue => issue.Message)));
+            Assert.DoesNotContain(result.Errors, issue => issue.Code == "R15");
+        }
+        finally
+        {
+            if (Directory.Exists(temp)) Directory.Delete(temp, true);
+        }
+    }
+
+    private static void CopyTree(string source, string destination)
+    {
+        foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(source, file);
+            if (relative.StartsWith("bin" + Path.DirectorySeparatorChar) || relative.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
+            if (relative.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar)) continue;
+            if (relative.Contains(Path.DirectorySeparatorChar + ".git" + Path.DirectorySeparatorChar)) continue;
+            var target = Path.Combine(destination, relative);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.Copy(file, target, true);
+        }
+    }
+
+    [Fact]
     public void DryRunDoesNotWriteManifest()
     {
         var repository = Repository();

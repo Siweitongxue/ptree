@@ -9,6 +9,8 @@ namespace PTree.Core;
 /// <summary>节点级 MCP 工具实现：AI 只给字段，不碰文件；写操作原子落盘、台账、重生成文档。</summary>
 public static class NodeTools
 {
+    private const int GitTimeoutMs = 120_000;
+
     // 联系类型白名单与 R40 共用 LinkKinds 一份，避免写入口和校验两处各写一遍
     private static readonly string[] LinkTypes = LinkKinds.All;
     private static readonly Regex IdPattern = new(@"^[a-z][a-z0-9-]*(\.[a-z0-9-]+)*$", RegexOptions.CultureInvariant);
@@ -1342,10 +1344,15 @@ public static class NodeTools
             foreach (var argument in arguments) start.ArgumentList.Add(argument);
             using var process = Process.Start(start);
             if (process is null) return (-1, "", "无法启动 git");
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-            return (process.ExitCode, stdout, stderr);
+            // 两路管道必须并发读：先读完 stdout 再读 stderr，任一路写满就会双方互等（死锁）。
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(GitTimeoutMs))
+            {
+                try { process.Kill(true); } catch { }
+                return (-1, "", "git 超时（" + GitTimeoutMs / 1000 + " 秒）");
+            }
+            return (process.ExitCode, stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult());
         }
         catch (Exception exception)
         {

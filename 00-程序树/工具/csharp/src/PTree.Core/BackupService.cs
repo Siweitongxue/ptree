@@ -25,6 +25,8 @@ public sealed class BackupRecord
 /// </summary>
 public static class BackupService
 {
+    private const int GitTimeoutMs = 120_000;
+
     public const string SetupHint = "请先跑 tree_backup_setup 完成配置（写入用户名与 token）";
     public const string EnableHint = "启用前必须先完成配置：" + SetupHint;
     public const int MaxRetention = 1000;
@@ -949,10 +951,15 @@ public static class BackupService
             foreach (var argument in arguments) start.ArgumentList.Add(argument);
             using var process = Process.Start(start);
             if (process is null) return (-1, "", "无法启动 git");
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-            return (process.ExitCode, stdout, stderr);
+            // 两路管道必须并发读：先读完 stdout 再读 stderr，任一路写满就会双方互等（死锁）。
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(GitTimeoutMs))
+            {
+                try { process.Kill(true); } catch { }
+                return (-1, "", "git 超时（" + GitTimeoutMs / 1000 + " 秒）");
+            }
+            return (process.ExitCode, stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult());
         }
         catch (Exception exception)
         {

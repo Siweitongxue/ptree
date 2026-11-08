@@ -94,14 +94,16 @@ public static class Program
             if (parts.Length < 2) return;
             var method = parts[0].ToUpperInvariant();
             var target = parts[1];
-            var contentLength = 0;
+            var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var line in lines.Skip(1))
             {
-                if (line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
-                {
-                    int.TryParse(line[15..].Trim(), out contentLength);
-                }
+                var colon = line.IndexOf(':');
+                if (colon <= 0) continue;
+                headers[line[..colon].Trim()] = line[(colon + 1)..].Trim();
             }
+            var contentLength = headers.TryGetValue("Content-Length", out var lengthText) && int.TryParse(lengthText, out var parsedLength)
+                ? Math.Max(0, parsedLength)
+                : 0;
             var bodyStart = headerEnd + 4;
             while (buffer.Count - bodyStart < contentLength)
             {
@@ -111,7 +113,7 @@ public static class Program
             }
             var bodyBytes = buffer.Skip(bodyStart).Take(Math.Max(0, Math.Min(contentLength, buffer.Count - bodyStart))).ToArray();
             var body = Encoding.UTF8.GetString(bodyBytes);
-            var (status, contentType, payload) = Route(method, target, body);
+            var (status, contentType, payload) = Route(method, target, body, headers);
             var head = "HTTP/1.1 " + status + " " + Reason(status) + "\r\n"
                 + "Content-Type: " + contentType + "; charset=utf-8\r\n"
                 + "Content-Length: " + payload.Length + "\r\n"
@@ -146,7 +148,7 @@ public static class Program
         return -1;
     }
 
-    private static (int, string, byte[]) Route(string method, string target, string body)
+    private static (int, string, byte[]) Route(string method, string target, string body, Dictionary<string, string> headers)
     {
         var path = target;
         var query = string.Empty;
@@ -159,6 +161,10 @@ public static class Program
         path = Uri.UnescapeDataString(path);
         try
         {
+            if (method == "POST" && !SameOrigin(headers))
+            {
+                return Text(403, "{\"ok\":false,\"error\":\"拒绝跨站写操作：请求来源不可信\"}");
+            }
             if (method == "GET" && path == "/api/health")
             {
                 return Json(200, new Dictionary<string, object?>
@@ -192,7 +198,7 @@ public static class Program
             {
                 var file = path == "/" ? "index.html" : path.TrimStart('/');
                 var full = Path.GetFullPath(Path.Combine(_viewer, file));
-                if (!full.StartsWith(_viewer, StringComparison.OrdinalIgnoreCase) || !File.Exists(full))
+                if (!IsUnderViewer(full) || !File.Exists(full))
                 {
                     return Text(404, "{\"ok\":false,\"error\":\"文件不存在\"}");
                 }
@@ -214,6 +220,24 @@ public static class Program
             return Text(500, JsonSerializer.Serialize(new { ok = false, error = exception.Message },
                 new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
         }
+    }
+
+    /// <summary>静态文件必须在 viewer 目录内：按分隔符边界判断，堵住 /../viewer-x/ 这类同前缀兄弟目录。</summary>
+    private static bool IsUnderViewer(string full)
+    {
+        var prefix = _viewer.EndsWith(Path.DirectorySeparatorChar) ? _viewer : _viewer + Path.DirectorySeparatorChar;
+        return string.Equals(full, _viewer, StringComparison.OrdinalIgnoreCase)
+            || full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>写接口只接受本机服务同源请求：浏览器跨站 POST 必带 Origin，非本机来源一律拒绝；命令行不带 Origin 时放行。</summary>
+    private static bool SameOrigin(Dictionary<string, string> headers)
+    {
+        if (!headers.TryGetValue("Origin", out var origin) || string.IsNullOrWhiteSpace(origin)) return true;
+        if (!Uri.TryCreate(origin, UriKind.Absolute, out var parsed)) return false;
+        if (!string.Equals(parsed.Scheme, "http", StringComparison.OrdinalIgnoreCase)) return false;
+        var loopback = parsed.Host is "127.0.0.1" or "localhost" or "::1" or "[::1]";
+        return loopback && parsed.Port == _port;
     }
 
     private static JsonElement Args(object value)

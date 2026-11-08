@@ -456,8 +456,9 @@ public static class VerifyRunner
                 check.Message = "node 无法启动";
                 return check;
             }
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
+            // 两路管道并发读，否则 stderr 写满时子进程阻塞，60 秒超时也救不回来。
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
             if (!process.WaitForExit(60000))
             {
                 try { process.Kill(true); } catch { }
@@ -466,6 +467,8 @@ public static class VerifyRunner
                 check.Message = "插件冒烟 60 秒超时";
                 return check;
             }
+            var stdout = stdoutTask.GetAwaiter().GetResult();
+            var stderr = stderrTask.GetAwaiter().GetResult();
             var lastLine = PythonText.SplitLines(stdout).LastOrDefault(line => line.Trim().Length > 0) ?? "";
             check.ExitCode = process.ExitCode;
             check.Status = process.ExitCode == 0 ? "PASS" : "WARN";

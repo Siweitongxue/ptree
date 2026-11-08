@@ -583,13 +583,13 @@ public static class ProposalEngine
             .ToHashSet(StringComparer.Ordinal);
         foreach (var issue in candidateResult.Errors)
         {
-            var key = issue.Code + "" + issue.Node + "" + issue.Message;
+            var key = issue.Code + "\u0000" + issue.Node + "\u0000" + issue.Message;
             if (baselineKeys.Contains(key)) continue;
             Add(evaluation, "E", issue.Code, issue.Node, issue.Message);
         }
         foreach (var issue in candidateResult.Warnings)
         {
-            var key = issue.Code + "" + issue.Node + "" + issue.Message;
+            var key = issue.Code + "\u0000" + issue.Node + "\u0000" + issue.Message;
             if (baselineKeys.Contains(key)) continue;
             Add(evaluation, "W", issue.Code, issue.Node, issue.Message);
         }
